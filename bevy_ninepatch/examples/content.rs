@@ -25,6 +25,12 @@ fn setup(
         .load_sync(&mut textures, "assets/blue_button02.png")
         .unwrap();
 
+    let button = bevy_ninepatch::NinePatchBuilder::by_margins(5., 10., 6., 6.).apply(
+        button_texture_handle,
+        &mut textures,
+        &mut materials,
+    );
+
     commands
         .spawn(NodeComponents {
             style: Style {
@@ -40,17 +46,9 @@ fn setup(
         .with_children(|global_parent| {
             bevy_ninepatch::NinePatchBuilder::by_margins(20., 20., 20., 20.)
                 .apply(panel_texture_handle, &mut textures, &mut materials)
-                .add(global_parent, 500., 300., |_, _| {});
-            global_parent.spawn(NodeComponents {
-                style: Style {
-                    size: Size::new(Val::Px(100.), Val::Auto),
-                    ..Default::default()
-                },
-                ..Default::default()
-            });
-            bevy_ninepatch::NinePatchBuilder::by_margins(5., 10., 6., 6.)
-                .apply(button_texture_handle, &mut textures, &mut materials)
-                .add(global_parent, 450., 150., |_, _| {});
+                .add(global_parent, 500., 300., |inside, _| {
+                    button.add(inside, 460., 100., |_, _| {});
+                });
         });
 
     commands.spawn(UiCameraComponents::default());
