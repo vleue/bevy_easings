@@ -1,3 +1,17 @@
+#![deny(
+    warnings,
+    missing_copy_implementations,
+    trivial_casts,
+    trivial_numeric_casts,
+    unsafe_code,
+    unstable_features,
+    unused_import_braces,
+    unused_qualifications,
+    missing_docs
+)]
+
+//! log diagnostics during run
+
 use bevy::core::{Time, Timer};
 use bevy::diagnostic::{Diagnostic, DiagnosticId, Diagnostics};
 use bevy::ecs::{IntoQuerySystem, Res, ResMut};
@@ -7,7 +21,9 @@ use tracing::debug;
 
 /// An App Plugin that prints diagnostics to the console
 pub struct LogDiagnosticsPlugin {
+    /// How often to log diagnostics, by default every seconds
     pub wait_duration: Duration,
+    /// Filter for specific diagnostics
     pub filter: Option<Vec<DiagnosticId>>,
 }
 
@@ -33,11 +49,12 @@ impl bevy::prelude::Plugin for LogDiagnosticsPlugin {
             filter: self.filter.clone(),
         });
 
-        app.add_system_to_stage(stage::POST_UPDATE, Self::print_diagnostics_system.system());
+        app.add_system_to_stage(stage::POST_UPDATE, Self::log_diagnostics_system.system());
     }
 }
 
 impl LogDiagnosticsPlugin {
+    /// Create a new `LogDiagnosticsPlugin` that will filter on the given diagnostics
     pub fn filtered(filter: Vec<DiagnosticId>) -> Self {
         LogDiagnosticsPlugin {
             filter: Some(filter),
@@ -45,7 +62,7 @@ impl LogDiagnosticsPlugin {
         }
     }
 
-    fn print_diagnostic(diagnostic: &Diagnostic) {
+    fn log_diagnostic(diagnostic: &Diagnostic) {
         if let Some(value) = diagnostic.value() {
             if let Some(average) = diagnostic.average() {
                 debug!(
@@ -58,7 +75,7 @@ impl LogDiagnosticsPlugin {
         }
     }
 
-    pub fn print_diagnostics_system(
+    fn log_diagnostics_system(
         mut state: ResMut<LogDiagnosticsState>,
         time: Res<Time>,
         diagnostics: Res<Diagnostics>,
@@ -67,11 +84,11 @@ impl LogDiagnosticsPlugin {
         if state.timer.finished {
             if let Some(ref filter) = state.filter {
                 for diagnostic in filter.iter().map(|id| diagnostics.get(*id).unwrap()) {
-                    Self::print_diagnostic(diagnostic);
+                    Self::log_diagnostic(diagnostic);
                 }
             } else {
                 for diagnostic in diagnostics.iter() {
-                    Self::print_diagnostic(diagnostic);
+                    Self::log_diagnostic(diagnostic);
                 }
             }
         }

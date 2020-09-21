@@ -1,6 +1,5 @@
 #![deny(
     warnings,
-    // missing_debug_implementations,
     missing_copy_implementations,
     trivial_casts,
     trivial_numeric_casts,
@@ -8,7 +7,7 @@
     unstable_features,
     unused_import_braces,
     unused_qualifications,
-    // missing_docs
+    missing_docs
 )]
 
 //! Nine Patch sprite system for bevy

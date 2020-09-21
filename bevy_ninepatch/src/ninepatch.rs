@@ -62,7 +62,7 @@ pub struct Patch<T: Clone> {
     pub x_growth: GrowthMode,
     /// How does it grow on y axis
     pub y_growth: GrowthMode,
-    /// Does this patch can contains content
+    /// Does this patch can contain content
     pub content: Option<T>,
 }
 
@@ -169,6 +169,8 @@ impl NinePatchBuilder<()> {
 }
 
 impl<T: Clone> NinePatchBuilder<T> {
+    /// Apply a `NinePatchBuilder` to a texture to get a `NinePatch` ready to be added to entities. This will split
+    /// the given texture according to the patches.
     pub fn apply(
         &self,
         texture_handle: Handle<Texture>,
@@ -219,13 +221,14 @@ impl<T: Clone> NinePatchBuilder<T> {
         }
         NinePatch {
             patches: self.patches.clone(),
-            texture_size: texture_size,
+            texture_size,
             background: materials.add(Color::NONE.into()),
             splitted_texture: patch_textures,
         }
     }
 }
 
+/// `NinePatch` ready to be added to entities.
 #[derive(Debug)]
 pub struct NinePatch<T: Clone> {
     patches: Vec<Vec<Patch<T>>>,
@@ -234,6 +237,7 @@ pub struct NinePatch<T: Clone> {
     splitted_texture: Vec<Handle<ColorMaterial>>,
 }
 impl<T: Clone> NinePatch<T> {
+    /// Add the `NinePatch` to entities. This will create several entities as children.
     pub fn add<F>(&self, parent: &mut ChildBuilder, width: f32, height: f32, mut content_builder: F)
     where
         F: FnMut(&mut ChildBuilder, &T) + Copy,
