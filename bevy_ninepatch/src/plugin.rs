@@ -7,11 +7,22 @@ use crate::ninepatch::*;
 
 /// State of the current `NinePatch`
 #[derive(Debug, Clone, Copy, Properties)]
-pub struct NinePatchLoaded(bool);
+pub struct NinePatchData {
+    /// Handle of the texture
+    pub texture: Handle<Texture>,
+    /// Size for the target UI element
+    pub size: Vec2,
+    /// Is the element already loaded and displayed
+    pub loaded: bool,
+}
 
-impl Default for NinePatchLoaded {
+impl Default for NinePatchData {
     fn default() -> Self {
-        NinePatchLoaded(false)
+        NinePatchData {
+            texture: Default::default(),
+            size: Default::default(),
+            loaded: false,
+        }
     }
 }
 
@@ -19,12 +30,10 @@ impl Default for NinePatchLoaded {
 pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     /// Handle to the `NinePatchBuilder`
     pub nine_patch: Handle<NinePatchBuilder<T>>,
-    /// Handle to the original `Texture`
-    pub texture: Handle<Texture>,
     /// Style of this UI node
     pub style: Style,
-    /// State of the `NinePatch` - should use default value
-    pub loaded: NinePatchLoaded,
+    /// State of the `NinePatch`
+    pub data: NinePatchData,
     /// UI node
     pub node: Node,
     /// Transform
@@ -37,9 +46,8 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
     fn default() -> Self {
         NinePatchComponents {
             nine_patch: Default::default(),
-            texture: Default::default(),
             style: Default::default(),
-            loaded: Default::default(),
+            data: Default::default(),
             node: Default::default(),
             transform: Default::default(),
             global_transform: Default::default(),
@@ -49,22 +57,19 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
 
 impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     fn with_static_ids<V>(f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
-        let mut xs: [(usize, std::any::TypeId); 7] = [
+        const N: usize = 6;
+        let mut xs: [(usize, std::any::TypeId); N] = [
             (
                 std::mem::align_of::<Handle<NinePatchBuilder<T>>>(),
                 std::any::TypeId::of::<Handle<NinePatchBuilder<T>>>(),
-            ),
-            (
-                std::mem::align_of::<Handle<Texture>>(),
-                std::any::TypeId::of::<Handle<Texture>>(),
             ),
             (
                 std::mem::align_of::<Style>(),
                 std::any::TypeId::of::<Style>(),
             ),
             (
-                std::mem::align_of::<NinePatchLoaded>(),
-                std::any::TypeId::of::<NinePatchLoaded>(),
+                std::mem::align_of::<NinePatchData>(),
+                std::any::TypeId::of::<NinePatchData>(),
             ),
             (std::mem::align_of::<Node>(), std::any::TypeId::of::<Node>()),
             (
@@ -77,7 +82,7 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
             ),
         ];
         xs.sort_unstable_by(|x, y| x.0.cmp(&y.0).reverse().then(x.1.cmp(&y.1)));
-        let mut ids = [std::any::TypeId::of::<()>(); 7];
+        let mut ids = [std::any::TypeId::of::<()>(); N];
         for (slot, &(_, id)) in ids.iter_mut().zip(xs.iter()) {
             *slot = id;
         }
@@ -87,9 +92,8 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     fn static_type_info() -> Vec<bevy::ecs::TypeInfo> {
         let mut xs = vec![
             bevy::ecs::TypeInfo::of::<Handle<NinePatchBuilder<T>>>(),
-            bevy::ecs::TypeInfo::of::<Handle<Texture>>(),
             bevy::ecs::TypeInfo::of::<Style>(),
-            bevy::ecs::TypeInfo::of::<NinePatchLoaded>(),
+            bevy::ecs::TypeInfo::of::<NinePatchData>(),
             bevy::ecs::TypeInfo::of::<Node>(),
             bevy::ecs::TypeInfo::of::<Transform>(),
             bevy::ecs::TypeInfo::of::<GlobalTransform>(),
@@ -112,13 +116,6 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         .ok_or_else(bevy::ecs::MissingComponent::new::<Handle<NinePatchBuilder<T>>>)?
         .as_ptr()
         .cast::<Handle<NinePatchBuilder<T>>>();
-        let texture = f(
-            std::any::TypeId::of::<Handle<Texture>>(),
-            std::mem::size_of::<Handle<Texture>>(),
-        )
-        .ok_or_else(bevy::ecs::MissingComponent::new::<Handle<Texture>>)?
-        .as_ptr()
-        .cast::<Handle<Texture>>();
         let style = f(
             std::any::TypeId::of::<Style>(),
             std::mem::size_of::<Style>(),
@@ -126,13 +123,13 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         .ok_or_else(bevy::ecs::MissingComponent::new::<Style>)?
         .as_ptr()
         .cast::<Style>();
-        let loaded = f(
-            std::any::TypeId::of::<NinePatchLoaded>(),
-            std::mem::size_of::<NinePatchLoaded>(),
+        let data = f(
+            std::any::TypeId::of::<NinePatchData>(),
+            std::mem::size_of::<NinePatchData>(),
         )
-        .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchLoaded>)?
+        .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchData>)?
         .as_ptr()
-        .cast::<NinePatchLoaded>();
+        .cast::<NinePatchData>();
         let node = f(std::any::TypeId::of::<Node>(), std::mem::size_of::<Node>())
             .ok_or_else(bevy::ecs::MissingComponent::new::<Node>)?
             .as_ptr()
@@ -154,9 +151,8 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
 
         Ok(NinePatchComponents {
             nine_patch: nine_patch.read(),
-            texture: texture.read(),
             style: style.read(),
-            loaded: loaded.read(),
+            data: data.read(),
             node: node.read(),
             transform: transform.read(),
             global_transform: global_transform.read(),
@@ -185,13 +181,6 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
             std::mem::forget(self.nine_patch);
         }
         if f(
-            (&mut self.texture as *mut Handle<Texture>).cast::<u8>(),
-            std::any::TypeId::of::<Handle<Texture>>(),
-            std::mem::size_of::<Handle<Texture>>(),
-        ) {
-            std::mem::forget(self.texture);
-        }
-        if f(
             (&mut self.style as *mut Style).cast::<u8>(),
             std::any::TypeId::of::<Style>(),
             std::mem::size_of::<Style>(),
@@ -199,11 +188,11 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
             std::mem::forget(self.style);
         }
         if f(
-            (&mut self.loaded as *mut NinePatchLoaded).cast::<u8>(),
-            std::any::TypeId::of::<NinePatchLoaded>(),
-            std::mem::size_of::<NinePatchLoaded>(),
+            (&mut self.data as *mut NinePatchData).cast::<u8>(),
+            std::any::TypeId::of::<NinePatchData>(),
+            std::mem::size_of::<NinePatchData>(),
         ) {
-            std::mem::forget(self.loaded);
+            std::mem::forget(self.data);
         }
         if f(
             (&mut self.node as *mut Node).cast::<u8>(),
@@ -256,15 +245,10 @@ fn setup<T: Clone + Send + Sync + 'static>(
     nine_patches: Res<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(
-        Entity,
-        &mut NinePatchLoaded,
-        &Handle<NinePatchBuilder<T>>,
-        &Handle<Texture>,
-    )>,
+    mut patches_query: Query<(Entity, &mut NinePatchData, &Handle<NinePatchBuilder<T>>)>,
 ) {
-    for (entity, mut loaded, nine_patch, texture_handle) in &mut patches_query.iter() {
-        if !loaded.0 {
+    for (entity, mut data, nine_patch) in &mut patches_query.iter() {
+        if !data.loaded {
             if let Some(nine_patch) = nine_patches.get(&nine_patch) {
                 commands
                     .spawn(NodeComponents {
@@ -279,11 +263,11 @@ fn setup<T: Clone + Send + Sync + 'static>(
                 let parent = commands.current_entity().unwrap();
                 commands.with_children(|p| {
                     nine_patch
-                        .apply(*texture_handle, &mut textures, &mut materials)
-                        .add(p, 300., 300., |_, _| {})
+                        .apply(data.texture, &mut textures, &mut materials)
+                        .add(p, data.size.x(), data.size.y(), |_, _| {})
                 });
                 commands.push_children(entity, &[parent]);
-                *loaded = NinePatchLoaded(true);
+                data.loaded = true;
             }
         }
     }

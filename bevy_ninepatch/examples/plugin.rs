@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use bevy_ninepatch::{NinePatchBuilder, NinePatchComponents, NinePatchPlugin};
+use bevy_ninepatch::{NinePatchBuilder, NinePatchComponents, NinePatchData, NinePatchPlugin};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
@@ -32,7 +32,11 @@ fn setup(
             ..Default::default()
         },
         nine_patch: nine_patch_handle,
-        texture: panel_texture_handle,
+        data: NinePatchData {
+            texture: panel_texture_handle,
+            size: Vec2::new(500., 350.),
+            ..Default::default()
+        },
         ..Default::default()
     });
 
