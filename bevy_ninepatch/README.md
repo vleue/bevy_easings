@@ -2,7 +2,7 @@
 
 Implementation of 9-patch images in Bevy. Let you have a UI that scale only the right parts of your images.
 
-![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/full.png)
+![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/result.png)
 
 See [the examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples) for examples of what can be done.
 
