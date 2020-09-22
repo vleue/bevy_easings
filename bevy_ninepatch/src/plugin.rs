@@ -1,5 +1,3 @@
-use std::marker::PhantomData;
-
 use bevy::ecs::DynamicBundle;
 use bevy::prelude::*;
 
@@ -27,9 +25,9 @@ impl Default for NinePatchData {
 }
 
 /// Component Bundle to place the NinePatch
-pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
+pub struct NinePatchComponents {
     /// Handle to the `NinePatchBuilder`
-    pub nine_patch: Handle<NinePatchBuilder<T>>,
+    pub nine_patch: Handle<NinePatchBuilder<()>>,
     /// Style of this UI node
     pub style: Style,
     /// State of the `NinePatch`
@@ -42,7 +40,7 @@ pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     pub global_transform: GlobalTransform,
 }
 
-impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
+impl Default for NinePatchComponents {
     fn default() -> Self {
         NinePatchComponents {
             nine_patch: Default::default(),
@@ -55,13 +53,13 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
+impl Bundle for NinePatchComponents {
     fn with_static_ids<V>(f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         const N: usize = 6;
         let mut xs: [(usize, std::any::TypeId); N] = [
             (
-                std::mem::align_of::<Handle<NinePatchBuilder<T>>>(),
-                std::any::TypeId::of::<Handle<NinePatchBuilder<T>>>(),
+                std::mem::align_of::<Handle<NinePatchBuilder<()>>>(),
+                std::any::TypeId::of::<Handle<NinePatchBuilder<()>>>(),
             ),
             (
                 std::mem::align_of::<Style>(),
@@ -91,7 +89,7 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
 
     fn static_type_info() -> Vec<bevy::ecs::TypeInfo> {
         let mut xs = vec![
-            bevy::ecs::TypeInfo::of::<Handle<NinePatchBuilder<T>>>(),
+            bevy::ecs::TypeInfo::of::<Handle<NinePatchBuilder<()>>>(),
             bevy::ecs::TypeInfo::of::<Style>(),
             bevy::ecs::TypeInfo::of::<NinePatchData>(),
             bevy::ecs::TypeInfo::of::<Node>(),
@@ -110,12 +108,12 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         Self: Sized,
     {
         let nine_patch = f(
-            std::any::TypeId::of::<Handle<NinePatchBuilder<T>>>(),
-            std::mem::size_of::<Handle<NinePatchBuilder<T>>>(),
+            std::any::TypeId::of::<Handle<NinePatchBuilder<()>>>(),
+            std::mem::size_of::<Handle<NinePatchBuilder<()>>>(),
         )
-        .ok_or_else(bevy::ecs::MissingComponent::new::<Handle<NinePatchBuilder<T>>>)?
+        .ok_or_else(bevy::ecs::MissingComponent::new::<Handle<NinePatchBuilder<()>>>)?
         .as_ptr()
-        .cast::<Handle<NinePatchBuilder<T>>>();
+        .cast::<Handle<NinePatchBuilder<()>>>();
         let style = f(
             std::any::TypeId::of::<Style>(),
             std::mem::size_of::<Style>(),
@@ -160,7 +158,7 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> {
+impl DynamicBundle for NinePatchComponents {
     fn with_ids<V>(&self, _f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         Self::with_static_ids(_f)
     }
@@ -174,9 +172,9 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
     #[allow(clippy::forget_copy)]
     unsafe fn put(mut self, mut f: impl FnMut(*mut u8, std::any::TypeId, usize) -> bool) {
         if f(
-            (&mut self.nine_patch as *mut Handle<NinePatchBuilder<T>>).cast::<u8>(),
-            std::any::TypeId::of::<Handle<NinePatchBuilder<T>>>(),
-            std::mem::size_of::<Handle<NinePatchBuilder<T>>>(),
+            (&mut self.nine_patch as *mut Handle<NinePatchBuilder<()>>).cast::<u8>(),
+            std::any::TypeId::of::<Handle<NinePatchBuilder<()>>>(),
+            std::mem::size_of::<Handle<NinePatchBuilder<()>>>(),
         ) {
             std::mem::forget(self.nine_patch);
         }
@@ -220,32 +218,22 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
 
 /// Plugin that will add the system and the resource for nine patch
 #[derive(Debug, Clone, Copy)]
-pub struct NinePatchPlugin<T: Clone> {
-    marker: PhantomData<T>,
-}
+pub struct NinePatchPlugin;
 
-impl<T: Clone> Default for NinePatchPlugin<T> {
-    fn default() -> Self {
-        NinePatchPlugin {
-            marker: PhantomData::default(),
-        }
-    }
-}
-
-impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
+impl Plugin for NinePatchPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.init_resource::<Assets<NinePatchBuilder<T>>>()
-            .add_system(setup::<T>.system());
+        app.init_resource::<Assets<NinePatchBuilder<()>>>()
+            .add_system(setup.system());
     }
 }
 
 #[allow(clippy::type_complexity)]
-fn setup<T: Clone + Send + Sync + 'static>(
+fn setup(
     mut commands: Commands,
-    nine_patches: Res<Assets<NinePatchBuilder<T>>>,
+    nine_patches: Res<Assets<NinePatchBuilder<()>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(Entity, &mut NinePatchData, &Handle<NinePatchBuilder<T>>)>,
+    mut patches_query: Query<(Entity, &mut NinePatchData, &Handle<NinePatchBuilder<()>>)>,
 ) {
     for (entity, mut data, nine_patch) in &mut patches_query.iter() {
         if !data.loaded {
