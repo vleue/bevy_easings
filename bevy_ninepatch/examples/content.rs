@@ -26,7 +26,7 @@ fn setup(
         .load_sync(&mut textures, "assets/blue_button02.png")
         .unwrap();
 
-    // Create the button 9-Patch in advance. This way it can be used without complications in a closure
+    // create the button 9-Patch in advance. This way it can be used without complications in a closure
     let button = bevy_ninepatch::NinePatchBuilder::by_margins(5., 10., 6., 6.).apply(
         button_texture_handle,
         &mut textures,

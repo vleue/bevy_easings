@@ -1,5 +1,20 @@
-use bevy::ecs::DynamicBundle;
-use bevy::prelude::*;
+use bevy::{
+    app::AppBuilder,
+    app::Plugin,
+    asset::Assets,
+    asset::Handle,
+    ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Query, Res, ResMut},
+    math::Vec2,
+    property::Properties,
+    render::color::Color,
+    render::draw::Draw,
+    render::texture::Texture,
+    sprite::ColorMaterial,
+    transform::components::{GlobalTransform, Transform},
+    transform::hierarchy::BuildChildren,
+    ui::FocusPolicy,
+    ui::{entity::NodeComponents, Node, Style},
+};
 
 use crate::ninepatch::*;
 
@@ -247,7 +262,7 @@ fn setup(
                         material: materials.add(Color::NONE.into()),
                         ..Default::default()
                     })
-                    .with(bevy::ui::FocusPolicy::Pass);
+                    .with(FocusPolicy::Pass);
                 let parent = commands.current_entity().unwrap();
                 commands.with_children(|p| {
                     nine_patch
