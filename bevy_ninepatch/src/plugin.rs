@@ -25,7 +25,7 @@ pub struct NinePatchData {
     /// Handle to the `NinePatchBuilder`
     pub nine_patch: Handle<NinePatchBuilder<()>>,
     /// Is the element already loaded and displayed
-    pub loaded_entity: Option<Entity>,
+    pub loaded: bool,
 }
 
 impl Default for NinePatchData {
@@ -33,7 +33,7 @@ impl Default for NinePatchData {
         NinePatchData {
             texture: Default::default(),
             nine_patch: Default::default(),
-            loaded_entity: None,
+            loaded: false,
         }
     }
 }
@@ -261,7 +261,7 @@ fn create_ninepatches(
     mut patches_query: Query<(Entity, &mut NinePatchData, &NinePatchSize)>,
 ) {
     for (entity, mut data, size) in &mut patches_query.iter() {
-        if data.loaded_entity.is_none() {
+        if !data.loaded {
             if let Some(nine_patch) = nine_patches.get(&data.nine_patch) {
                 commands
                     .spawn(NodeComponents {
@@ -282,7 +282,7 @@ fn create_ninepatches(
                 });
                 commands.push_children(entity, &[parent]);
                 commands.with(NinePatchId(id));
-                data.loaded_entity = Some(parent);
+                data.loaded = true;
             }
         }
     }
@@ -295,7 +295,7 @@ fn update_sizes(
     mut growth_info: Query<(&NinePatchId, &BuildedNinePatchGrowth, &mut Style)>,
 ) {
     for (data, new_size, children) in &mut patches_query.iter() {
-        if data.loaded_entity.is_some() {
+        if data.loaded {
             let id = children
                 .iter()
                 .filter_map(|entity| id_query.get::<NinePatchId>(*entity).ok())
