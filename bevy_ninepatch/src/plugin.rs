@@ -4,16 +4,15 @@ use bevy::{
     asset::Assets,
     asset::Handle,
     ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Mutated, Query, Res, ResMut},
-    math::Vec2,
+    math::{Size, Vec2},
     property::Properties,
     render::color::Color,
     render::draw::Draw,
     render::texture::Texture,
     sprite::ColorMaterial,
-    transform::components::{GlobalTransform, Transform},
-    transform::hierarchy::{BuildChildren, DespawnRecursiveExt},
-    ui::FocusPolicy,
-    ui::{entity::NodeComponents, Node, Style},
+    transform::components::{Children, GlobalTransform, Transform},
+    transform::hierarchy::BuildChildren,
+    ui::{entity::NodeComponents, FocusPolicy, Node, Style, Val},
 };
 
 use crate::ninepatch::*;
@@ -247,10 +246,9 @@ pub struct NinePatchPlugin;
 impl Plugin for NinePatchPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Assets<NinePatchBuilder<()>>>()
-            .add_stage_after(bevy::app::stage::UPDATE, "FINAL_UPDATE")
+            .add_stage_after(bevy::app::stage::UPDATE, "NINEPATCH_CHECK_UPDATED_SIZE")
             .add_system(create_ninepatches.system())
-            // .add_system(update_sizes.system());
-            .add_system_to_stage("FINAL_UPDATE", update_sizes.system());
+            .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes.system());
     }
 }
 
@@ -276,12 +274,14 @@ fn create_ninepatches(
                     })
                     .with(FocusPolicy::Pass);
                 let parent = commands.current_entity().unwrap();
+                let mut id = 0;
                 commands.with_children(|p| {
-                    nine_patch
+                    id = nine_patch
                         .apply(data.texture, &mut textures, &mut materials)
-                        .add(p, size.0.x(), size.0.y(), |_, _| {})
+                        .add(p, size.0.x(), size.0.y(), |_, _| {});
                 });
                 commands.push_children(entity, &[parent]);
+                commands.with(NinePatchId(id));
                 data.loaded_entity = Some(parent);
             }
         }
@@ -290,34 +290,37 @@ fn create_ninepatches(
 
 #[allow(clippy::type_complexity)]
 fn update_sizes(
-    mut commands: Commands,
-    nine_patches: Res<Assets<NinePatchBuilder<()>>>,
-    mut textures: ResMut<Assets<Texture>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(Entity, &mut NinePatchData, Mutated<NinePatchSize>)>,
+    mut patches_query: Query<(&NinePatchData, Mutated<NinePatchSize>, &Children)>,
+    id_query: Query<&NinePatchId>,
+    mut growth_info: Query<(&NinePatchId, &BuildedNinePatchGrowth, &mut Style)>,
 ) {
-    for (entity, mut data, size) in &mut patches_query.iter() {
-        if let Some(old_entity) = data.loaded_entity {
-            commands.despawn_recursive(old_entity);
-            if let Some(nine_patch) = nine_patches.get(&data.nine_patch) {
-                commands
-                    .spawn(NodeComponents {
-                        draw: Draw {
-                            is_transparent: true,
-                            ..Default::default()
-                        },
-                        material: materials.add(Color::NONE.into()),
-                        ..Default::default()
-                    })
-                    .with(FocusPolicy::Pass);
-                let parent = commands.current_entity().unwrap();
-                commands.with_children(|p| {
-                    nine_patch
-                        .apply(data.texture, &mut textures, &mut materials)
-                        .add(p, size.0.x(), size.0.y(), |_, _| {})
-                });
-                commands.push_children(entity, &[parent]);
-                data.loaded_entity = Some(parent);
+    for (data, new_size, children) in &mut patches_query.iter() {
+        if data.loaded_entity.is_some() {
+            let id = children
+                .iter()
+                .filter_map(|entity| id_query.get::<NinePatchId>(*entity).ok())
+                .next()
+                .unwrap();
+            for (children_id, growth, mut style) in &mut growth_info.iter() {
+                if id.0 == children_id.0 {
+                    *style = Style {
+                        size: Size::new(
+                            match growth.x {
+                                None => style.size.width,
+                                Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
+                                    Val::Px((new_size.0.x() - fixed) * ratio)
+                                }
+                            },
+                            match growth.y {
+                                None => style.size.height,
+                                Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
+                                    Val::Px((new_size.0.y() - fixed) * ratio)
+                                }
+                            },
+                        ),
+                        ..*style
+                    };
+                }
             }
         }
     }

@@ -45,7 +45,7 @@ fn setup(
                     texture: panel_texture_handle,
                     ..Default::default()
                 },
-                nine_patch_size: NinePatchSize(Vec2::new(500., 100.)),
+                nine_patch_size: NinePatchSize(Vec2::new(50., 50.)),
                 ..Default::default()
             },
         )
@@ -59,7 +59,12 @@ fn update_size(timer: &Timer, mut size: Mut<NinePatchSize>) {
         let y = size.0.y_mut();
         *y += 2.;
         if size.0.y() > 500. {
-            size.0.set_y(100.);
+            size.0.set_y(50.);
+        }
+        let x = size.0.x_mut();
+        *x += 3.;
+        if size.0.x() > 700. {
+            size.0.set_x(50.);
         }
     }
 }

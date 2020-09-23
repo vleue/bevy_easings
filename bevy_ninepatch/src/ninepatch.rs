@@ -11,9 +11,10 @@ use bevy::{
     transform::hierarchy::{BuildChildren, ChildBuilder},
     ui::{
         entity::{ImageComponents, NodeComponents},
-        AlignContent, FlexDirection, PositionType, Style, Val,
+        AlignContent, FlexDirection, FocusPolicy, PositionType, Style, Val,
     },
 };
+use rand::Rng;
 
 /// How a patch can grow
 #[derive(PartialEq, Debug, Clone, Copy)]
@@ -228,6 +229,21 @@ impl<T: Clone> NinePatchBuilder<T> {
     }
 }
 
+#[derive(Clone)]
+pub struct BuildedNinePatchGrowthAxis {
+    pub fixed: f32,
+    pub ratio: f32,
+}
+
+#[derive(Clone)]
+pub struct BuildedNinePatchGrowth {
+    pub x: Option<BuildedNinePatchGrowthAxis>,
+    pub y: Option<BuildedNinePatchGrowthAxis>,
+}
+
+#[derive(Clone)]
+pub struct NinePatchId(pub u128);
+
 /// `NinePatch` ready to be added to entities.
 #[derive(Debug)]
 pub struct NinePatch<T: Clone> {
@@ -238,10 +254,19 @@ pub struct NinePatch<T: Clone> {
 }
 impl<T: Clone> NinePatch<T> {
     /// Add the `NinePatch` to entities. This will create several entities as children.
-    pub fn add<F>(&self, parent: &mut ChildBuilder, width: f32, height: f32, mut content_builder: F)
+    pub fn add<F>(
+        &self,
+        parent: &mut ChildBuilder,
+        width: f32,
+        height: f32,
+        mut content_builder: F,
+    ) -> u128
     where
         F: FnMut(&mut ChildBuilder, &T) + Copy,
     {
+        let mut rng = rand::thread_rng();
+
+        let id: u128 = rng.gen();
         parent
             .spawn(NodeComponents {
                 style: Style {
@@ -257,7 +282,20 @@ impl<T: Clone> NinePatch<T> {
                 material: self.background,
                 ..Default::default()
             })
-            .with(bevy::ui::FocusPolicy::Pass)
+            .with(FocusPolicy::Pass)
+            .with_bundle((
+                NinePatchId(id),
+                BuildedNinePatchGrowth {
+                    x: Some(BuildedNinePatchGrowthAxis {
+                        fixed: 0.,
+                        ratio: 1.,
+                    }),
+                    y: Some(BuildedNinePatchGrowthAxis {
+                        fixed: 0.,
+                        ratio: 1.,
+                    }),
+                },
+            ))
             .with_children(|inner_parent| {
                 let mut n = 0;
                 for row in self.patches.iter() {
@@ -281,7 +319,17 @@ impl<T: Clone> NinePatch<T> {
                             material: self.background,
                             ..Default::default()
                         })
-                        .with(bevy::ui::FocusPolicy::Pass);
+                        .with_bundle((
+                            NinePatchId(id),
+                            BuildedNinePatchGrowth {
+                                x: Some(BuildedNinePatchGrowthAxis {
+                                    fixed: 0.,
+                                    ratio: 1.,
+                                }),
+                                y: None,
+                            },
+                        ))
+                        .with(FocusPolicy::Pass);
                     inner_parent.with_children(|row_parent| {
                         let mut accu_x = 0.;
                         for (j, column_item) in row.iter().enumerate() {
@@ -318,7 +366,35 @@ impl<T: Clone> NinePatch<T> {
                                     },
                                     ..Default::default()
                                 })
-                                .with(bevy::ui::FocusPolicy::Pass);
+                                .with(FocusPolicy::Pass);
+                            let growth_bundle = (
+                                NinePatchId(id),
+                                BuildedNinePatchGrowth {
+                                    x: match column_item.x_growth {
+                                        GrowthMode::None => None,
+                                        GrowthMode::StretchRatio(ratio) => {
+                                            Some(BuildedNinePatchGrowthAxis {
+                                                fixed: fixed_width_in_row,
+                                                ratio,
+                                            })
+                                        }
+                                    },
+                                    y: match column_item.y_growth {
+                                        GrowthMode::None => None,
+                                        GrowthMode::StretchRatio(ratio) => {
+                                            Some(BuildedNinePatchGrowthAxis {
+                                                fixed: fixed_height_in_column,
+                                                ratio,
+                                            })
+                                        }
+                                    },
+                                },
+                            );
+                            if (column_item.x_growth != GrowthMode::None)
+                                || (column_item.y_growth != GrowthMode::None)
+                            {
+                                row_parent.with_bundle(growth_bundle.clone());
+                            }
                             if let Some(content_part) = column_item.content.as_ref() {
                                 row_parent
                                     .spawn(NodeComponents {
@@ -338,7 +414,13 @@ impl<T: Clone> NinePatch<T> {
                                         },
                                         ..Default::default()
                                     })
-                                    .with(bevy::ui::FocusPolicy::Pass);
+                                    .with(FocusPolicy::Pass);
+                                if (column_item.x_growth != GrowthMode::None)
+                                    || (column_item.y_growth != GrowthMode::None)
+                                {
+                                    row_parent.with_bundle(growth_bundle);
+                                }
+
                                 row_parent.with_children(|child_builder| {
                                     content_builder(child_builder, content_part);
                                 });
@@ -350,5 +432,6 @@ impl<T: Clone> NinePatch<T> {
                     });
                 }
             });
+        id
     }
 }
