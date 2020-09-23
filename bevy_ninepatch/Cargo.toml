@@ -12,5 +12,5 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-bevy = "0.2.1"
+bevy = "0.2"
 rand = "0.7"
