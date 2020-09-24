@@ -19,16 +19,16 @@ use crate::ninepatch::*;
 
 /// State of the current `NinePatch`
 #[derive(Debug, Clone, Copy)]
-pub struct NinePatchData {
+pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
     /// Handle of the texture
     pub texture: Handle<Texture>,
     /// Handle to the `NinePatchBuilder`
-    pub nine_patch: Handle<NinePatchBuilder<()>>,
+    pub nine_patch: Handle<NinePatchBuilder<T>>,
     /// Is the element already loaded and displayed
     pub loaded: bool,
 }
 
-impl Default for NinePatchData {
+impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
     fn default() -> Self {
         NinePatchData {
             texture: Default::default(),
@@ -48,11 +48,11 @@ impl Default for NinePatchSize {
 }
 
 /// Component Bundle to place the NinePatch
-pub struct NinePatchComponents {
+pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     /// Style of this UI node
     pub style: Style,
     /// State of the `NinePatch`
-    pub nine_patch_data: NinePatchData,
+    pub nine_patch_data: NinePatchData<T>,
     /// Size of the `NinePatch`
     pub nine_patch_size: NinePatchSize,
     /// UI node
@@ -63,7 +63,7 @@ pub struct NinePatchComponents {
     pub global_transform: GlobalTransform,
 }
 
-impl Default for NinePatchComponents {
+impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
     fn default() -> Self {
         NinePatchComponents {
             style: Default::default(),
@@ -76,7 +76,7 @@ impl Default for NinePatchComponents {
     }
 }
 
-impl Bundle for NinePatchComponents {
+impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     fn with_static_ids<V>(f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         const N: usize = 6;
         let mut xs: [(usize, std::any::TypeId); N] = [
@@ -85,8 +85,8 @@ impl Bundle for NinePatchComponents {
                 std::any::TypeId::of::<Style>(),
             ),
             (
-                std::mem::align_of::<NinePatchData>(),
-                std::any::TypeId::of::<NinePatchData>(),
+                std::mem::align_of::<NinePatchData<T>>(),
+                std::any::TypeId::of::<NinePatchData<T>>(),
             ),
             (
                 std::mem::align_of::<NinePatchSize>(),
@@ -113,7 +113,7 @@ impl Bundle for NinePatchComponents {
     fn static_type_info() -> Vec<bevy::ecs::TypeInfo> {
         let mut xs = vec![
             bevy::ecs::TypeInfo::of::<Style>(),
-            bevy::ecs::TypeInfo::of::<NinePatchData>(),
+            bevy::ecs::TypeInfo::of::<NinePatchData<T>>(),
             bevy::ecs::TypeInfo::of::<NinePatchSize>(),
             bevy::ecs::TypeInfo::of::<Node>(),
             bevy::ecs::TypeInfo::of::<Transform>(),
@@ -138,12 +138,12 @@ impl Bundle for NinePatchComponents {
         .as_ptr()
         .cast::<Style>();
         let nine_patch_data = f(
-            std::any::TypeId::of::<NinePatchData>(),
-            std::mem::size_of::<NinePatchData>(),
+            std::any::TypeId::of::<NinePatchData<T>>(),
+            std::mem::size_of::<NinePatchData<T>>(),
         )
-        .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchData>)?
+        .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchData<T>>)?
         .as_ptr()
-        .cast::<NinePatchData>();
+        .cast::<NinePatchData<T>>();
         let nine_patch_size = f(
             std::any::TypeId::of::<NinePatchSize>(),
             std::mem::size_of::<NinePatchSize>(),
@@ -181,7 +181,7 @@ impl Bundle for NinePatchComponents {
     }
 }
 
-impl DynamicBundle for NinePatchComponents {
+impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> {
     fn with_ids<V>(&self, _f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         Self::with_static_ids(_f)
     }
@@ -202,9 +202,9 @@ impl DynamicBundle for NinePatchComponents {
             std::mem::forget(self.style);
         }
         if f(
-            (&mut self.nine_patch_data as *mut NinePatchData).cast::<u8>(),
-            std::any::TypeId::of::<NinePatchData>(),
-            std::mem::size_of::<NinePatchData>(),
+            (&mut self.nine_patch_data as *mut NinePatchData<T>).cast::<u8>(),
+            std::any::TypeId::of::<NinePatchData<T>>(),
+            std::mem::size_of::<NinePatchData<T>>(),
         ) {
             std::mem::forget(self.nine_patch_data);
         }
@@ -241,24 +241,34 @@ impl DynamicBundle for NinePatchComponents {
 
 /// Plugin that will add the system and the resource for nine patch
 #[derive(Debug, Clone, Copy)]
-pub struct NinePatchPlugin;
+pub struct NinePatchPlugin<T: Clone + Send + Sync + 'static> {
+    marker: std::marker::PhantomData<T>,
+}
 
-impl Plugin for NinePatchPlugin {
+impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
+    fn default() -> Self {
+        NinePatchPlugin {
+            marker: Default::default(),
+        }
+    }
+}
+
+impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut AppBuilder) {
-        app.init_resource::<Assets<NinePatchBuilder<()>>>()
+        app.init_resource::<Assets<NinePatchBuilder<T>>>()
             .add_stage_after(bevy::app::stage::UPDATE, "NINEPATCH_CHECK_UPDATED_SIZE")
-            .add_system(create_ninepatches.system())
-            .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes.system());
+            .add_system(create_ninepatches::<T>.system())
+            .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes::<T>.system());
     }
 }
 
 #[allow(clippy::type_complexity)]
-fn create_ninepatches(
+fn create_ninepatches<T: Clone + Send + Sync + 'static>(
     mut commands: Commands,
-    nine_patches: Res<Assets<NinePatchBuilder<()>>>,
+    nine_patches: Res<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(Entity, &mut NinePatchData, &NinePatchSize)>,
+    mut patches_query: Query<(Entity, &mut NinePatchData<T>, &NinePatchSize)>,
 ) {
     for (entity, mut data, size) in &mut patches_query.iter() {
         if !data.loaded {
@@ -273,7 +283,9 @@ fn create_ninepatches(
                         ..Default::default()
                     })
                     .with(FocusPolicy::Pass);
-                let parent = commands.current_entity().unwrap();
+                let parent = commands
+                    .current_entity()
+                    .expect("should have a current entity as one was created just before");
                 let mut id = 0;
                 commands.with_children(|p| {
                     id = nine_patch
@@ -289,8 +301,8 @@ fn create_ninepatches(
 }
 
 #[allow(clippy::type_complexity)]
-fn update_sizes(
-    mut patches_query: Query<(&NinePatchData, Mutated<NinePatchSize>, &Children)>,
+fn update_sizes<T: Clone + Send + Sync + 'static>(
+    mut patches_query: Query<(&NinePatchData<T>, Mutated<NinePatchSize>, &Children)>,
     id_query: Query<&NinePatchId>,
     mut growth_info: Query<(&NinePatchId, &BuildedNinePatchGrowth, &mut Style)>,
 ) {
@@ -300,7 +312,7 @@ fn update_sizes(
                 .iter()
                 .filter_map(|entity| id_query.get::<NinePatchId>(*entity).ok())
                 .next()
-                .unwrap();
+                .expect("should have a child with component `NinePatchId`");
             for (children_id, growth, mut style) in &mut growth_info.iter() {
                 if id.0 == children_id.0 {
                     *style = Style {

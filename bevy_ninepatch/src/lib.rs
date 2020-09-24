@@ -13,7 +13,7 @@
 //! Nine Patch sprite system for bevy
 
 mod ninepatch;
-pub use ninepatch::{GrowthMode, NinePatch, NinePatchBuilder, Patch, PatchSize};
+pub use ninepatch::{GrowthMode, NinePatch, NinePatchBuilder, NinePatchContent, Patch, PatchSize};
 
 mod plugin;
 pub use plugin::*;

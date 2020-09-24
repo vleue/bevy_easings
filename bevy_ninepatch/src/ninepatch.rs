@@ -54,7 +54,7 @@ impl PatchSize {
 
 /// Describe a patch in the original image, how it should grow and if it can have content
 #[derive(Debug, Clone)]
-pub struct Patch<T: Clone> {
+pub struct Patch<T: Clone + Send + Sync + 'static> {
     /// Width of the patch
     pub width: PatchSize,
     /// Height of the patch
@@ -69,18 +69,19 @@ pub struct Patch<T: Clone> {
 
 /// Holds the patches of a nine patch texture
 #[derive(Debug)]
-pub struct NinePatchBuilder<T: Clone> {
+pub struct NinePatchBuilder<T: Clone + Send + Sync + 'static = ()> {
     /// Patches for a nine patch texture. See example `full.rs` on how to use directly
     pub patches: Vec<Vec<Patch<T>>>,
 }
 
-impl NinePatchBuilder<()> {
+impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
     /// Create a simple nine patch split by creating fixed patch for the margins, and growing patches inside
     pub fn by_margins(
         top_margin: f32,
         bottom_margin: f32,
         left_margin: f32,
         right_margin: f32,
+        content: T,
     ) -> Self {
         let top = vec![
             Patch {
@@ -126,7 +127,7 @@ impl NinePatchBuilder<()> {
                 },
                 x_growth: GrowthMode::StretchRatio(1.),
                 y_growth: GrowthMode::StretchRatio(1.),
-                content: Some(()),
+                content: Some(content),
             },
             Patch {
                 width: PatchSize::Absolute(right_margin),
@@ -169,7 +170,7 @@ impl NinePatchBuilder<()> {
     }
 }
 
-impl<T: Clone> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
     /// Apply a `NinePatchBuilder` to a texture to get a `NinePatch` ready to be added to entities. This will split
     /// the given texture according to the patches.
     pub fn apply(
@@ -179,7 +180,9 @@ impl<T: Clone> NinePatchBuilder<T> {
         materials: &mut ResMut<Assets<ColorMaterial>>,
     ) -> NinePatch<T> {
         let (texture_size, texture_data) = {
-            let t = textures.get(&texture_handle).unwrap();
+            let t = textures
+                .get(&texture_handle)
+                .expect("could not get texture from handle");
             (t.size, t.data.clone())
         };
 
@@ -244,15 +247,24 @@ pub struct BuildedNinePatchGrowth {
 #[derive(Clone)]
 pub struct NinePatchId(pub u128);
 
+/// Component to mark the entity placed for the content of the 9-Patch UI element
+#[derive(Clone, Debug)]
+pub struct NinePatchContent<T: Send + Sync + 'static> {
+    /// Name of the content patch
+    pub content: T,
+    /// Has it been already loaded
+    pub loaded: bool,
+}
+
 /// `NinePatch` ready to be added to entities.
 #[derive(Debug)]
-pub struct NinePatch<T: Clone> {
+pub struct NinePatch<T: Clone + Send + Sync + 'static> {
     patches: Vec<Vec<Patch<T>>>,
     texture_size: Vec2,
     background: Handle<ColorMaterial>,
     splitted_texture: Vec<Handle<ColorMaterial>>,
 }
-impl<T: Clone> NinePatch<T> {
+impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
     /// Add the `NinePatch` to entities. This will create several entities as children.
     pub fn add<F>(
         &self,
@@ -414,7 +426,11 @@ impl<T: Clone> NinePatch<T> {
                                         },
                                         ..Default::default()
                                     })
-                                    .with(FocusPolicy::Pass);
+                                    .with(FocusPolicy::Pass)
+                                    .with(NinePatchContent {
+                                        content: content_part.clone(),
+                                        loaded: false,
+                                    });
                                 if (column_item.x_growth != GrowthMode::None)
                                     || (column_item.y_growth != GrowthMode::None)
                                 {
