@@ -43,7 +43,7 @@ See [plugin.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_
 
 ## Changing element size
 
-The component `NinePatchSize` can be changed to update the size of the 9-Patch UI element.
+The component `NinePatchSize` can be changed to update the size of the 9-Patch UI element. Changing this component must happen during the `UPDATE` stage and may not work otherwise.
 
 See [change_size.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/change_size.rs) for a complete example.
 
@@ -53,7 +53,7 @@ You can specify the content to be used inside the 9-Patch UI element. When creat
 
 See [multi_content.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/content.rs) for a complete example.
 
-## More flexible definition -> add example with plugin
+## More flexible definition
 
 It is possible to set any number of patches for an image, the only constraints is that all patches in a line must have the same height. Using this methods, different parts of the image can grow at different rates, and several content zones can be created.
 
@@ -61,7 +61,7 @@ See [full.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ni
 
 ## Usage without a plugin
 
-9-Patch UI elements can be added without using a plugin if needed.
+9-Patch UI elements can be added without using a plugin if needed. Without the plugin, 9-Path UI elements can still be created, but changing size won't work.
 
 See [no_plugin_simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs) for a simple example, or [the other examples without plugin](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples#withoutplugin).
 
