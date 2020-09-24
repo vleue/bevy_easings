@@ -43,7 +43,7 @@ fn setup(
         )
         .with_children(|global_parent| {
             // first element: a panel, where all margins are equal
-            bevy_ninepatch::NinePatchBuilder::by_margins(20., 20., 20., 20.)
+            bevy_ninepatch::NinePatchBuilder::by_margins(20., 20., 20., 20., ())
                 .apply(panel_texture_handle, &mut textures, &mut materials)
                 .add(global_parent, 500., 300., |_, _| {});
 
@@ -57,7 +57,7 @@ fn setup(
             });
 
             // second element: a button, not all margins are the same
-            bevy_ninepatch::NinePatchBuilder::by_margins(5., 10., 6., 6.)
+            bevy_ninepatch::NinePatchBuilder::by_margins(5., 10., 6., 6., ())
                 .apply(button_texture_handle, &mut textures, &mut materials)
                 .add(global_parent, 450., 150., |_, _| {});
         });

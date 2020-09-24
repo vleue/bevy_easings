@@ -4,54 +4,64 @@ Implementation of 9-patch images in Bevy. Let you have a UI that scale only the 
 
 ![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/result.png)
 
-See [the examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples) for examples of what can be done.
+See [the examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples) for what can be done.
 
-## Usage
+## Simple usage
 
-### Simple case
+After adding the `NinePatchPlugin` plugin, spawning an `Entity` with the `NinePatchComponents` component bundle will add a 9-patch UI element.
 
 A simple builder based on Godot's [NinePatchRect](https://docs.godotengine.org/en/3.2/classes/class_ninepatchrect.html) is available.
 
 ```rust
-    let panel_texture_handle = asset_server
-        .load_sync(&mut textures, "assets/glassPanel_corners.png")
-        .unwrap();
+let panel_texture_handle = asset_server
+    .load_sync(&mut textures, "assets/glassPanel_corners.png")
+    .unwrap();
 
-    commands
-        .spawn(NodeComponents {
-            style: Style {
-                margin: Rect::all(Val::Auto),
-                justify_content: JustifyContent::Center,
-                align_items: AlignItems::Center,
-                ..Default::default()
-            },
-            material: materials.add(Color::NONE.into()),
+let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20., 20., 20., 20., ()));
 
+
+commands.spawn(
+    NinePatchComponents {
+        style: Style {
+            margin: Rect::all(Val::Auto),
+            justify_content: JustifyContent::Center,
+            align_items: AlignItems::Center,
             ..Default::default()
-        })
-        .with_children(|global_parent| {
-            bevy_ninepatch::NinePatchBuilder::by_margins(20., 20., 20., 20.)
-                .apply(panel_texture_handle, &mut textures, &mut materials)
-                .add(global_parent, 500., 300., |_, _| {});
-        });
+        },
+        nine_patch_data: NinePatchData {
+            nine_patch: nine_patch_handle,
+            texture: panel_texture_handle,
+            ..Default::default()
+        },
+        nine_patch_size: NinePatchSize(Vec2::new(500., 300.)),
+        ..Default::default()
+    },
+);
 ```
-
-See [simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/simple.rs) for a complete example.
-
-### Usage as a plugin
-
-A plugin and a component bundle are exposed, and can be used to add 9-Patch UI elements.
 
 See [plugin.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/plugin.rs) for a complete example.
 
-### Specify content to use
+## Changing element size
 
-You can specify the content to be used inside the 9-Patch UI element. When creating a 9-Patch by specifying the margins, a content zone will be available by default for the center of the 9-Patch UI element.
+The component `NinePatchSize` can be changed to update the size of the 9-Patch UI element.
 
-See [content.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/content.rs) for a complete example.
+See [change_size.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/change_size.rs) for a complete example.
 
-### More flexible definition
+## Specify content to use
+
+You can specify the content to be used inside the 9-Patch UI element. When creating a 9-Patch by specifying the margins, a content zone will be available by default for the center of the 9-Patch UI element. This can be set with the `NinePatchContent` component.
+
+See [multi_content.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/content.rs) for a complete example.
+
+## More flexible definition -> add example with plugin
 
 It is possible to set any number of patches for an image, the only constraints is that all patches in a line must have the same height. Using this methods, different parts of the image can grow at different rates, and several content zones can be created.
 
 See [full.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/full.rs) for a complete example.
+
+## Usage without a plugin
+
+9-Patch UI elements can be added without using a plugin if needed.
+
+See [no_plugin_simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs) for a simple example, or [the other examples without plugin](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples#withoutplugin).
+

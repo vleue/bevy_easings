@@ -1,8 +1,7 @@
 use bevy::prelude::*;
 
 use bevy_ninepatch::{
-    NinePatchBuilder, NinePatchComponents, NinePatchContent, NinePatchData, NinePatchPlugin,
-    NinePatchSize,
+    NinePatchBuilder, NinePatchComponents, NinePatchData, NinePatchPlugin, NinePatchSize,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -11,7 +10,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())
         .add_startup_system(setup.system())
-        .add_system(set_content.system())
+        // this system will change the size depending on time elapsed since startup
+        .add_system(update_size.system())
         .run();
 
     Ok(())
@@ -45,7 +45,7 @@ fn setup(
                 texture: panel_texture_handle,
                 ..Default::default()
             },
-            nine_patch_size: NinePatchSize(Vec2::new(500., 300.)),
+            nine_patch_size: NinePatchSize(Vec2::new(50., 50.)),
             ..Default::default()
         },
     );
@@ -53,31 +53,10 @@ fn setup(
     commands.spawn(UiCameraComponents::default());
 }
 
-fn set_content(
-    mut commands: Commands,
-    asset_server: Res<AssetServer>,
-    entity: Entity,
-    mut nine_patch_content: Mut<NinePatchContent<()>>,
-) {
-    if !nine_patch_content.loaded {
-        // load font
-        let font = asset_server
-            .load("assets/Kenney Future Narrow.ttf")
-            .expect("was able to load font");
+// by changing the component `NinePatchSize`, the 9-Patch UI element will be resized
+fn update_size(time: Res<Time>, mut size: Mut<NinePatchSize>) {
+    let (x, y) = time.seconds_since_startup.sin_cos();
 
-        commands.spawn(TextComponents {
-            text: Text {
-                value: "Hello".to_string(),
-                font,
-                style: TextStyle {
-                    font_size: 50.,
-                    color: Color::GREEN,
-                },
-            },
-            ..Default::default()
-        });
-        let content_entity = commands.current_entity().unwrap();
-        commands.push_children(entity, &[content_entity]);
-        nine_patch_content.loaded = true;
-    }
+    size.0.set_x((250. + 200. * x as f32).ceil());
+    size.0.set_y((250. + 200. * y as f32).ceil());
 }
