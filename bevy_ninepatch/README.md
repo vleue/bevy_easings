@@ -63,5 +63,5 @@ See [full.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ni
 
 9-Patch UI elements can be added without using a plugin if needed. Without the plugin, 9-Path UI elements can still be created, but changing size won't work.
 
-See [no_plugin_simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs) for a simple example, or [the other examples without plugin](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples#withoutplugin).
+See [no_plugin_simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs) for a simple example, or [the other examples without plugin](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples#without-plugin).
 
