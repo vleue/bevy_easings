@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "bevy_log_diagnostic",
+    "bevy_diagnostic_entity_count",
     "bevy_ninepatch",
 ]

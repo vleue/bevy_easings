@@ -1,0 +1,15 @@
+[package]
+name = "bevy_diagnostic_entity_count"
+version = "0.1.0"
+authors = ["François Mockers <mockersf@gmail.com>"]
+edition = "2018"
+description = "Adds entity count as a diagnostic to Bevy"
+repository = "https://github.com/mockersf/bevy_extra"
+homepage = "https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch"
+documentation = "https://docs.rs/bevy_ninepatch"
+keywords = ["bevy", "diagnostics"]
+license = "MIT"
+readme = "README.md"
+
+[dependencies]
+bevy = "0.2"
