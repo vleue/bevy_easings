@@ -6,6 +6,12 @@ Implementation of 9-patch images in Bevy. Let you have a UI that scale only the 
 
 ![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/result.png)
 
+## [bevy_easings](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings)
+
+Easing methods for Bevy components for nice transition
+
+![easing example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
+
 ## [bevy_log_diagnostic](https://github.com/mockersf/bevy_extra/tree/master/bevy_log_diagnostic)
 
 Reimplementation of bevy's [print_diagnostic_plugin](https://github.com/bevyengine/bevy/blob/master/crates/bevy_diagnostic/src/print_diagnostics_plugin.rs) but using debug logs instead of stdout print.
