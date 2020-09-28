@@ -2,6 +2,8 @@
 
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
 
+## Usage
+
 Add the plugin to your app:
 ```rust
     App::build()
@@ -36,6 +38,31 @@ commands
     );
 ```
 
+## Components Supported
+
+- [`ColorMaterial`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.ColorMaterial.html)
+- [`Sprite`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Sprite.html)
+- [`Transform`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Transform.html)
+- [`Style`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Style.html)
+
+### Custom Component Support
+
+To be able to ease a component, it needs to implement the trait `Lerp`
+
+```rust
+struct CustomComponent(f32);
+impl bevy_easings::Lerp for CustomComponent {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        CustomComponent(self.0.lerp(&other.0, scalar))
+    }
+}
+```
+
+Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be added to the application. 
+
+## Ease Functions
 
 Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.EaseFunction.html) are available:
 
