@@ -43,7 +43,7 @@ commands
     );
 ```
 
-If the component being eased is not already a component of the entity, the component shoulb be first inserted for the target entity.
+If the component being eased is not already a component of the entity, the component should first be inserted for the target entity.
 
 ### Chaining easing
 

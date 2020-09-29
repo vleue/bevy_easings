@@ -45,6 +45,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             },
             ..Default::default()
         })
+        // as `CustomComponent` is not already part of the components of the entity,
         // insert the component with a basic value, it will be replaced immediately
         .with(CustomComponent(-1.))
         .with(CustomComponent(0.).ease_to(
