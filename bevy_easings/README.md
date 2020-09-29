@@ -113,6 +113,18 @@ The basic formula for lerp (linear interpolation) is `self + (other - self) * sc
 
 Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be added to the application. 
 
+## Examples
+
+See [examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings/examples)
+
+![colormaterial_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
+
+![sprite_size](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_size.gif)
+
+![transform_rotation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_rotation.gif)
+
+![transform_translation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
+
 ## Ease Functions
 
 Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.EaseFunction.html) are available:
@@ -147,16 +159,3 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 - BounceIn
 - BounceOut
 - BounceInOut
-
-
-## Examples
-
-See [examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings/examples)
-
-![colormaterial_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
-
-![sprite_size](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_size.gif)
-
-![transform_rotation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_rotation.gif)
-
-![transform_translation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
