@@ -84,19 +84,17 @@ pub fn ease_system<T: Ease + Component>(
                 }
             }
         }
-    } else {
-        if let Some(ref mut easing_chain) = easing_chain {
-            let next = easing_chain.0.pop();
-            if let Some(mut next) = next {
-                if next.start.is_none() {
-                    next.start = Some(EaseValue(std::mem::take(&mut object)));
-                }
-                *object = interpolation::lerp(next.start.as_ref().unwrap(), &next.end, &0.).0;
-
-                commands.insert_one(entity, next);
-            } else {
-                commands.remove_one::<EasingChainComponent<T>>(entity);
+    } else if let Some(ref mut easing_chain) = easing_chain {
+        let next = easing_chain.0.pop();
+        if let Some(mut next) = next {
+            if next.start.is_none() {
+                next.start = Some(EaseValue(std::mem::take(&mut object)));
             }
+            *object = interpolation::lerp(next.start.as_ref().unwrap(), &next.end, &0.).0;
+
+            commands.insert_one(entity, next);
+        } else {
+            commands.remove_one::<EasingChainComponent<T>>(entity);
         }
     }
 }
@@ -158,23 +156,22 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 }
             }
         }
-    } else {
-        if let Some(ref mut easing_chain) = easing_chain {
-            let next = easing_chain.0.pop();
-            if let Some(mut next) = next {
-                if next.start.is_none() {
-                    next.start = Some(EaseValue(std::mem::take(&mut object)));
-                }
-                *object = interpolation::lerp(&next.start.as_ref().unwrap().0, &next.end.0, &0.);
-
-                commands.insert_one(entity, next);
-            } else {
-                commands.remove_one::<EasingChainComponent<T>>(entity);
+    } else if let Some(ref mut easing_chain) = easing_chain {
+        let next = easing_chain.0.pop();
+        if let Some(mut next) = next {
+            if next.start.is_none() {
+                next.start = Some(EaseValue(std::mem::take(&mut object)));
             }
+            *object = interpolation::lerp(&next.start.as_ref().unwrap().0, &next.end.0, &0.);
+
+            commands.insert_one(entity, next);
+        } else {
+            commands.remove_one::<EasingChainComponent<T>>(entity);
         }
     }
 }
 
+#[allow(clippy::too_many_arguments)]
 fn handle_ease_system<T: Ease + Component>(
     mut commands: Commands,
     time: Res<Time>,
@@ -244,17 +241,15 @@ fn handle_ease_system<T: Ease + Component>(
                 }
             }
         }
-    } else {
-        if let Some(ref mut easing_chain) = easing_chain {
-            let next = easing_chain.0.pop();
-            if let Some(mut next) = next {
-                if next.start.is_none() {
-                    next.start = Some(EaseValue(object.clone()));
-                }
-                commands.insert_one(entity, next);
-            } else {
-                commands.remove_one::<EasingChainComponent<T>>(entity);
+    } else if let Some(ref mut easing_chain) = easing_chain {
+        let next = easing_chain.0.pop();
+        if let Some(mut next) = next {
+            if next.start.is_none() {
+                next.start = Some(EaseValue(*object));
             }
+            commands.insert_one(entity, next);
+        } else {
+            commands.remove_one::<EasingChainComponent<T>>(entity);
         }
     }
 }

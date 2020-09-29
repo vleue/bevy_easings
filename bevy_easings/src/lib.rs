@@ -162,7 +162,7 @@ pub trait Ease: Sized {
     ) -> EasingComponent<Self> {
         let mut rng = rand::thread_rng();
         EasingComponent {
-            start: start.map(|v| EaseValue(v)),
+            start: start.map(EaseValue),
             end: EaseValue(end),
             ease_function,
             timer: match easing_type {
@@ -217,7 +217,7 @@ pub trait CustomComponentEase: Sized {
     ) -> EasingComponent<Self> {
         let mut rng = rand::thread_rng();
         EasingComponent {
-            start: start.map(|v| EaseValue(v)),
+            start: start.map(EaseValue),
             end: EaseValue(end),
             ease_function,
             timer: match easing_type {
