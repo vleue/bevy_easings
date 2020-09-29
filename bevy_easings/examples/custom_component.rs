@@ -14,6 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[derive(Default)]
 struct CustomComponent(f32);
 impl bevy_easings::Lerp for CustomComponent {
     type Scalar = f32;
@@ -44,6 +45,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             },
             ..Default::default()
         })
+        // insert the component with a basic value, it will be replaced immediately
         .with(CustomComponent(-1.))
         .with(CustomComponent(0.).ease_to(
             CustomComponent(100.),
@@ -53,9 +55,11 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 pause: std::time::Duration::from_millis(500),
             },
         ))
-        .with(Timer::from_seconds(0.25, true));
+        .with(Timer::from_seconds(0.2, true));
 }
 
-fn check_value(_timer: &Timer, custom: &CustomComponent) {
-    println!("got {:?}", custom.0);
+fn check_value(timer: &Timer, custom: &CustomComponent) {
+    if timer.just_finished {
+        println!("got {:?}", custom.0);
+    }
 }

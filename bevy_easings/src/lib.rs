@@ -31,6 +31,66 @@ pub struct EasingComponent<T> {
     direction: i16,
 }
 
+impl<T: Default> EasingComponent<T> {
+    pub fn and_then(
+        self,
+        end: T,
+        ease_function: interpolation::EaseFunction,
+        animation_type: AnimationType,
+    ) -> EasingComponentChain<T> {
+        let mut rng = rand::thread_rng();
+
+        let next = EasingComponent {
+            start: EaseValue(T::default()),
+            end: EaseValue(end),
+            ease_function,
+            timer: match animation_type {
+                AnimationType::Once { duration } => Timer::new(duration, false),
+                AnimationType::Loop { duration, .. } => Timer::new(duration, false),
+                AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
+            },
+            paused: false,
+            animation_type,
+            id: rng.gen(),
+            direction: 1,
+        };
+
+        EasingComponentChain(vec![next, self])
+    }
+}
+
+pub struct EasingComponentChainLastValue<T>(T);
+pub struct EasingComponentChain<T>(Vec<EasingComponent<T>>);
+
+impl<T: Default> EasingComponentChain<T> {
+    pub fn and_then(
+        mut self,
+        end: T,
+        ease_function: interpolation::EaseFunction,
+        animation_type: AnimationType,
+    ) -> EasingComponentChain<T> {
+        let mut rng = rand::thread_rng();
+
+        let next = EasingComponent {
+            start: EaseValue(T::default()),
+            end: EaseValue(end),
+            ease_function,
+            timer: match animation_type {
+                AnimationType::Once { duration } => Timer::new(duration, false),
+                AnimationType::Loop { duration, .. } => Timer::new(duration, false),
+                AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
+            },
+            paused: false,
+            animation_type,
+            id: rng.gen(),
+            direction: 1,
+        };
+
+        self.0.insert(0, next);
+        self
+    }
+}
+
 pub trait Ease: Sized {
     fn ease(
         start: Self,
@@ -67,6 +127,15 @@ pub trait Ease: Sized {
 impl<T> Ease for EaseValue<T> where T: interpolation::Lerp<Scalar = f32> {}
 impl<T> Ease for Handle<T> where EaseValue<T>: interpolation::Lerp<Scalar = f32> {}
 impl<T> Ease for T where EaseValue<T>: interpolation::Lerp<Scalar = f32> {}
+
+impl<T> Default for EaseValue<T>
+where
+    T: Default,
+{
+    fn default() -> Self {
+        EaseValue(T::default())
+    }
+}
 
 trait IntermediateLerp: Sized {
     fn lerp(start: &EaseValue<&Self>, end: &EaseValue<&Self>, scalar: &f32) -> Self;

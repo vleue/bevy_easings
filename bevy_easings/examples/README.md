@@ -70,3 +70,67 @@ Transform::default()
 ```
 
 ![transform_translation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
+
+### [custom_component.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/custom_component.rs)
+
+```rust
+#[derive(Default)]
+struct CustomComponent(f32);
+impl bevy_easings::Lerp for CustomComponent {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        CustomComponent(self.0.lerp(&other.0, scalar))
+    }
+}
+```
+
+```rust
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    App::build()
+        .add_default_plugins()
+        .add_plugin(bevy_easings::EasingsPlugin)
+        .add_startup_system(setup.system())
+        .add_system(check_value.system())
+        .add_system(bevy_easings::custom_ease_system::<CustomComponent>.system())
+        .run();
+
+    Ok(())
+}
+```
+
+```rust
+    commands
+        .spawn(ImageComponents {
+            ..Default::default()
+        })
+        // as `CustomComponent` is not already part of the components of the entity, 
+        // insert the component with a basic value, it will be replaced immediately
+        .with(CustomComponent(-1.))
+        .with(CustomComponent(0.).ease_to(
+            CustomComponent(100.),
+            bevy_easings::EaseFunction::QuadraticInOut,
+            bevy_easings::AnimationType::PingPong {
+                duration: std::time::Duration::from_secs(1),
+                pause: std::time::Duration::from_millis(500),
+            },
+        ))
+```
+
+### [chain.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/chain.rs)
+
+```rust
+transform0
+    .ease_to(
+        transform1,
+        bevy_easings::EaseFunction::QuadraticInOut,
+        bevy_easings::AnimationType::Once { duration },
+    )
+    .and_then(
+        transform2,
+        bevy_easings::EaseFunction::QuadraticInOut,
+        bevy_easings::AnimationType::Once { duration },
+    )
+```
+
+![chain](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/chain.gif)

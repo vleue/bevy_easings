@@ -4,6 +4,8 @@ Easings on Bevy components using [interpolation](https://crates.io/crates/interp
 
 ## Usage
 
+### System setup
+
 Add the plugin to your app:
 ```rust
     App::build()
@@ -12,7 +14,10 @@ Add the plugin to your app:
         ...
 ```
 
+### Easing a component to a new value
+
 And then just ease your components to their new state!
+
 ```rust
 commands
     .spawn(SpriteComponents {
@@ -38,6 +43,47 @@ commands
     );
 ```
 
+If the component being eased is not already a component of the entity, the component shoulb be first inserted for the target entity.
+
+### Chaining easing
+
+You can chain easings, if they are not set to repeat they will happen in sequence.
+
+```rust
+commands
+    .spawn(SpriteComponents {
+        material: materials.add(Color::RED.into()),
+        ..Default::default()
+    })
+    .with(
+        Sprite {
+            size: Vec2::new(10., 10.),
+            ..Default::default()
+        }
+        .ease_to(
+            Sprite {
+                size: Vec2::new(300., 300.),
+                ..Default::default()
+            },
+            EaseFunction::QuadraticIn,
+            bevy_easings::AnimationType::Once {
+                duration: std::time::Duration::from_secs(1),
+            },
+        )
+        .and_then(
+            Sprite {
+                size: Vec2::new(350., 350.),
+                ..Default::default()
+            },
+            EaseFunction::QuadraticIn,
+            bevy_easings::AnimationType::PingPong {
+                duration: std::time::Duration::from_millis(500),
+                pause: std::time::Duration::from_millis(200),
+            },
+        ),
+    );
+```
+
 ## Components Supported
 
 - [`ColorMaterial`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.ColorMaterial.html)
@@ -45,11 +91,12 @@ commands
 - [`Transform`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Transform.html)
 - [`Style`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Style.html)
 
-### Custom Component Support
+### Custom component support
 
-To be able to ease a component, it needs to implement the trait `Lerp`
+To be able to ease a component, it needs to implement the traits `Default` and [`Lerp`](https://docs.rs/interpolation/0.2.0/interpolation/trait.Lerp.html). This trait is re-exported by `beavy_easings`.
 
 ```rust
+#[Derive(Default)]
 struct CustomComponent(f32);
 impl bevy_easings::Lerp for CustomComponent {
     type Scalar = f32;
