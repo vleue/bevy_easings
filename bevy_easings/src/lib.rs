@@ -32,7 +32,7 @@ pub struct EasingComponent<T> {
 }
 
 impl<T: Default> EasingComponent<T> {
-    pub fn and_then(
+    pub fn ease_to(
         self,
         end: T,
         ease_function: interpolation::EaseFunction,
@@ -63,7 +63,7 @@ pub struct EasingComponentChainLastValue<T>(T);
 pub struct EasingComponentChain<T>(Vec<EasingComponent<T>>);
 
 impl<T: Default> EasingComponentChain<T> {
-    pub fn and_then(
+    pub fn ease_to(
         mut self,
         end: T,
         ease_function: interpolation::EaseFunction,

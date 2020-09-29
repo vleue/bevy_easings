@@ -126,7 +126,7 @@ transform0
         bevy_easings::EaseFunction::QuadraticInOut,
         bevy_easings::AnimationType::Once { duration },
     )
-    .and_then(
+    .ease_to(
         transform2,
         bevy_easings::EaseFunction::QuadraticInOut,
         bevy_easings::AnimationType::Once { duration },

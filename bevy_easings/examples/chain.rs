@@ -52,32 +52,32 @@ fn add_easing(mut commands: Commands, timer: &Timer, entity: Entity) {
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform2,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform3,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform4,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform5,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform6,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },
                 )
-                .and_then(
+                .ease_to(
                     transform7,
                     bevy_easings::EaseFunction::QuadraticInOut,
                     bevy_easings::AnimationType::Once { duration },

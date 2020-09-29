@@ -70,7 +70,7 @@ commands
                 duration: std::time::Duration::from_secs(1),
             },
         )
-        .and_then(
+        .ease_to(
             Sprite {
                 size: Vec2::new(350., 350.),
                 ..Default::default()
