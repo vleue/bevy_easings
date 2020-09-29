@@ -10,7 +10,7 @@ Add the plugin to your app:
 ```rust
     App::build()
         .add_default_plugins()
-        .add_plugin(bevy_easings::EasingsPlugin)
+        .add_plugin(EasingsPlugin)
         ...
 ```
 
@@ -35,7 +35,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            bevy_easings::AnimationType::PingPong {
+            AnimationType::PingPong {
                 duration: std::time::Duration::from_secs(1),
                 pause: std::time::Duration::from_millis(500),
             },
@@ -66,7 +66,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            bevy_easings::AnimationType::Once {
+            AnimationType::Once {
                 duration: std::time::Duration::from_secs(1),
             },
         )
@@ -76,7 +76,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            bevy_easings::AnimationType::PingPong {
+            AnimationType::PingPong {
                 duration: std::time::Duration::from_millis(500),
                 pause: std::time::Duration::from_millis(200),
             },
@@ -98,7 +98,7 @@ To be able to ease a component, it needs to implement the traits `Default` and [
 ```rust
 #[Derive(Default)]
 struct CustomComponent(f32);
-impl bevy_easings::Lerp for CustomComponent {
+impl Lerp for CustomComponent {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
