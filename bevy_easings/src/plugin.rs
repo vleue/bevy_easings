@@ -19,8 +19,10 @@ impl Plugin for EasingsPlugin {
             .add_system(ease_system::<ColorMaterial>.system())
             .add_system(ease_system::<Color>.system())
             .add_system(ease_system::<Transform>.system())
-            .add_system(ease_system::<Style>.system())
-            .init_resource::<HandleCache<ColorMaterial>>()
+            .add_system(ease_system::<Style>.system());
+
+        #[cfg(feature = "ease_handle")]
+        app.init_resource::<HandleCache<ColorMaterial>>()
             .add_system(handle_ease_system::<ColorMaterial>.system());
     }
 }

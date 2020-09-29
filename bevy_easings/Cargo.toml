@@ -15,3 +15,7 @@ readme = "README.md"
 bevy = "0.2"
 interpolation = "0.2"
 rand = "0.7"
+
+[features]
+default = [ "ease_handle" ]
+ease_handle = []
