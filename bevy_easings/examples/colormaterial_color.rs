@@ -69,7 +69,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             .with(materials.add(Color::RED.into()).ease_to(
                 materials.add(Color::BLUE.into()),
                 *ease_function,
-                bevy_easings::AnimationType::PingPong {
+                bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
                     pause: std::time::Duration::from_millis(500),
                 },

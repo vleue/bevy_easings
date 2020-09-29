@@ -6,7 +6,7 @@
 materials.add(Color::RED.into()).ease_to(
     materials.add(Color::BLUE.into()),
     *ease_function,
-    bevy_easings::AnimationType::PingPong {
+    bevy_easings::EasingType::PingPong {
         duration: std::time::Duration::from_secs(1),
         pause: std::time::Duration::from_millis(500),
     },
@@ -28,7 +28,7 @@ Sprite {
         ..Default::default()
     },
     *ease_function,
-    bevy_easings::AnimationType::PingPong {
+    bevy_easings::EasingType::PingPong {
         duration: std::time::Duration::from_secs(1),
         pause: std::time::Duration::from_millis(500),
     },
@@ -43,7 +43,7 @@ Sprite {
 Transform::default().ease_to(
     Transform::default().with_rotation(Quat::from_rotation_ypr(0., 0., 3.1415 / 2.)),
     *ease_function,
-    bevy_easings::AnimationType::PingPong {
+    bevy_easings::EasingType::PingPong {
         duration: std::time::Duration::from_secs(1),
         pause: std::time::Duration::from_millis(500),
     },
@@ -60,7 +60,7 @@ Transform::default()
     .ease_to(
         Transform::default().with_translate(Vec3::new(x, -screen_y, 0.)),
         *ease_function,
-        bevy_easings::AnimationType::PingPong {
+        bevy_easings::EasingType::PingPong {
             duration: std::time::Duration::from_secs(1),
             pause: std::time::Duration::from_millis(500),
         },
@@ -108,7 +108,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .with(CustomComponent(0.).ease_to(
             CustomComponent(100.),
             bevy_easings::EaseFunction::QuadraticInOut,
-            bevy_easings::AnimationType::PingPong {
+            bevy_easings::EasingType::PingPong {
                 duration: std::time::Duration::from_secs(1),
                 pause: std::time::Duration::from_millis(500),
             },
@@ -122,12 +122,12 @@ transform0
     .ease_to(
         transform1,
         bevy_easings::EaseFunction::QuadraticInOut,
-        bevy_easings::AnimationType::Once { duration },
+        bevy_easings::EasingType::Once { duration },
     )
     .ease_to(
         transform2,
         bevy_easings::EaseFunction::QuadraticInOut,
-        bevy_easings::AnimationType::Once { duration },
+        bevy_easings::EasingType::Once { duration },
     )
 ```
 

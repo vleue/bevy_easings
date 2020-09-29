@@ -35,7 +35,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            AnimationType::PingPong {
+            EasingType::PingPong {
                 duration: std::time::Duration::from_secs(1),
                 pause: std::time::Duration::from_millis(500),
             },
@@ -66,7 +66,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            AnimationType::Once {
+            EasingType::Once {
                 duration: std::time::Duration::from_secs(1),
             },
         )
@@ -76,7 +76,7 @@ commands
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
-            AnimationType::PingPong {
+            EasingType::PingPong {
                 duration: std::time::Duration::from_millis(500),
                 pause: std::time::Duration::from_millis(200),
             },

@@ -3,13 +3,14 @@ use bevy::prelude::*;
 use interpolation::Ease as IEase;
 
 use crate::{
-    AnimationState, AnimationType, CustomComponentEase, Ease, EaseValue, EasingComponent,
-    EasingComponentChain, IntermediateLerp,
+    CustomComponentEase, Ease, EaseValue, EasingChainComponent, EasingComponent, EasingState,
+    EasingType, IntermediateLerp,
 };
 
 #[derive(Default)]
 struct HandleCache<T: 'static>(std::collections::HashMap<i128, Handle<T>>);
 
+/// Plugin to add systems related to easing
 #[derive(Debug, Clone, Copy)]
 pub struct EasingsPlugin;
 
@@ -32,26 +33,24 @@ pub fn ease_system<T: Ease + Component>(
     time: Res<Time>,
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<T>>>,
-    mut easing_chain: Option<Mut<EasingComponentChain<T>>>,
+    mut easing_chain: Option<Mut<EasingChainComponent<T>>>,
     mut object: Mut<T>,
 ) where
     EaseValue<T>: interpolation::Lerp<Scalar = f32>,
     T: Default,
 {
     if let Some(ref mut easing) = easing {
-        if easing.state == AnimationState::Play {
+        if easing.state == EasingState::Play {
             easing.timer.tick(time.delta_seconds);
         }
         if easing.paused {
             if easing.timer.just_finished {
-                match easing.animation_type {
-                    AnimationType::Once { duration } => {
+                match easing.easing_type {
+                    EasingType::Once { duration } => easing.timer.duration = duration.as_secs_f32(),
+                    EasingType::Loop { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
-                    AnimationType::Loop { duration, .. } => {
-                        easing.timer.duration = duration.as_secs_f32()
-                    }
-                    AnimationType::PingPong { duration, .. } => {
+                    EasingType::PingPong { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
                 }
@@ -67,16 +66,16 @@ pub fn ease_system<T: Ease + Component>(
             let factor = progress.calc(easing.ease_function);
             *object = interpolation::lerp(easing.start.as_ref().unwrap(), &easing.end, &factor).0;
             if easing.timer.finished {
-                match easing.animation_type {
-                    AnimationType::Once { .. } => {
+                match easing.easing_type {
+                    EasingType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
-                    AnimationType::Loop { pause, .. } => {
+                    EasingType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
                     }
-                    AnimationType::PingPong { pause, .. } => {
+                    EasingType::PingPong { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
@@ -96,36 +95,35 @@ pub fn ease_system<T: Ease + Component>(
 
                 commands.insert_one(entity, next);
             } else {
-                commands.remove_one::<EasingComponentChain<T>>(entity);
+                commands.remove_one::<EasingChainComponent<T>>(entity);
             }
         }
     }
 }
 
+/// Ease system for custom component. Add this system to your application with your component as a type parameter.
 pub fn custom_ease_system<T: CustomComponentEase + Component>(
     mut commands: Commands,
     time: Res<Time>,
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<T>>>,
-    mut easing_chain: Option<Mut<EasingComponentChain<T>>>,
+    mut easing_chain: Option<Mut<EasingChainComponent<T>>>,
     mut object: Mut<T>,
 ) where
     T: interpolation::Lerp<Scalar = f32> + Default,
 {
     if let Some(ref mut easing) = easing {
-        if easing.state == AnimationState::Play {
+        if easing.state == EasingState::Play {
             easing.timer.tick(time.delta_seconds);
         }
         if easing.paused {
             if easing.timer.just_finished {
-                match easing.animation_type {
-                    AnimationType::Once { duration } => {
+                match easing.easing_type {
+                    EasingType::Once { duration } => easing.timer.duration = duration.as_secs_f32(),
+                    EasingType::Loop { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
-                    AnimationType::Loop { duration, .. } => {
-                        easing.timer.duration = duration.as_secs_f32()
-                    }
-                    AnimationType::PingPong { duration, .. } => {
+                    EasingType::PingPong { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
                 }
@@ -142,16 +140,16 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
             *object =
                 interpolation::lerp(&easing.start.as_ref().unwrap().0, &easing.end.0, &factor);
             if easing.timer.finished {
-                match easing.animation_type {
-                    AnimationType::Once { .. } => {
+                match easing.easing_type {
+                    EasingType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
-                    AnimationType::Loop { pause, .. } => {
+                    EasingType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
                     }
-                    AnimationType::PingPong { pause, .. } => {
+                    EasingType::PingPong { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
@@ -171,7 +169,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
 
                 commands.insert_one(entity, next);
             } else {
-                commands.remove_one::<EasingComponentChain<T>>(entity);
+                commands.remove_one::<EasingChainComponent<T>>(entity);
             }
         }
     }
@@ -184,25 +182,23 @@ fn handle_ease_system<T: Ease + Component>(
     mut handle_cache: ResMut<HandleCache<T>>,
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<Handle<T>>>>,
-    mut easing_chain: Option<Mut<EasingComponentChain<Handle<T>>>>,
+    mut easing_chain: Option<Mut<EasingChainComponent<Handle<T>>>>,
     mut object: Mut<Handle<T>>,
 ) where
     T: IntermediateLerp,
 {
     if let Some(ref mut easing) = easing {
-        if easing.state == AnimationState::Play {
+        if easing.state == EasingState::Play {
             easing.timer.tick(time.delta_seconds);
         }
         if easing.paused {
             if easing.timer.just_finished {
-                match easing.animation_type {
-                    AnimationType::Once { duration } => {
+                match easing.easing_type {
+                    EasingType::Once { duration } => easing.timer.duration = duration.as_secs_f32(),
+                    EasingType::Loop { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
-                    AnimationType::Loop { duration, .. } => {
-                        easing.timer.duration = duration.as_secs_f32()
-                    }
-                    AnimationType::PingPong { duration, .. } => {
+                    EasingType::PingPong { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
                     }
                 }
@@ -230,16 +226,16 @@ fn handle_ease_system<T: Ease + Component>(
                 });
             *object = handle;
             if easing.timer.finished {
-                match easing.animation_type {
-                    AnimationType::Once { .. } => {
+                match easing.easing_type {
+                    EasingType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
-                    AnimationType::Loop { pause, .. } => {
+                    EasingType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
                     }
-                    AnimationType::PingPong { pause, .. } => {
+                    EasingType::PingPong { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
                         easing.timer.reset();
                         easing.paused = true;
@@ -257,7 +253,7 @@ fn handle_ease_system<T: Ease + Component>(
                 }
                 commands.insert_one(entity, next);
             } else {
-                commands.remove_one::<EasingComponentChain<T>>(entity);
+                commands.remove_one::<EasingChainComponent<T>>(entity);
             }
         }
     }

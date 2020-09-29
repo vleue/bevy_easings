@@ -69,7 +69,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                     .ease_to(
                         Transform::default().with_translate(Vec3::new(x, -screen_y, 0.)),
                         *ease_function,
-                        bevy_easings::AnimationType::PingPong {
+                        bevy_easings::EasingType::PingPong {
                             duration: std::time::Duration::from_secs(1),
                             pause: std::time::Duration::from_millis(500),
                         },

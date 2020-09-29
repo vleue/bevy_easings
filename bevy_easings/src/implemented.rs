@@ -98,7 +98,7 @@ impl Lerp for EaseValue<Rect<Val>> {
     }
 }
 
-impl interpolation::Lerp for EaseValue<Size<Val>> {
+impl Lerp for EaseValue<Size<Val>> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {

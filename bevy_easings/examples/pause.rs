@@ -31,7 +31,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 .ease_to(
                     Transform::default().with_translate(Vec3::new(500., 0., 0.)),
                     bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::AnimationType::PingPong {
+                    bevy_easings::EasingType::PingPong {
                         duration: std::time::Duration::from_millis(500),
                         pause: std::time::Duration::from_millis(100),
                     },
