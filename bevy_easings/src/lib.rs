@@ -20,11 +20,29 @@ pub enum AnimationType {
     PingPong { duration: Duration, pause: Duration },
 }
 
+#[derive(PartialEq, Debug, Clone, Copy)]
+pub enum AnimationState {
+    Play,
+    Paused,
+}
+
+impl std::ops::Not for AnimationState {
+    type Output = AnimationState;
+
+    fn not(self) -> Self::Output {
+        match self {
+            AnimationState::Paused => AnimationState::Play,
+            AnimationState::Play => AnimationState::Paused,
+        }
+    }
+}
+
 pub struct EasingComponent<T> {
     start: Option<EaseValue<T>>,
     end: EaseValue<T>,
     ease_function: interpolation::EaseFunction,
     timer: Timer,
+    pub state: AnimationState,
     paused: bool,
     animation_type: AnimationType,
     id: i128,
@@ -49,6 +67,7 @@ impl<T: Default> EasingComponent<T> {
                 AnimationType::Loop { duration, .. } => Timer::new(duration, false),
                 AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
             },
+            state: AnimationState::Play,
             paused: false,
             animation_type,
             id: rng.gen(),
@@ -79,6 +98,7 @@ impl<T: Default> EasingComponentChain<T> {
                 AnimationType::Loop { duration, .. } => Timer::new(duration, false),
                 AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
             },
+            state: AnimationState::Play,
             paused: false,
             animation_type,
             id: rng.gen(),
@@ -107,6 +127,7 @@ pub trait Ease: Sized {
                 AnimationType::Loop { duration, .. } => Timer::new(duration, false),
                 AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
             },
+            state: AnimationState::Play,
             paused: false,
             animation_type,
             id: rng.gen(),
@@ -157,6 +178,7 @@ pub trait CustomComponentEase: Sized {
                 AnimationType::Loop { duration, .. } => Timer::new(duration, false),
                 AnimationType::PingPong { duration, .. } => Timer::new(duration, false),
             },
+            state: AnimationState::Play,
             paused: false,
             animation_type,
             id: rng.gen(),

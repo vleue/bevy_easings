@@ -1,7 +1,5 @@
 # Examples
 
-## Working on `SpriteComponents`
-
 ### [colormaterial_color.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/colormaterial_color.rs)
 
 ```rust
@@ -134,3 +132,17 @@ transform0
 ```
 
 ![chain](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/chain.gif)
+
+
+### [pause.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/pause.rs)
+
+```rust
+fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>>) {
+    if timer.just_finished {
+        easing.state = !easing.state;
+    }
+}
+```
+
+![pause](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/pause.gif)
+

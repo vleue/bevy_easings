@@ -3,8 +3,8 @@ use bevy::prelude::*;
 use interpolation::Ease as IEase;
 
 use crate::{
-    AnimationType, CustomComponentEase, Ease, EaseValue, EasingComponent, EasingComponentChain,
-    IntermediateLerp,
+    AnimationState, AnimationType, CustomComponentEase, Ease, EaseValue, EasingComponent,
+    EasingComponentChain, IntermediateLerp,
 };
 
 #[derive(Default)]
@@ -37,7 +37,9 @@ pub fn ease_system<T: Ease + Component>(
     T: Default,
 {
     if let Some(ref mut easing) = easing {
-        easing.timer.tick(time.delta_seconds);
+        if easing.state == AnimationState::Play {
+            easing.timer.tick(time.delta_seconds);
+        }
         if easing.paused {
             if easing.timer.just_finished {
                 match easing.animation_type {
@@ -109,7 +111,9 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
     T: interpolation::Lerp<Scalar = f32> + Default,
 {
     if let Some(ref mut easing) = easing {
-        easing.timer.tick(time.delta_seconds);
+        if easing.state == AnimationState::Play {
+            easing.timer.tick(time.delta_seconds);
+        }
         if easing.paused {
             if easing.timer.just_finished {
                 match easing.animation_type {
@@ -184,7 +188,9 @@ fn handle_ease_system<T: Ease + Component>(
     T: IntermediateLerp,
 {
     if let Some(ref mut easing) = easing {
-        easing.timer.tick(time.delta_seconds);
+        if easing.state == AnimationState::Play {
+            easing.timer.tick(time.delta_seconds);
+        }
         if easing.paused {
             if easing.timer.just_finished {
                 match easing.animation_type {
