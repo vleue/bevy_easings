@@ -91,6 +91,8 @@ commands
 - [`Transform`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Transform.html)
 - [`Style`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Style.html)
 
+> :warning: While doing easings on `Handle<ColorMaterial>` is possible (as shown in [this example](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/colormaterial_color.rs)), it is probably not a good idea as many `ColorMaterial`s will need to be added to the assets and it will slow down your game.
+
 ### Custom component support
 
 To be able to ease a component, it needs to implement the traits `Default` and [`Lerp`](https://docs.rs/interpolation/0.2.0/interpolation/trait.Lerp.html). This trait is re-exported by `beavy_easings`.
