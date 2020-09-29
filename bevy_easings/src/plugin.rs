@@ -4,7 +4,7 @@ use interpolation::Ease as IEase;
 
 use crate::{
     AnimationType, CustomComponentEase, Ease, EaseValue, EasingComponent, EasingComponentChain,
-    EasingComponentChainLastValue, IntermediateLerp,
+    IntermediateLerp,
 };
 
 #[derive(Default)]
@@ -31,7 +31,6 @@ pub fn ease_system<T: Ease + Component>(
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<T>>>,
     mut easing_chain: Option<Mut<EasingComponentChain<T>>>,
-    last_value: Option<Mut<EasingComponentChainLastValue<T>>>,
     mut object: Mut<T>,
 ) where
     EaseValue<T>: interpolation::Lerp<Scalar = f32>,
@@ -62,15 +61,11 @@ pub fn ease_system<T: Ease + Component>(
                 1. - easing.timer.elapsed / easing.timer.duration
             };
             let factor = progress.calc(easing.ease_function);
-            *object = interpolation::lerp(&easing.start, &easing.end, &factor).0;
+            *object = interpolation::lerp(easing.start.as_ref().unwrap(), &easing.end, &factor).0;
             if easing.timer.finished {
                 match easing.animation_type {
                     AnimationType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
-                        commands.insert_one(
-                            entity,
-                            EasingComponentChainLastValue(std::mem::take(&mut easing.end.0)),
-                        );
                     }
                     AnimationType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
@@ -90,11 +85,11 @@ pub fn ease_system<T: Ease + Component>(
         if let Some(ref mut easing_chain) = easing_chain {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
-                if let Some(mut last_value) = last_value {
-                    next.start = EaseValue(std::mem::take(&mut last_value.0));
-
-                    commands.remove_one::<EasingComponentChainLastValue<T>>(entity);
+                if next.start.is_none() {
+                    next.start = Some(EaseValue(std::mem::take(&mut object)));
                 }
+                *object = interpolation::lerp(next.start.as_ref().unwrap(), &next.end, &0.).0;
+
                 commands.insert_one(entity, next);
             } else {
                 commands.remove_one::<EasingComponentChain<T>>(entity);
@@ -109,7 +104,6 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<T>>>,
     mut easing_chain: Option<Mut<EasingComponentChain<T>>>,
-    last_value: Option<Mut<EasingComponentChainLastValue<T>>>,
     mut object: Mut<T>,
 ) where
     T: interpolation::Lerp<Scalar = f32> + Default,
@@ -139,15 +133,12 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 1. - easing.timer.elapsed / easing.timer.duration
             };
             let factor = progress.calc(easing.ease_function);
-            *object = interpolation::lerp(&easing.start.0, &easing.end.0, &factor);
+            *object =
+                interpolation::lerp(&easing.start.as_ref().unwrap().0, &easing.end.0, &factor);
             if easing.timer.finished {
                 match easing.animation_type {
                     AnimationType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
-                        commands.insert_one(
-                            entity,
-                            EasingComponentChainLastValue(std::mem::take(&mut easing.end.0)),
-                        );
                     }
                     AnimationType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
@@ -167,11 +158,11 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
         if let Some(ref mut easing_chain) = easing_chain {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
-                if let Some(mut last_value) = last_value {
-                    next.start = EaseValue(std::mem::take(&mut last_value.0));
-
-                    commands.remove_one::<EasingComponentChainLastValue<T>>(entity);
+                if next.start.is_none() {
+                    next.start = Some(EaseValue(std::mem::take(&mut object)));
                 }
+                *object = interpolation::lerp(&next.start.as_ref().unwrap().0, &next.end.0, &0.);
+
                 commands.insert_one(entity, next);
             } else {
                 commands.remove_one::<EasingComponentChain<T>>(entity);
@@ -188,7 +179,6 @@ fn handle_ease_system<T: Ease + Component>(
     entity: Entity,
     mut easing: Option<Mut<EasingComponent<Handle<T>>>>,
     mut easing_chain: Option<Mut<EasingComponentChain<Handle<T>>>>,
-    last_value: Option<&EasingComponentChainLastValue<Handle<T>>>,
     mut object: Mut<Handle<T>>,
 ) where
     T: IntermediateLerp,
@@ -223,7 +213,7 @@ fn handle_ease_system<T: Ease + Component>(
                 .0
                 .entry(easing.id + (easing.direction * factor_simplified) as i128)
                 .or_insert_with(|| {
-                    let start = assets.get(&easing.start.0).unwrap();
+                    let start = assets.get(&easing.start.as_ref().unwrap().0).unwrap();
                     let end = assets.get(&easing.end.0).unwrap();
                     let intermediate =
                         IntermediateLerp::lerp(&EaseValue(start), &EaseValue(end), &factor);
@@ -235,10 +225,6 @@ fn handle_ease_system<T: Ease + Component>(
                 match easing.animation_type {
                     AnimationType::Once { .. } => {
                         commands.remove_one::<EasingComponent<T>>(entity);
-                        commands.insert_one(
-                            entity,
-                            EasingComponentChainLastValue(easing.end.0.clone()),
-                        );
                     }
                     AnimationType::Loop { pause, .. } => {
                         easing.timer.duration = pause.as_secs_f32();
@@ -258,10 +244,8 @@ fn handle_ease_system<T: Ease + Component>(
         if let Some(ref mut easing_chain) = easing_chain {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
-                if let Some(last_value) = last_value {
-                    next.start = EaseValue(last_value.0.clone());
-
-                    commands.remove_one::<EasingComponentChainLastValue<T>>(entity);
+                if next.start.is_none() {
+                    next.start = Some(EaseValue(object.clone()));
                 }
                 commands.insert_one(entity, next);
             } else {

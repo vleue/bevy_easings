@@ -21,7 +21,7 @@ pub enum AnimationType {
 }
 
 pub struct EasingComponent<T> {
-    start: EaseValue<T>,
+    start: Option<EaseValue<T>>,
     end: EaseValue<T>,
     ease_function: interpolation::EaseFunction,
     timer: Timer,
@@ -41,7 +41,7 @@ impl<T: Default> EasingComponent<T> {
         let mut rng = rand::thread_rng();
 
         let next = EasingComponent {
-            start: EaseValue(T::default()),
+            start: None,
             end: EaseValue(end),
             ease_function,
             timer: match animation_type {
@@ -59,7 +59,6 @@ impl<T: Default> EasingComponent<T> {
     }
 }
 
-pub struct EasingComponentChainLastValue<T>(T);
 pub struct EasingComponentChain<T>(Vec<EasingComponent<T>>);
 
 impl<T: Default> EasingComponentChain<T> {
@@ -72,7 +71,7 @@ impl<T: Default> EasingComponentChain<T> {
         let mut rng = rand::thread_rng();
 
         let next = EasingComponent {
-            start: EaseValue(T::default()),
+            start: None,
             end: EaseValue(end),
             ease_function,
             timer: match animation_type {
@@ -100,7 +99,7 @@ pub trait Ease: Sized {
     ) -> EasingComponent<Self> {
         let mut rng = rand::thread_rng();
         EasingComponent {
-            start: EaseValue(start),
+            start: Some(EaseValue(start)),
             end: EaseValue(end),
             ease_function,
             timer: match animation_type {
@@ -150,7 +149,7 @@ pub trait CustomComponentEase: Sized {
     ) -> EasingComponent<Self> {
         let mut rng = rand::thread_rng();
         EasingComponent {
-            start: EaseValue(start),
+            start: Some(EaseValue(start)),
             end: EaseValue(end),
             ease_function,
             timer: match animation_type {
