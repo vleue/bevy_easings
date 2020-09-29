@@ -14,8 +14,8 @@ readme = "README.md"
 [dependencies]
 bevy = "0.2"
 interpolation = "0.2"
-rand = "0.7"
+rand = { version = "0.7", optional = true }
 
 [features]
 default = [ "ease_handle" ]
-ease_handle = []
+ease_handle = [ "rand" ]

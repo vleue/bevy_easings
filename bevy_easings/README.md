@@ -162,4 +162,4 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 
 ## Features
 
-Feature `ease_handle` is enabled by default, and control wether easing on `Handle<ColorMaterial>` is possible or not. Disabling this feature removes a system and a resource that are not used otherwise.
+Feature `ease_handle` is enabled by default, and control wether easing on `Handle<ColorMaterial>` is possible or not. Disabling this feature removes a system and a resource that are not used otherwise, the `rand` dependency and remove a `i128` from the `EasingComponent`.

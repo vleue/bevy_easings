@@ -2,9 +2,11 @@ use bevy::prelude::*;
 
 use interpolation::Ease as IEase;
 
+#[cfg(feature = "ease_handle")]
+use crate::IntermediateLerp;
 use crate::{
     CustomComponentEase, Ease, EaseValue, EasingChainComponent, EasingComponent, EasingState,
-    EasingType, IntermediateLerp,
+    EasingType,
 };
 
 #[derive(Default)]
@@ -171,6 +173,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
     }
 }
 
+#[cfg(feature = "ease_handle")]
 #[allow(clippy::too_many_arguments)]
 fn handle_ease_system<T: Ease + Component>(
     mut commands: Commands,
