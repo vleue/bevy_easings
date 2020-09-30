@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+      - name: Install Dependencies
+        run: sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+      - name: Install cargo-make
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: --debug cargo-make
+      - name: Run CI
+        uses: actions-rs/cargo@v1
+        with:
+          command: make
+          args: ci-flow
+      - name: Run CI - workspace
+        uses: actions-rs/cargo@v1
+        with:
+          command: make
+          args: --no-workspace workspace-ci-flow
