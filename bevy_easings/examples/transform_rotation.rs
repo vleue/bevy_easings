@@ -74,7 +74,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                         Transform::default().with_rotation(Quat::from_rotation_ypr(
                             0.,
                             0.,
-                            3.1415 / 2.,
+                            std::f32::consts::PI / 2.,
                         )),
                         *ease_function,
                         bevy_easings::EasingType::PingPong {
