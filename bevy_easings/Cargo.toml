@@ -10,6 +10,7 @@ documentation = "https://docs.rs/bevy_easings"
 keywords = ["bevy", "animation", "easing"]
 license = "MIT"
 readme = "README.md"
+exclude = ["examples/*.gif"]
 
 [dependencies]
 bevy = "0.2"

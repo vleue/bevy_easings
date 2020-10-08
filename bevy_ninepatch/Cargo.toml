@@ -10,6 +10,7 @@ documentation = "https://docs.rs/bevy_ninepatch"
 keywords = ["bevy", "ninepatch"]
 license = "MIT"
 readme = "README.md"
+exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies]
 bevy = "0.2"
