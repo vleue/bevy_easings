@@ -288,9 +288,15 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
                     .expect("should have a current entity as one was created just before");
                 let mut id = 0;
                 commands.with_children(|p| {
-                    id = nine_patch
-                        .apply(data.texture, &mut textures, &mut materials)
-                        .add(p, size.0.x(), size.0.y(), |_, _| {});
+                    let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
+                    #[cfg(not(feature = "manual"))]
+                    {
+                        id = np.add_with_parent(p, size.0.x(), size.0.y(), entity, |_, _| {});
+                    }
+                    #[cfg(feature = "manual")]
+                    {
+                        id = np.add_with_parent(p, size.0.x(), size.0.y(), Some(entity), |_, _| {});
+                    }
                 });
                 commands.push_children(entity, &[parent]);
                 commands.with(NinePatchId(id));

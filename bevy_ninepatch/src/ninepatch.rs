@@ -1,6 +1,6 @@
 use bevy::{
     asset::{Assets, Handle},
-    ecs::ResMut,
+    ecs::{Entity, ResMut},
     math::{Rect, Size, Vec2},
     render::{
         color::Color,
@@ -254,6 +254,12 @@ pub struct NinePatchContent<T: Send + Sync + 'static> {
     pub content: T,
     /// Has it been already loaded
     pub loaded: bool,
+    #[cfg(feature = "manual")]
+    /// Entity parent of the 9-Patch UI element
+    pub parent: Option<Entity>,
+    #[cfg(not(feature = "manual"))]
+    /// Entity parent of the 9-Patch UI element
+    pub parent: Entity,
 }
 
 /// `NinePatch` ready to be added to entities.
@@ -266,17 +272,37 @@ pub struct NinePatch<T: Clone + Send + Sync + 'static> {
 }
 impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
     /// Add the `NinePatch` to entities. This will create several entities as children.
+    #[cfg(feature = "manual")]
     pub fn add<F>(
         &self,
         parent: &mut ChildBuilder,
         width: f32,
         height: f32,
+        content_builder: F,
+    ) -> u128
+    where
+        F: FnMut(&mut ChildBuilder, &T) + Copy,
+    {
+        self.add_with_parent(parent, width, height, None, content_builder)
+    }
+
+    pub(crate) fn add_with_parent<F>(
+        &self,
+        parent: &mut ChildBuilder,
+        width: f32,
+        height: f32,
+        #[cfg(feature = "manual")] grandparent: Option<Entity>,
+        #[cfg(not(feature = "manual"))] grandparent: Entity,
         mut content_builder: F,
     ) -> u128
     where
         F: FnMut(&mut ChildBuilder, &T) + Copy,
     {
         let mut rng = rand::thread_rng();
+        // // temp entity that will be erased when getting actual entity
+        // // TODO: use `current_entity` once https://github.com/bevyengine/bevy/pull/595 is released
+        // let mut parent_entity = Entity::new(0);
+        // parent.for_current_entity(|entity| parent_entity = entity);
 
         let id: u128 = rng.gen();
         parent
@@ -430,6 +456,10 @@ impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
                                     .with(NinePatchContent {
                                         content: content_part.clone(),
                                         loaded: false,
+                                        #[cfg(feature = "manual")]
+                                        parent: grandparent.clone(),
+                                        #[cfg(not(feature = "manual"))]
+                                        parent: grandparent,
                                     });
                                 if (column_item.x_growth != GrowthMode::None)
                                     || (column_item.y_growth != GrowthMode::None)
