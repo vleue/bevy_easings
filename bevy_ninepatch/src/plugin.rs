@@ -273,6 +273,10 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
     for (entity, mut data, size) in &mut patches_query.iter() {
         if !data.loaded {
             if let Some(nine_patch) = nine_patches.get_mut(&data.nine_patch) {
+                if textures.get(&data.texture).is_none() {
+                    // texture is not available yet, will try next loop
+                    continue;
+                }
                 commands
                     .spawn(NodeComponents {
                         draw: Draw {
