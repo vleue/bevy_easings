@@ -57,105 +57,103 @@ fn setup(
         .with_children(|global_parent| {
             // this time, we create the 9-Patch UI element by specifying all the patch. Notice that the top row of patch
             // actually has 5 patches instead of 3
-            NinePatchBuilder {
-                patches: vec![
-                    vec![
-                        // top left corner patch
-                        Patch {
-                            width: PatchSize::Absolute(30.),
-                            height: PatchSize::Absolute(35.),
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                        // top middle-left patch. This patch width can grow, and will contain the content for
-                        // `PanelContent::Title`
-                        Patch {
-                            width: PatchSize::Absolute(15.),
-                            height: PatchSize::Absolute(35.),
-                            x_growth: GrowthMode::StretchRatio(0.3),
-                            y_growth: GrowthMode::None,
-                            content: Some(PanelContent::Title),
-                        },
-                        // top middle patch. In the original PNG, it's the yellow titled part
-                        Patch {
-                            width: PatchSize::Absolute(25.),
-                            height: PatchSize::Absolute(35.),
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                        // top middle-right patch. This patch width can grow
-                        Patch {
-                            width: PatchSize::Absolute(20.),
-                            height: PatchSize::Absolute(35.),
-                            x_growth: GrowthMode::StretchRatio(0.7),
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                        // top right corner
-                        Patch {
-                            width: PatchSize::Absolute(10.),
-                            height: PatchSize::Absolute(35.),
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                    ],
-                    vec![
-                        // left border. This patch height can grow
-                        Patch {
-                            width: PatchSize::Absolute(10.),
-                            height: PatchSize::Height { offset: -45. },
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::StretchRatio(1.),
-                            content: None,
-                        },
-                        // center. This patch can grow both in height and width, and will contain `PanelContent::Body`
-                        Patch {
-                            width: PatchSize::Width { offset: -20. },
-                            height: PatchSize::Height { offset: -45. },
-                            x_growth: GrowthMode::StretchRatio(1.),
-                            y_growth: GrowthMode::StretchRatio(1.),
-                            content: Some(PanelContent::Body),
-                        },
-                        // right border. This patch height can grow
-                        Patch {
-                            width: PatchSize::Absolute(10.),
-                            height: PatchSize::Height { offset: -45. },
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::StretchRatio(1.),
-                            content: None,
-                        },
-                    ],
-                    vec![
-                        // bottom left corner
-                        Patch {
-                            width: PatchSize::Absolute(10.),
-                            height: PatchSize::Absolute(10.),
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                        // bottom middle. This patch width can grow
-                        Patch {
-                            width: PatchSize::Width { offset: -20. },
-                            height: PatchSize::Absolute(10.),
-                            x_growth: GrowthMode::StretchRatio(1.),
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                        // bottom right corner
-                        Patch {
-                            width: PatchSize::Absolute(10.),
-                            height: PatchSize::Absolute(10.),
-                            x_growth: GrowthMode::None,
-                            y_growth: GrowthMode::None,
-                            content: None,
-                        },
-                    ],
+            NinePatchBuilder::from_patches(vec![
+                vec![
+                    // top left corner patch
+                    Patch {
+                        width: PatchSize::Absolute(30.),
+                        height: PatchSize::Absolute(35.),
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                    // top middle-left patch. This patch width can grow, and will contain the content for
+                    // `PanelContent::Title`
+                    Patch {
+                        width: PatchSize::Absolute(15.),
+                        height: PatchSize::Absolute(35.),
+                        x_growth: GrowthMode::StretchRatio(0.3),
+                        y_growth: GrowthMode::None,
+                        content: Some(PanelContent::Title),
+                    },
+                    // top middle patch. In the original PNG, it's the yellow titled part
+                    Patch {
+                        width: PatchSize::Absolute(25.),
+                        height: PatchSize::Absolute(35.),
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                    // top middle-right patch. This patch width can grow
+                    Patch {
+                        width: PatchSize::Absolute(20.),
+                        height: PatchSize::Absolute(35.),
+                        x_growth: GrowthMode::StretchRatio(0.7),
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                    // top right corner
+                    Patch {
+                        width: PatchSize::Absolute(10.),
+                        height: PatchSize::Absolute(35.),
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
                 ],
-            }
+                vec![
+                    // left border. This patch height can grow
+                    Patch {
+                        width: PatchSize::Absolute(10.),
+                        height: PatchSize::Height { offset: -45. },
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::StretchRatio(1.),
+                        content: None,
+                    },
+                    // center. This patch can grow both in height and width, and will contain `PanelContent::Body`
+                    Patch {
+                        width: PatchSize::Width { offset: -20. },
+                        height: PatchSize::Height { offset: -45. },
+                        x_growth: GrowthMode::StretchRatio(1.),
+                        y_growth: GrowthMode::StretchRatio(1.),
+                        content: Some(PanelContent::Body),
+                    },
+                    // right border. This patch height can grow
+                    Patch {
+                        width: PatchSize::Absolute(10.),
+                        height: PatchSize::Height { offset: -45. },
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::StretchRatio(1.),
+                        content: None,
+                    },
+                ],
+                vec![
+                    // bottom left corner
+                    Patch {
+                        width: PatchSize::Absolute(10.),
+                        height: PatchSize::Absolute(10.),
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                    // bottom middle. This patch width can grow
+                    Patch {
+                        width: PatchSize::Width { offset: -20. },
+                        height: PatchSize::Absolute(10.),
+                        x_growth: GrowthMode::StretchRatio(1.),
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                    // bottom right corner
+                    Patch {
+                        width: PatchSize::Absolute(10.),
+                        height: PatchSize::Absolute(10.),
+                        x_growth: GrowthMode::None,
+                        y_growth: GrowthMode::None,
+                        content: None,
+                    },
+                ],
+            ])
             .apply(cornered_panel_texture_handle, &mut textures, &mut materials)
             .add(
                 global_parent,

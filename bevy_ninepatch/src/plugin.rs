@@ -3,7 +3,7 @@ use bevy::{
     app::Plugin,
     asset::Assets,
     asset::Handle,
-    ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Mutated, Query, Res, ResMut},
+    ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Mutated, Query, ResMut},
     math::{Size, Vec2},
     property::Properties,
     render::color::Color,
@@ -265,14 +265,14 @@ impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
 #[allow(clippy::type_complexity)]
 fn create_ninepatches<T: Clone + Send + Sync + 'static>(
     mut commands: Commands,
-    nine_patches: Res<Assets<NinePatchBuilder<T>>>,
+    mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut patches_query: Query<(Entity, &mut NinePatchData<T>, &NinePatchSize)>,
 ) {
     for (entity, mut data, size) in &mut patches_query.iter() {
         if !data.loaded {
-            if let Some(nine_patch) = nine_patches.get(&data.nine_patch) {
+            if let Some(nine_patch) = nine_patches.get_mut(&data.nine_patch) {
                 commands
                     .spawn(NodeComponents {
                         draw: Draw {

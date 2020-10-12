@@ -1,6 +1,6 @@
 use bevy::{
     asset::{Assets, Handle},
-    ecs::{Entity, ResMut},
+    ecs::Entity,
     math::{Rect, Size, Vec2},
     render::{
         color::Color,
@@ -72,6 +72,19 @@ pub struct Patch<T: Clone + Send + Sync + 'static> {
 pub struct NinePatchBuilder<T: Clone + Send + Sync + 'static = ()> {
     /// Patches for a nine patch texture. See example `full.rs` on how to use directly
     pub patches: Vec<Vec<Patch<T>>>,
+    pub(crate) patch_textures: Option<Vec<Handle<ColorMaterial>>>,
+    pub(crate) original_texture: Option<Handle<Texture>>,
+}
+
+impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+    /// Create a `NinePatchBuilder` from it's patches
+    pub fn from_patches(patches: Vec<Vec<Patch<T>>>) -> Self {
+        Self {
+            patches,
+            patch_textures: None,
+            original_texture: None,
+        }
+    }
 }
 
 impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
@@ -166,6 +179,8 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
         ];
         Self {
             patches: vec![top, middle, bottom],
+            patch_textures: None,
+            original_texture: None,
         }
     }
 }
@@ -174,10 +189,10 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
     /// Apply a `NinePatchBuilder` to a texture to get a `NinePatch` ready to be added to entities. This will split
     /// the given texture according to the patches.
     pub fn apply(
-        &self,
+        &mut self,
         texture_handle: Handle<Texture>,
-        textures: &mut ResMut<Assets<Texture>>,
-        materials: &mut ResMut<Assets<ColorMaterial>>,
+        textures: &mut Assets<Texture>,
+        materials: &mut Assets<ColorMaterial>,
     ) -> NinePatch<T> {
         let (texture_size, texture_data) = {
             let t = textures
@@ -185,49 +200,52 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
                 .expect("could not get texture from handle");
             (t.size, t.data.clone())
         };
+        if self.patch_textures.is_none() || self.original_texture != Some(texture_handle) {
+            let mut patch_textures = vec![];
+            let mut accu_y = 0.;
+            for row in &self.patches {
+                let mut accu_x = 0.;
+                for column_item in row {
+                    let start_x = accu_x;
+                    let end_x = accu_x + column_item.width.to_value(texture_size);
 
-        let mut patch_textures = vec![];
-        let mut accu_y = 0.;
-        for row in &self.patches {
-            let mut accu_x = 0.;
-            for column_item in row {
-                let start_x = accu_x;
-                let end_x = accu_x + column_item.width.to_value(texture_size);
+                    let start_y = accu_y;
+                    let end_y = accu_y + column_item.height.to_value(texture_size);
 
-                let start_y = accu_y;
-                let end_y = accu_y + column_item.height.to_value(texture_size);
-
-                let mut patch_texture_data = vec![];
-                for j in start_y as usize..end_y as usize {
-                    for i in start_x as usize..end_x as usize {
-                        let base = (i + j * texture_size.x() as usize) * 4;
-                        patch_texture_data.push(texture_data[base]);
-                        patch_texture_data.push(texture_data[base + 1]);
-                        patch_texture_data.push(texture_data[base + 2]);
-                        patch_texture_data.push(texture_data[base + 3]);
+                    let mut patch_texture_data = vec![];
+                    for j in start_y as usize..end_y as usize {
+                        for i in start_x as usize..end_x as usize {
+                            let base = (i + j * texture_size.x() as usize) * 4;
+                            patch_texture_data.push(texture_data[base]);
+                            patch_texture_data.push(texture_data[base + 1]);
+                            patch_texture_data.push(texture_data[base + 2]);
+                            patch_texture_data.push(texture_data[base + 3]);
+                        }
                     }
-                }
 
-                let patch_texture = Texture {
-                    size: Vec2::new(
-                        column_item.width.to_value(texture_size),
-                        column_item.height.to_value(texture_size),
-                    ),
-                    data: patch_texture_data,
-                    format: TextureFormat::Rgba8UnormSrgb,
-                };
-                let patch_texture_handle = textures.add(patch_texture);
-                let material = materials.add(patch_texture_handle.into());
-                patch_textures.push(material);
-                accu_x += column_item.width.to_value(texture_size);
+                    let patch_texture = Texture {
+                        size: Vec2::new(
+                            column_item.width.to_value(texture_size),
+                            column_item.height.to_value(texture_size),
+                        ),
+                        data: patch_texture_data,
+                        format: TextureFormat::Rgba8UnormSrgb,
+                    };
+                    let patch_texture_handle = textures.add(patch_texture);
+                    let material = materials.add(patch_texture_handle.into());
+                    patch_textures.push(material);
+                    accu_x += column_item.width.to_value(texture_size);
+                }
+                accu_y += row[0].height.to_value(texture_size);
             }
-            accu_y += row[0].height.to_value(texture_size);
+            self.patch_textures = Some(patch_textures);
+            self.original_texture = Some(texture_handle);
         }
         NinePatch {
             patches: self.patches.clone(),
             texture_size,
             background: materials.add(Color::NONE.into()),
-            splitted_texture: patch_textures,
+            splitted_texture: self.patch_textures.as_ref().cloned().unwrap(),
         }
     }
 }
