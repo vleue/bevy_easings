@@ -1,5 +1,7 @@
 # Bevy 9-Patch plugin
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Doc](https://docs.rs/bevy_ninepatch/badge.svg)](https://docs.rs/bevy_ninepatch) [![Crate](https://img.shields.io/crates/v/bevy_ninepatch.svg)](https://crates.io/crates/bevy_ninepatch)
+
 Implementation of 9-patch images in Bevy. Let you have a UI that scale only the right parts of your images.
 
 ![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/result.png)
