@@ -1,5 +1,8 @@
 # Bevy Easings
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Doc](https://docs.rs/bevy_easings/badge.svg)](https://docs.rs/bevy_easings) [![Crate](https://img.shields.io/crates/v/bevy_easings.svg)](https://crates.io/crates/bevy_easings)
+
+
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
 
 ## Usage
