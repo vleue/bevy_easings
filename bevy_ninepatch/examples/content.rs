@@ -2,7 +2,6 @@ use bevy::prelude::*;
 
 use bevy_ninepatch::{
     NinePatchBuilder, NinePatchComponents, NinePatchContent, NinePatchData, NinePatchPlugin,
-    NinePatchSize,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -38,6 +37,7 @@ fn setup(
                 margin: Rect::all(Val::Auto),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
+                size: Size::new(Val::Px(500.), Val::Px(300.)),
                 ..Default::default()
             },
             nine_patch_data: NinePatchData {
@@ -45,7 +45,6 @@ fn setup(
                 texture: panel_texture_handle,
                 ..Default::default()
             },
-            nine_patch_size: NinePatchSize(Vec2::new(500., 300.)),
             ..Default::default()
         },
     );

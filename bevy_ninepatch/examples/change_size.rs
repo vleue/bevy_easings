@@ -1,8 +1,6 @@
 use bevy::prelude::*;
 
-use bevy_ninepatch::{
-    NinePatchBuilder, NinePatchComponents, NinePatchData, NinePatchPlugin, NinePatchSize,
-};
+use bevy_ninepatch::{NinePatchBuilder, NinePatchComponents, NinePatchData, NinePatchPlugin};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
@@ -38,6 +36,7 @@ fn setup(
                 margin: Rect::all(Val::Auto),
                 justify_content: JustifyContent::Center,
                 align_items: AlignItems::Center,
+                size: Size::new(Val::Px(50.), Val::Px(50.)),
                 ..Default::default()
             },
             nine_patch_data: NinePatchData {
@@ -45,7 +44,6 @@ fn setup(
                 texture: panel_texture_handle,
                 ..Default::default()
             },
-            nine_patch_size: NinePatchSize(Vec2::new(50., 50.)),
             ..Default::default()
         },
     );
@@ -53,10 +51,10 @@ fn setup(
     commands.spawn(UiCameraComponents::default());
 }
 
-// by changing the component `NinePatchSize`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut size: Mut<NinePatchSize>) {
+// by changing the component `Style.size`, the 9-Patch UI element will be resized
+fn update_size(time: Res<Time>, mut style: Mut<Style>) {
     let (x, y) = time.seconds_since_startup.sin_cos();
 
-    size.0.set_x((250. + 200. * x as f32).ceil());
-    size.0.set_y((250. + 200. * y as f32).ceil());
+    style.size.width = Val::Px((250. + 200. * x as f32).ceil());
+    style.size.height = Val::Px((250. + 200. * y as f32).ceil());
 }

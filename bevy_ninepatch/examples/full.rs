@@ -132,6 +132,7 @@ fn setup(
                     margin: Rect::all(Val::Auto),
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
+                    size: Size::new(Val::Px(900.), Val::Px(600.)),
                     ..Default::default()
                 },
                 nine_patch_data: NinePatchData {
@@ -139,7 +140,6 @@ fn setup(
                     texture: cornered_panel_texture_handle,
                     ..Default::default()
                 },
-                nine_patch_size: NinePatchSize(Vec2::new(900., 600.)),
                 ..Default::default()
             },
         )
@@ -182,6 +182,7 @@ fn set_content(
                                 margin: Rect::all(Val::Auto),
                                 justify_content: JustifyContent::Center,
                                 align_items: AlignItems::Center,
+                                size: Size::new(Val::Px(850.), Val::Px(550.)),
                                 ..Default::default()
                             },
                             nine_patch_data: NinePatchData {
@@ -189,7 +190,6 @@ fn set_content(
                                 texture: panel_texture_handle,
                                 ..Default::default()
                             },
-                            nine_patch_size: NinePatchSize(Vec2::new(850., 550.)),
                             ..Default::default()
                         },
                     )
@@ -255,6 +255,7 @@ fn set_content(
                                 top: Val::Auto,
                                 bottom: Val::Px(0.),
                             },
+                            size: Size::new(Val::Px(300.), Val::Px(80.)),
 
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
@@ -265,7 +266,6 @@ fn set_content(
                             texture: button_texture_handle,
                             ..Default::default()
                         },
-                        nine_patch_size: NinePatchSize(Vec2::new(300., 80.)),
                         ..Default::default()
                     },
                 );
@@ -284,6 +284,7 @@ fn set_content(
                             },
                             justify_content: JustifyContent::Center,
                             align_items: AlignItems::Center,
+                            size: Size::new(Val::Px(300.), Val::Px(80.)),
                             ..Default::default()
                         },
                         nine_patch_data: NinePatchData {
@@ -291,7 +292,6 @@ fn set_content(
                             texture: button_texture_handle,
                             ..Default::default()
                         },
-                        nine_patch_size: NinePatchSize(Vec2::new(300., 80.)),
                         ..Default::default()
                     },
                 );
@@ -378,18 +378,18 @@ enum Content {
     ButtonCancel,
 }
 
-// by changing the component `NinePatchSize`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut size: Mut<NinePatchSize>, panel: &ResizableContent) {
+// by changing the component `Style.size`, the 9-Patch UI element will be resized
+fn update_size(time: Res<Time>, mut style: Mut<Style>, panel: &ResizableContent) {
     let (x, y) = time.seconds_since_startup.sin_cos();
 
     match panel {
         ResizableContent::Panel => {
-            size.0.set_x((900. + 50. * x as f32).ceil());
-            size.0.set_y((600. + 50. * y as f32).ceil());
+            style.size.width = Val::Px((900. + 50. * x as f32).ceil());
+            style.size.height = Val::Px((600. + 50. * y as f32).ceil());
         }
         ResizableContent::InnerPanel => {
-            size.0.set_x((850. + 50. * x as f32).ceil());
-            size.0.set_y((550. + 50. * y as f32).ceil());
+            style.size.width = Val::Px((850. + 50. * x as f32).ceil());
+            style.size.height = Val::Px((550. + 50. * y as f32).ceil());
         }
     }
 }

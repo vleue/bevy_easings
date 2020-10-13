@@ -20,7 +20,7 @@ Adding a simple 9-Patch UI element by using the `NinePatchComponents` component 
 
 ### [change_size.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/change_size.rs)
 
-Changing the size of a 9-Patch UI element by modifying the `NinePatchSize` component.
+Changing the size of a 9-Patch UI element by modifying the `Style.size` component.
 
 ![changing size of component](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/change_size.gif)
 

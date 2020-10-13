@@ -4,8 +4,7 @@ use bevy::{
     asset::Assets,
     asset::Handle,
     ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Mutated, Query, ResMut},
-    math::{Size, Vec2},
-    property::Properties,
+    math::Size,
     render::color::Color,
     render::draw::Draw,
     render::texture::Texture,
@@ -37,15 +36,6 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
         }
     }
 }
-/// Size of the current `NinePatch`
-#[derive(Debug, Clone, Copy, Properties)]
-pub struct NinePatchSize(pub Vec2);
-
-impl Default for NinePatchSize {
-    fn default() -> Self {
-        NinePatchSize(Default::default())
-    }
-}
 
 /// Component Bundle to place the NinePatch
 pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
@@ -53,8 +43,6 @@ pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     pub style: Style,
     /// State of the `NinePatch`
     pub nine_patch_data: NinePatchData<T>,
-    /// Size of the `NinePatch`
-    pub nine_patch_size: NinePatchSize,
     /// UI node
     pub node: Node,
     /// Transform
@@ -68,7 +56,6 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
         NinePatchComponents {
             style: Default::default(),
             nine_patch_data: Default::default(),
-            nine_patch_size: Default::default(),
             node: Default::default(),
             transform: Default::default(),
             global_transform: Default::default(),
@@ -78,7 +65,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
 
 impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     fn with_static_ids<V>(f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
-        const N: usize = 6;
+        const N: usize = 5;
         let mut xs: [(usize, std::any::TypeId); N] = [
             (
                 std::mem::align_of::<Style>(),
@@ -87,10 +74,6 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
             (
                 std::mem::align_of::<NinePatchData<T>>(),
                 std::any::TypeId::of::<NinePatchData<T>>(),
-            ),
-            (
-                std::mem::align_of::<NinePatchSize>(),
-                std::any::TypeId::of::<NinePatchSize>(),
             ),
             (std::mem::align_of::<Node>(), std::any::TypeId::of::<Node>()),
             (
@@ -114,7 +97,6 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         let mut xs = vec![
             bevy::ecs::TypeInfo::of::<Style>(),
             bevy::ecs::TypeInfo::of::<NinePatchData<T>>(),
-            bevy::ecs::TypeInfo::of::<NinePatchSize>(),
             bevy::ecs::TypeInfo::of::<Node>(),
             bevy::ecs::TypeInfo::of::<Transform>(),
             bevy::ecs::TypeInfo::of::<GlobalTransform>(),
@@ -144,13 +126,6 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchData<T>>)?
         .as_ptr()
         .cast::<NinePatchData<T>>();
-        let nine_patch_size = f(
-            std::any::TypeId::of::<NinePatchSize>(),
-            std::mem::size_of::<NinePatchSize>(),
-        )
-        .ok_or_else(bevy::ecs::MissingComponent::new::<NinePatchSize>)?
-        .as_ptr()
-        .cast::<NinePatchSize>();
         let node = f(std::any::TypeId::of::<Node>(), std::mem::size_of::<Node>())
             .ok_or_else(bevy::ecs::MissingComponent::new::<Node>)?
             .as_ptr()
@@ -173,7 +148,6 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
         Ok(NinePatchComponents {
             style: style.read(),
             nine_patch_data: nine_patch_data.read(),
-            nine_patch_size: nine_patch_size.read(),
             node: node.read(),
             transform: transform.read(),
             global_transform: global_transform.read(),
@@ -207,13 +181,6 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
             std::mem::size_of::<NinePatchData<T>>(),
         ) {
             std::mem::forget(self.nine_patch_data);
-        }
-        if f(
-            (&mut self.nine_patch_size as *mut NinePatchSize).cast::<u8>(),
-            std::any::TypeId::of::<NinePatchSize>(),
-            std::mem::size_of::<NinePatchSize>(),
-        ) {
-            std::mem::forget(self.nine_patch_size);
         }
         if f(
             (&mut self.node as *mut Node).cast::<u8>(),
@@ -256,9 +223,10 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
 impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Assets<NinePatchBuilder<T>>>()
-            .add_stage_after(bevy::app::stage::UPDATE, "NINEPATCH_CHECK_UPDATED_SIZE")
+            // .add_stage_after(bevy::ui::stage::UI, "NINEPATCH_CHECK_UPDATED_SIZE")
             .add_system(create_ninepatches::<T>.system())
-            .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes::<T>.system());
+            .add_system(update_sizes::<T>.system());
+        // .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes::<T>.system());
     }
 }
 
@@ -268,9 +236,9 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
     mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(Entity, &mut NinePatchData<T>, &NinePatchSize)>,
+    mut patches_query: Query<(Entity, &mut NinePatchData<T>, &Node)>,
 ) {
-    for (entity, mut data, size) in &mut patches_query.iter() {
+    for (entity, mut data, node) in &mut patches_query.iter() {
         if !data.loaded {
             if let Some(nine_patch) = nine_patches.get_mut(&data.nine_patch) {
                 if textures.get(&data.texture).is_none() {
@@ -295,11 +263,17 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
                     let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
                     #[cfg(not(feature = "manual"))]
                     {
-                        id = np.add_with_parent(p, size.0.x(), size.0.y(), entity, |_, _| {});
+                        id = np.add_with_parent(p, node.size.x(), node.size.y(), entity, |_, _| {});
                     }
                     #[cfg(feature = "manual")]
                     {
-                        id = np.add_with_parent(p, size.0.x(), size.0.y(), Some(entity), |_, _| {});
+                        id = np.add_with_parent(
+                            p,
+                            node.size.x(),
+                            node.size.y(),
+                            Some(entity),
+                            |_, _| {},
+                        );
                     }
                 });
                 commands.push_children(entity, &[parent]);
@@ -312,11 +286,12 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
 
 #[allow(clippy::type_complexity)]
 fn update_sizes<T: Clone + Send + Sync + 'static>(
-    mut patches_query: Query<(&NinePatchData<T>, Mutated<NinePatchSize>, &Children)>,
+    // mut patches_query: Query<(&NinePatchData<T>, Mutated<Node>, &Children)>,
+    mut patches_query: Query<(&NinePatchData<T>, &Node, &Children)>,
     id_query: Query<&NinePatchId>,
     mut growth_info: Query<(&NinePatchId, &BuildedNinePatchGrowth, &mut Style)>,
 ) {
-    for (data, new_size, children) in &mut patches_query.iter() {
+    for (data, node, children) in &mut patches_query.iter() {
         if data.loaded {
             let id = children
                 .iter()
@@ -330,13 +305,13 @@ fn update_sizes<T: Clone + Send + Sync + 'static>(
                             match growth.x {
                                 None => style.size.width,
                                 Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
-                                    Val::Px((new_size.0.x() - fixed) * ratio)
+                                    Val::Px((node.size.x() - fixed) * ratio)
                                 }
                             },
                             match growth.y {
                                 None => style.size.height,
                                 Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
-                                    Val::Px((new_size.0.y() - fixed) * ratio)
+                                    Val::Px((node.size.y() - fixed) * ratio)
                                 }
                             },
                         ),

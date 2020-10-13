@@ -41,6 +41,7 @@ fn setup(
                         top: Val::Auto,
                         bottom: Val::Px(0.),
                     },
+                    size: Size::new(Val::Px(300.), Val::Px(80.)),
 
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
@@ -51,7 +52,6 @@ fn setup(
                     texture: button_texture_handle,
                     ..Default::default()
                 },
-                nine_patch_size: NinePatchSize(Vec2::new(300., 80.)),
                 ..Default::default()
             },
         )
@@ -68,6 +68,7 @@ fn setup(
                         top: Val::Auto,
                         bottom: Val::Px(0.),
                     },
+                    size: Size::new(Val::Px(300.), Val::Px(80.)),
 
                     justify_content: JustifyContent::Center,
                     align_items: AlignItems::Center,
@@ -78,7 +79,6 @@ fn setup(
                     texture: button_texture_handle,
                     ..Default::default()
                 },
-                nine_patch_size: NinePatchSize(Vec2::new(300., 80.)),
                 ..Default::default()
             },
         )

@@ -28,6 +28,7 @@ commands.spawn(
             margin: Rect::all(Val::Auto),
             justify_content: JustifyContent::Center,
             align_items: AlignItems::Center,
+            size: Size::new(Val::Px(500.), Val::Px(300.)),
             ..Default::default()
         },
         nine_patch_data: NinePatchData {
@@ -35,7 +36,6 @@ commands.spawn(
             texture: panel_texture_handle,
             ..Default::default()
         },
-        nine_patch_size: NinePatchSize(Vec2::new(500., 300.)),
         ..Default::default()
     },
 );
@@ -45,7 +45,7 @@ See [plugin.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_
 
 ## Changing element size
 
-The component `NinePatchSize` can be changed to update the size of the 9-Patch UI element. Changing this component must happen during the `UPDATE` stage and may not work otherwise.
+The component `Style` can be changed to update the size of the 9-Patch UI element, by changing the `size` attribute.
 
 See [change_size.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/change_size.rs) for a complete example.
 
