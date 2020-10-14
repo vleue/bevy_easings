@@ -1,3 +1,4 @@
+use bevy::diagnostic::*;
 use bevy::prelude::*;
 
 use bevy_ninepatch::*;
@@ -18,106 +19,91 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
-    // prepare the panel
+    // load the assets
     let cornered_panel_texture_handle = asset_server
-        .load_sync(&mut textures, "assets/metalPanel_yellowCorner.png")
+        .load("assets/metalPanel_yellowCorner.png")
         .unwrap();
+    let _panel_texture_handle: Handle<Texture> =
+        asset_server.load("assets/glassPanel_corners.png").unwrap();
+    let _button_texture_handle: Handle<Texture> =
+        asset_server.load("assets/blue_button02.png").unwrap();
+    let _font: Handle<Font> = asset_server
+        .load("assets/Kenney Future Narrow.ttf")
+        .expect("was able to load font");
+
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::from_patches(vec![
         vec![
             // top left corner patch
             Patch {
-                width: PatchSize::Absolute(30.),
-                height: PatchSize::Absolute(35.),
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::None,
+                original_size: Size::new(30, 35),
+                target_size: Size::new(Val::Undefined, Val::Undefined),
                 content: None,
             },
             // top middle-left patch. This patch width can grow, and will contain the content for
             // `PanelContent::Title`
             Patch {
-                width: PatchSize::Absolute(15.),
-                height: PatchSize::Absolute(35.),
-                x_growth: GrowthMode::StretchRatio(0.3),
-                y_growth: GrowthMode::None,
-                content: Some(Content::PanelTitle),
+                original_size: Size::new(15, 35),
+                target_size: Size::new(Val::Percent(30.), Val::Undefined),
+                content: Some(Content::Title),
             },
             // top middle patch. In the original PNG, it's the yellow titled part
             Patch {
-                width: PatchSize::Absolute(25.),
-                height: PatchSize::Absolute(35.),
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::None,
+                original_size: Size::new(25, 35),
+                target_size: Size::new(Val::Undefined, Val::Undefined),
                 content: None,
             },
             // top middle-right patch. This patch width can grow
             Patch {
-                width: PatchSize::Absolute(20.),
-                height: PatchSize::Absolute(35.),
-                x_growth: GrowthMode::StretchRatio(0.7),
-                y_growth: GrowthMode::None,
+                original_size: Size::new(20, 35),
+                target_size: Size::new(Val::Percent(70.), Val::Undefined),
                 content: None,
             },
             // top right corner
             Patch {
-                width: PatchSize::Absolute(10.),
-                height: PatchSize::Absolute(35.),
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::None,
+                original_size: Size::new(10, 35),
+                target_size: Size::new(Val::Undefined, Val::Undefined),
                 content: None,
             },
         ],
         vec![
             // left border. This patch height can grow
             Patch {
-                width: PatchSize::Absolute(10.),
-                height: PatchSize::Height { offset: -45. },
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::StretchRatio(1.),
+                original_size: Size::new(10, -45),
+                target_size: Size::new(Val::Undefined, Val::Percent(100.)),
                 content: None,
             },
             // center. This patch can grow both in height and width, and will contain `PanelContent::Body`
             Patch {
-                width: PatchSize::Width { offset: -20. },
-                height: PatchSize::Height { offset: -45. },
-                x_growth: GrowthMode::StretchRatio(1.),
-                y_growth: GrowthMode::StretchRatio(1.),
-                content: Some(Content::PanelBody),
+                original_size: Size::new(-20, -45),
+                target_size: Size::new(Val::Percent(100.), Val::Percent(100.)),
+                content: Some(Content::Content),
             },
             // right border. This patch height can grow
             Patch {
-                width: PatchSize::Absolute(10.),
-                height: PatchSize::Height { offset: -45. },
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::StretchRatio(1.),
+                original_size: Size::new(10, -45),
+                target_size: Size::new(Val::Undefined, Val::Percent(100.)),
                 content: None,
             },
         ],
         vec![
             // bottom left corner
             Patch {
-                width: PatchSize::Absolute(10.),
-                height: PatchSize::Absolute(10.),
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::None,
+                original_size: Size::new(10, 10),
+                target_size: Size::new(Val::Undefined, Val::Undefined),
                 content: None,
             },
             // bottom middle. This patch width can grow
             Patch {
-                width: PatchSize::Width { offset: -20. },
-                height: PatchSize::Absolute(10.),
-                x_growth: GrowthMode::StretchRatio(1.),
-                y_growth: GrowthMode::None,
+                original_size: Size::new(-20, 10),
+                target_size: Size::new(Val::Percent(100.), Val::Undefined),
                 content: None,
             },
             // bottom right corner
             Patch {
-                width: PatchSize::Absolute(10.),
-                height: PatchSize::Absolute(10.),
-                x_growth: GrowthMode::None,
-                y_growth: GrowthMode::None,
+                original_size: Size::new(10, 10),
+                target_size: Size::new(Val::Undefined, Val::Undefined),
                 content: None,
             },
         ],
@@ -143,7 +129,7 @@ fn setup(
                 ..Default::default()
             },
         )
-        .with(ResizableContent::Panel);
+        .with(UiElement::Panel);
 
     commands.spawn(UiCameraComponents::default());
 }
@@ -151,245 +137,252 @@ fn setup(
 fn set_content(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
-
-    entity: Entity,
-    mut nine_patch_content: Mut<NinePatchContent<Content>>,
+    mut patch_content: Query<(Entity, &mut NinePatchContent<Content>)>,
+    ui_element_query: Query<&UiElement>,
 ) {
-    if !nine_patch_content.loaded {
-        match nine_patch_content.content {
-            Content::PanelBody => {
-                let panel_texture_handle = asset_server
-                    .load_sync(&mut textures, "assets/glassPanel_corners.png")
-                    .unwrap();
+    for (entity, mut nine_patch_content) in &mut patch_content.iter() {
+        if !nine_patch_content.loaded {
+            match (
+                *ui_element_query
+                    .get::<UiElement>(nine_patch_content.parent)
+                    .unwrap(),
+                &nine_patch_content.content,
+            ) {
+                (UiElement::Panel, Content::Content) => {
+                    let panel_texture_handle: Handle<Texture> =
+                        asset_server.load("assets/glassPanel_corners.png").unwrap();
 
-                // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
-                let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
-                    20.,
-                    20.,
-                    20.,
-                    20.,
-                    Content::InnerPanel,
-                ));
+                    // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
+                    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
+                        20,
+                        20,
+                        20,
+                        20,
+                        Content::Content,
+                    ));
 
-                commands
-                    .spawn(
-                        // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
-                        // of this entity
-                        NinePatchComponents {
-                            style: Style {
-                                margin: Rect::all(Val::Auto),
-                                justify_content: JustifyContent::Center,
-                                align_items: AlignItems::Center,
-                                size: Size::new(Val::Px(850.), Val::Px(550.)),
+                    commands
+                        .spawn(
+                            // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
+                            // of this entity
+                            NinePatchComponents {
+                                style: Style {
+                                    margin: Rect::all(Val::Auto),
+                                    justify_content: JustifyContent::Center,
+                                    align_items: AlignItems::Center,
+                                    size: Size::new(Val::Px(850.), Val::Px(550.)),
+                                    ..Default::default()
+                                },
+                                nine_patch_data: NinePatchData {
+                                    nine_patch: nine_patch_handle,
+                                    texture: panel_texture_handle,
+                                    ..Default::default()
+                                },
                                 ..Default::default()
                             },
-                            nine_patch_data: NinePatchData {
-                                nine_patch: nine_patch_handle,
-                                texture: panel_texture_handle,
-                                ..Default::default()
-                            },
-                            ..Default::default()
-                        },
-                    )
-                    .with(ResizableContent::InnerPanel);
-                let content_entity = commands.current_entity().unwrap();
-                commands.push_children(entity, &[content_entity]);
-                nine_patch_content.loaded = true;
-            }
-            Content::PanelTitle => {
-                // load font
-                let font = asset_server
-                    .load("assets/Kenney Future Narrow.ttf")
-                    .expect("was able to load font");
+                        )
+                        .with(UiElement::InnerPanel);
+                    let content_entity = commands.current_entity().unwrap();
+                    commands.push_children(entity, &[content_entity]);
+                    nine_patch_content.loaded = true;
+                }
+                (UiElement::Panel, Content::Title) => {
+                    // load font
+                    let font = asset_server
+                        .load("assets/Kenney Future Narrow.ttf")
+                        .expect("was able to load font");
 
-                commands.spawn(TextComponents {
-                    style: Style {
-                        margin: Rect {
-                            left: Val::Undefined,
-                            right: Val::Auto,
-                            top: Val::Auto,
-                            bottom: Val::Px(8.),
-                        },
-                        ..Default::default()
-                    },
-                    text: Text {
-                        value: "Example Title".to_string(),
-                        font,
-                        style: TextStyle {
-                            font_size: 25.,
-                            color: Color::BLUE,
-                        },
-                    },
-                    ..Default::default()
-                });
-                let content_entity = commands.current_entity().unwrap();
-                commands.push_children(entity, &[content_entity]);
-                nine_patch_content.loaded = true;
-            }
-            Content::InnerPanel => {
-                // prepare the button
-                let button_texture_handle = asset_server
-                    .load_sync(&mut textures, "assets/blue_button02.png")
-                    .unwrap();
-                let button_ok_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
-                    5.,
-                    10.,
-                    6.,
-                    6.,
-                    Content::ButtonOK,
-                ));
-                let button_cancel_nine_patch_handle = nine_patches.add(
-                    NinePatchBuilder::by_margins(5., 10., 6., 6., Content::ButtonCancel),
-                );
-
-                commands.spawn(
-                    // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
-                    // of this entity
-                    NinePatchComponents {
+                    commands.spawn(TextComponents {
                         style: Style {
                             margin: Rect {
-                                left: Val::Px(0.),
+                                left: Val::Undefined,
                                 right: Val::Auto,
                                 top: Val::Auto,
-                                bottom: Val::Px(0.),
+                                bottom: Val::Px(8.),
                             },
-                            size: Size::new(Val::Px(300.), Val::Px(80.)),
-
-                            justify_content: JustifyContent::Center,
-                            align_items: AlignItems::Center,
                             ..Default::default()
                         },
-                        nine_patch_data: NinePatchData {
-                            nine_patch: button_cancel_nine_patch_handle,
-                            texture: button_texture_handle,
-                            ..Default::default()
+                        text: Text {
+                            value: "Example Title".to_string(),
+                            font,
+                            style: TextStyle {
+                                font_size: 25.,
+                                color: Color::BLUE,
+                            },
                         },
                         ..Default::default()
-                    },
-                );
-                let button_cancel_entity = commands.current_entity().unwrap();
+                    });
+                    let content_entity = commands.current_entity().unwrap();
+                    commands.push_children(entity, &[content_entity]);
+                    nine_patch_content.loaded = true;
+                }
+                (UiElement::InnerPanel, _) => {
+                    // prepare the button
+                    let button_texture_handle =
+                        asset_server.load("assets/blue_button02.png").unwrap();
+                    let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
+                        5,
+                        10,
+                        6,
+                        6,
+                        Content::Content,
+                    ));
 
-                commands.spawn(
-                    // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
-                    // of this entity
-                    NinePatchComponents {
+                    commands
+                        .spawn(
+                            // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
+                            // of this entity
+                            NinePatchComponents {
+                                style: Style {
+                                    margin: Rect {
+                                        left: Val::Px(0.),
+                                        right: Val::Auto,
+                                        top: Val::Auto,
+                                        bottom: Val::Px(0.),
+                                    },
+                                    size: Size::new(Val::Px(300.), Val::Px(80.)),
+
+                                    justify_content: JustifyContent::Center,
+                                    align_items: AlignItems::Center,
+                                    ..Default::default()
+                                },
+                                nine_patch_data: NinePatchData {
+                                    nine_patch: button_nine_patch_handle,
+                                    texture: button_texture_handle,
+                                    ..Default::default()
+                                },
+                                ..Default::default()
+                            },
+                        )
+                        .with(UiElement::ButtonCancel);
+                    let button_cancel_entity = commands.current_entity().unwrap();
+
+                    commands
+                        .spawn(
+                            // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
+                            // of this entity
+                            NinePatchComponents {
+                                style: Style {
+                                    margin: Rect {
+                                        left: Val::Auto,
+                                        right: Val::Px(0.),
+                                        top: Val::Auto,
+                                        bottom: Val::Px(0.),
+                                    },
+                                    justify_content: JustifyContent::Center,
+                                    align_items: AlignItems::Center,
+                                    size: Size::new(Val::Px(300.), Val::Px(80.)),
+                                    ..Default::default()
+                                },
+                                nine_patch_data: NinePatchData {
+                                    nine_patch: button_nine_patch_handle,
+                                    texture: button_texture_handle,
+                                    ..Default::default()
+                                },
+                                ..Default::default()
+                            },
+                        )
+                        .with(UiElement::ButtonOK);
+
+                    let button_ok_entity = commands.current_entity().unwrap();
+
+                    commands.push_children(entity, &[button_cancel_entity, button_ok_entity]);
+                    nine_patch_content.loaded = true;
+                }
+                (UiElement::ButtonOK, _) => {
+                    // load font
+                    let font = asset_server
+                        .load("assets/Kenney Future Narrow.ttf")
+                        .expect("was able to load font");
+
+                    commands.spawn(TextComponents {
                         style: Style {
                             margin: Rect {
-                                left: Val::Auto,
-                                right: Val::Px(0.),
+                                left: Val::Px(110.),
+                                right: Val::Auto,
                                 top: Val::Auto,
-                                bottom: Val::Px(0.),
+                                bottom: Val::Px(10.),
                             },
-                            justify_content: JustifyContent::Center,
-                            align_items: AlignItems::Center,
-                            size: Size::new(Val::Px(300.), Val::Px(80.)),
                             ..Default::default()
                         },
-                        nine_patch_data: NinePatchData {
-                            nine_patch: button_ok_nine_patch_handle,
-                            texture: button_texture_handle,
+                        text: Text {
+                            value: "OK".to_string(),
+                            font,
+                            style: TextStyle {
+                                font_size: 50.,
+                                color: Color::GREEN,
+                            },
+                        },
+                        ..Default::default()
+                    });
+                    let content_entity = commands.current_entity().unwrap();
+                    commands.push_children(entity, &[content_entity]);
+                    nine_patch_content.loaded = true;
+                }
+                (UiElement::ButtonCancel, _) => {
+                    // load font
+                    let font = asset_server
+                        .load("assets/Kenney Future Narrow.ttf")
+                        .expect("was able to load font");
+
+                    commands.spawn(TextComponents {
+                        style: Style {
+                            margin: Rect {
+                                left: Val::Px(50.),
+                                right: Val::Auto,
+                                top: Val::Auto,
+                                bottom: Val::Px(10.),
+                            },
                             ..Default::default()
                         },
-                        ..Default::default()
-                    },
-                );
-                let button_ok_entity = commands.current_entity().unwrap();
-
-                commands.push_children(entity, &[button_cancel_entity, button_ok_entity]);
-                nine_patch_content.loaded = true;
-            }
-            Content::ButtonOK => {
-                // load font
-                let font = asset_server
-                    .load("assets/Kenney Future Narrow.ttf")
-                    .expect("was able to load font");
-
-                commands.spawn(TextComponents {
-                    style: Style {
-                        margin: Rect {
-                            left: Val::Px(110.),
-                            right: Val::Auto,
-                            top: Val::Auto,
-                            bottom: Val::Px(10.),
+                        text: Text {
+                            value: "CANCEL".to_string(),
+                            font,
+                            style: TextStyle {
+                                font_size: 50.,
+                                color: Color::RED,
+                            },
                         },
                         ..Default::default()
-                    },
-                    text: Text {
-                        value: "OK".to_string(),
-                        font,
-                        style: TextStyle {
-                            font_size: 50.,
-                            color: Color::GREEN,
-                        },
-                    },
-                    ..Default::default()
-                });
-                let content_entity = commands.current_entity().unwrap();
-                commands.push_children(entity, &[content_entity]);
-                nine_patch_content.loaded = true;
-            }
-            Content::ButtonCancel => {
-                // load font
-                let font = asset_server
-                    .load("assets/Kenney Future Narrow.ttf")
-                    .expect("was able to load font");
-
-                commands.spawn(TextComponents {
-                    style: Style {
-                        margin: Rect {
-                            left: Val::Px(50.),
-                            right: Val::Auto,
-                            top: Val::Auto,
-                            bottom: Val::Px(10.),
-                        },
-                        ..Default::default()
-                    },
-                    text: Text {
-                        value: "CANCEL".to_string(),
-                        font,
-                        style: TextStyle {
-                            font_size: 50.,
-                            color: Color::RED,
-                        },
-                    },
-                    ..Default::default()
-                });
-                let content_entity = commands.current_entity().unwrap();
-                commands.push_children(entity, &[content_entity]);
-                nine_patch_content.loaded = true;
+                    });
+                    let content_entity = commands.current_entity().unwrap();
+                    commands.push_children(entity, &[content_entity]);
+                    nine_patch_content.loaded = true;
+                }
             }
         }
     }
 }
 
-enum ResizableContent {
-    Panel,
-    InnerPanel,
-}
-
 #[derive(Clone)]
 enum Content {
-    PanelTitle,
-    PanelBody,
+    Title,
+    Content,
+}
+
+#[derive(Clone, Copy)]
+enum UiElement {
+    Panel,
     InnerPanel,
     ButtonOK,
     ButtonCancel,
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut style: Mut<Style>, panel: &ResizableContent) {
+fn update_size(time: Res<Time>, mut style: Mut<Style>, panel: &UiElement) {
     let (x, y) = time.seconds_since_startup.sin_cos();
 
     match panel {
-        ResizableContent::Panel => {
+        UiElement::Panel => {
             style.size.width = Val::Px((900. + 50. * x as f32).ceil());
             style.size.height = Val::Px((600. + 50. * y as f32).ceil());
         }
-        ResizableContent::InnerPanel => {
+        UiElement::InnerPanel => {
             style.size.width = Val::Px((850. + 50. * x as f32).ceil());
             style.size.height = Val::Px((550. + 50. * y as f32).ceil());
         }
+        UiElement::ButtonOK => style.size.width = Val::Px((300. + 50. * x as f32).ceil()),
+        UiElement::ButtonCancel => style.size.height = Val::Px((90. + 10. * y as f32).ceil()),
     }
 }

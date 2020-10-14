@@ -24,7 +24,7 @@ fn setup(
         .unwrap();
 
     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
-    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20., 20., 20., 20., ()));
+    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20, ()));
 
     commands.spawn(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child

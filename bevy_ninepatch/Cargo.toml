@@ -14,7 +14,6 @@ exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies]
 bevy = "0.2"
-rand = "0.7"
 
 [features]
 default = []

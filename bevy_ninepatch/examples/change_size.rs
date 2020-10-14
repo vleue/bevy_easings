@@ -26,7 +26,7 @@ fn setup(
         .unwrap();
 
     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
-    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20., 20., 20., 20., ()));
+    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20, ()));
 
     commands.spawn(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
@@ -52,7 +52,7 @@ fn setup(
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut style: Mut<Style>) {
+fn update_size(time: Res<Time>, mut style: Mut<Style>, _np_component: &NinePatchData<()>) {
     let (x, y) = time.seconds_since_startup.sin_cos();
 
     style.size.width = Val::Px((250. + 200. * x as f32).ceil());

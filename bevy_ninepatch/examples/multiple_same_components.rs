@@ -1,3 +1,4 @@
+use bevy::diagnostic::*;
 use bevy::prelude::*;
 
 use bevy_ninepatch::*;
@@ -26,8 +27,7 @@ fn setup(
     let button_texture_handle = asset_server
         .load_sync(&mut textures, "assets/blue_button02.png")
         .unwrap();
-    let button_nine_patch_handle =
-        nine_patches.add(NinePatchBuilder::by_margins(5., 10., 6., 6., ()));
+    let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6, ()));
 
     commands
         .spawn(

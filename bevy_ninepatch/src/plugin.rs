@@ -3,15 +3,12 @@ use bevy::{
     app::Plugin,
     asset::Assets,
     asset::Handle,
-    ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Mutated, Query, ResMut},
-    math::Size,
-    render::color::Color,
-    render::draw::Draw,
+    ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Query, ResMut},
     render::texture::Texture,
     sprite::ColorMaterial,
-    transform::components::{Children, GlobalTransform, Transform},
+    transform::components::{GlobalTransform, Transform},
     transform::hierarchy::BuildChildren,
-    ui::{entity::NodeComponents, FocusPolicy, Node, Style, Val},
+    ui::{Node, Style},
 };
 
 use crate::ninepatch::*;
@@ -223,10 +220,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
 impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Assets<NinePatchBuilder<T>>>()
-            // .add_stage_after(bevy::ui::stage::UI, "NINEPATCH_CHECK_UPDATED_SIZE")
-            .add_system(create_ninepatches::<T>.system())
-            .add_system(update_sizes::<T>.system());
-        // .add_system_to_stage("NINEPATCH_CHECK_UPDATED_SIZE", update_sizes::<T>.system());
+            .add_system(create_ninepatches::<T>.system());
     }
 }
 
@@ -236,88 +230,22 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
     mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut patches_query: Query<(Entity, &mut NinePatchData<T>, &Node)>,
+    mut patches_query: Query<(Entity, &mut NinePatchData<T>, &Style)>,
 ) {
-    for (entity, mut data, node) in &mut patches_query.iter() {
+    for (entity, mut data, style) in &mut patches_query.iter() {
         if !data.loaded {
             if let Some(nine_patch) = nine_patches.get_mut(&data.nine_patch) {
                 if textures.get(&data.texture).is_none() {
                     // texture is not available yet, will try next loop
                     continue;
                 }
-                commands
-                    .spawn(NodeComponents {
-                        draw: Draw {
-                            is_transparent: true,
-                            ..Default::default()
-                        },
-                        material: materials.add(Color::NONE.into()),
-                        ..Default::default()
-                    })
-                    .with(FocusPolicy::Pass);
+                let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
+                np.add_with_parent(&mut commands, entity, style);
                 let parent = commands
                     .current_entity()
                     .expect("should have a current entity as one was created just before");
-                let mut id = 0;
-                commands.with_children(|p| {
-                    let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
-                    #[cfg(not(feature = "manual"))]
-                    {
-                        id = np.add_with_parent(p, node.size.x(), node.size.y(), entity, |_, _| {});
-                    }
-                    #[cfg(feature = "manual")]
-                    {
-                        id = np.add_with_parent(
-                            p,
-                            node.size.x(),
-                            node.size.y(),
-                            Some(entity),
-                            |_, _| {},
-                        );
-                    }
-                });
                 commands.push_children(entity, &[parent]);
-                commands.with(NinePatchId(id));
                 data.loaded = true;
-            }
-        }
-    }
-}
-
-#[allow(clippy::type_complexity)]
-fn update_sizes<T: Clone + Send + Sync + 'static>(
-    // mut patches_query: Query<(&NinePatchData<T>, Mutated<Node>, &Children)>,
-    mut patches_query: Query<(&NinePatchData<T>, &Node, &Children)>,
-    id_query: Query<&NinePatchId>,
-    mut growth_info: Query<(&NinePatchId, &BuildedNinePatchGrowth, &mut Style)>,
-) {
-    for (data, node, children) in &mut patches_query.iter() {
-        if data.loaded {
-            let id = children
-                .iter()
-                .filter_map(|entity| id_query.get::<NinePatchId>(*entity).ok())
-                .next()
-                .expect("should have a child with component `NinePatchId`");
-            for (children_id, growth, mut style) in &mut growth_info.iter() {
-                if id.0 == children_id.0 {
-                    *style = Style {
-                        size: Size::new(
-                            match growth.x {
-                                None => style.size.width,
-                                Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
-                                    Val::Px((node.size.x() - fixed) * ratio)
-                                }
-                            },
-                            match growth.y {
-                                None => style.size.height,
-                                Some(BuildedNinePatchGrowthAxis { fixed, ratio }) => {
-                                    Val::Px((node.size.y() - fixed) * ratio)
-                                }
-                            },
-                        ),
-                        ..*style
-                    };
-                }
             }
         }
     }
