@@ -271,7 +271,7 @@ impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
                     Val::Undefined => (Val::Px(to_height(p.original_size, self.texture_size)), 0.),
                     Val::Px(i) => (Val::Px(i), 0.),
                     Val::Auto => (Val::Auto, 1.),
-                    Val::Percent(x) => (Val::Auto, x),
+                    Val::Percent(x) => (Val::Auto, x / 100.),
                 })
                 .unwrap_or((Val::Undefined, 0.));
 
@@ -304,12 +304,13 @@ impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
                         ),
                         Val::Px(i) => (Val::Px(i), 0.),
                         Val::Auto => (Val::Auto, 1.),
-                        Val::Percent(x) => (Val::Auto, x),
+                        Val::Percent(x) => (Val::Auto, x / 100.),
                     };
                     let size_height = match column_item.target_size.height {
                         Val::Undefined => {
                             Val::Px(to_height(column_item.original_size, self.texture_size))
                         }
+                        Val::Percent(_) => Val::Auto,
                         other => other,
                     };
                     row_parent
