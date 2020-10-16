@@ -158,7 +158,7 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
             let t = textures
                 .get(&texture_handle)
                 .expect("could not get texture from handle");
-            (t.size, t.data.clone())
+            (t.size, &t.data)
         };
         if self.patch_textures.is_none() || self.original_texture != Some(texture_handle) {
             let mut patch_textures = vec![];
@@ -174,13 +174,11 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
 
                     let mut patch_texture_data = vec![];
                     for j in start_y as usize..end_y as usize {
-                        for i in start_x as usize..end_x as usize {
-                            let base = (i + j * texture_size.x() as usize) * 4;
-                            patch_texture_data.push(texture_data[base]);
-                            patch_texture_data.push(texture_data[base + 1]);
                             patch_texture_data.push(texture_data[base + 2]);
                             patch_texture_data.push(texture_data[base + 3]);
                         }
+                        let end_line = (end_x as usize + j * texture_size.x() as usize) * 4;
+                        patch_texture_data.extend_from_slice(&texture_data[start_line..end_line]);
                     }
 
                     let patch_texture = Texture {
@@ -191,13 +189,16 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
                         data: patch_texture_data,
                         format: TextureFormat::Rgba8UnormSrgb,
                     };
-                    let patch_texture_handle = textures.add(patch_texture);
-                    let material = materials.add(patch_texture_handle.into());
-                    patch_textures.push(material);
+                    textures_to_add.push(patch_texture);
                     accu_x += to_width(column_item.original_size, texture_size);
                 }
                 accu_y += to_height(row[0].original_size, texture_size);
             }
+            textures_to_add.into_iter().for_each(|patch_texture| {
+                let patch_texture_handle = textures.add(patch_texture);
+                let material = materials.add(patch_texture_handle.into());
+                patch_textures.push(material);
+            });
             self.patch_textures = Some(patch_textures);
             self.original_texture = Some(texture_handle);
         }
