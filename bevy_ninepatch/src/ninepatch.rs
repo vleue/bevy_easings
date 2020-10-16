@@ -160,6 +160,7 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
                 .expect("could not get texture from handle");
             (t.size, &t.data)
         };
+        let mut textures_to_add = vec![];
         if self.patch_textures.is_none() || self.original_texture != Some(texture_handle) {
             let mut patch_textures = vec![];
             let mut accu_y = 0.;
@@ -174,9 +175,7 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
 
                     let mut patch_texture_data = vec![];
                     for j in start_y as usize..end_y as usize {
-                            patch_texture_data.push(texture_data[base + 2]);
-                            patch_texture_data.push(texture_data[base + 3]);
-                        }
+                        let start_line = (start_x as usize + j * texture_size.x() as usize) * 4;
                         let end_line = (end_x as usize + j * texture_size.x() as usize) * 4;
                         patch_texture_data.extend_from_slice(&texture_data[start_line..end_line]);
                     }
