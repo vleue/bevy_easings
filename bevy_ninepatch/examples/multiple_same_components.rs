@@ -1,4 +1,3 @@
-use bevy::diagnostic::*;
 use bevy::prelude::*;
 
 use bevy_ninepatch::*;

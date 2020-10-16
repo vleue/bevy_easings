@@ -1,4 +1,3 @@
-use bevy::diagnostic::*;
 use bevy::prelude::*;
 
 use bevy_ninepatch::*;
@@ -355,7 +354,7 @@ fn set_content(
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, std::hash::Hash)]
 enum Content {
     Title,
     Content,

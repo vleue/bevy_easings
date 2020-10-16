@@ -14,7 +14,7 @@ use bevy::{
 use crate::ninepatch::*;
 
 /// State of the current `NinePatch`
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone)]
 pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
     /// Handle of the texture
     pub texture: Handle<Texture>,
@@ -22,6 +22,8 @@ pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
     pub nine_patch: Handle<NinePatchBuilder<T>>,
     /// Is the element already loaded and displayed
     pub loaded: bool,
+    /// Entity that should be used for the content
+    pub content: std::collections::HashMap<T, Entity>,
 }
 
 impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
@@ -30,6 +32,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
             texture: Default::default(),
             nine_patch: Default::default(),
             loaded: false,
+            content: Default::default(),
         }
     }
 }
@@ -217,7 +220,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<Assets<NinePatchBuilder<T>>>()
             .add_system(create_ninepatches::<T>.system());
@@ -225,7 +228,7 @@ impl<T: Clone + Send + Sync + 'static> Plugin for NinePatchPlugin<T> {
 }
 
 #[allow(clippy::type_complexity)]
-fn create_ninepatches<T: Clone + Send + Sync + 'static>(
+fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
     mut commands: Commands,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
@@ -240,7 +243,7 @@ fn create_ninepatches<T: Clone + Send + Sync + 'static>(
                     continue;
                 }
                 let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
-                np.add_with_parent(&mut commands, entity, style);
+                np.add_with_parent(&mut commands, entity, style, &data.content);
                 let parent = commands
                     .current_entity()
                     .expect("should have a current entity as one was created just before");

@@ -145,7 +145,7 @@ fn to_height(patch: Size<i32>, total: Vec2) -> f32 {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T> {
     /// Apply a `NinePatchBuilder` to a texture to get a `NinePatch` ready to be added to entities. This will split
     /// the given texture according to the patches.
     pub fn apply(
@@ -227,13 +227,13 @@ pub struct NinePatchContent<T: Send + Sync + 'static> {
 
 /// `NinePatch` ready to be added to entities.
 #[derive(Debug)]
-pub struct NinePatch<T: Clone + Send + Sync + 'static> {
+pub struct NinePatch<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     patches: Vec<Vec<Patch<T>>>,
     texture_size: Vec2,
     background: Handle<ColorMaterial>,
     splitted_texture: Vec<Handle<ColorMaterial>>,
 }
-impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
     /// Add the `NinePatch` to entities. This will create several entities as children.
     #[cfg(feature = "manual")]
     pub fn add<F>(&self, parent: &mut ChildBuilder, style: &Style, content_builder: F)
@@ -243,7 +243,13 @@ impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
         // self.add_with_parent(parent, None, style, content_builder);
     }
 
-    pub(crate) fn add_with_parent(&self, commands: &mut Commands, parent: Entity, style: &Style) {
+    pub(crate) fn add_with_parent(
+        &self,
+        commands: &mut Commands,
+        parent: Entity,
+        style: &Style,
+        contents: &std::collections::HashMap<T, Entity>,
+    ) {
         commands
             .insert(
                 parent,
@@ -336,6 +342,12 @@ impl<T: Clone + Send + Sync + 'static> NinePatch<T> {
                             loaded: false,
                             parent: parent,
                         });
+                        if let Some(content_entity) = contents.get(content_part) {
+                            let mut content_parent_entity = Entity::new(0);
+                            row_parent.for_current_entity(|entity| content_parent_entity = entity);
+                            row_parent
+                                .push_children(content_parent_entity, &[content_entity.clone()]);
+                        }
                     }
                     n += 1;
                 }

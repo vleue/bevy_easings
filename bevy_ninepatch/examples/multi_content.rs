@@ -133,7 +133,7 @@ fn set_content(
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq, std::hash::Hash)]
 enum Content {
     Panel,
     Button,
