@@ -17,16 +17,3 @@ bevy = "0.2"
 
 [features]
 default = []
-manual = []
-
-[[example]]
-name = "no_plugin_simple"
-required-features = ["manual"]
-
-[[example]]
-name = "no_plugin_full"
-required-features = ["manual"]
-
-[[example]]
-name = "no_plugin_content"
-required-features = ["manual"]

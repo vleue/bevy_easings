@@ -217,10 +217,6 @@ pub struct NinePatchContent<T: Send + Sync + 'static> {
     pub content: T,
     /// Has it been already loaded
     pub loaded: bool,
-    #[cfg(feature = "manual")]
-    /// Entity parent of the 9-Patch UI element
-    pub parent: Option<Entity>,
-    #[cfg(not(feature = "manual"))]
     /// Entity parent of the 9-Patch UI element
     pub parent: Entity,
 }
@@ -234,15 +230,6 @@ pub struct NinePatch<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     splitted_texture: Vec<Handle<ColorMaterial>>,
 }
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
-    /// Add the `NinePatch` to entities. This will create several entities as children.
-    #[cfg(feature = "manual")]
-    pub fn add<F>(&self, parent: &mut ChildBuilder, style: &Style, content_builder: F)
-    where
-        F: FnMut(&mut ChildBuilder, &T) + Copy,
-    {
-        // self.add_with_parent(parent, None, style, content_builder);
-    }
-
     pub(crate) fn add_with_parent(
         &self,
         commands: &mut Commands,
