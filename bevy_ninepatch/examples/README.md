@@ -24,17 +24,15 @@ Changing the size of a 9-Patch UI element by modifying the `Style.size` componen
 
 ![changing size of component](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/change_size.gif)
 
-### [content.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/content.rs)
+### [multi_content_with_content_map.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/multi_content_with_content_map.rs)
 
-Adding content inside a 9-Patch UI element by modifying the `NinePatchContent` component. This approach only works if there is only one 9-Patch UI element.
-
-![setting content](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/content.png)
-
-### [multi_content.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/multi_content.rs)
-
-Adding content inside a 9-Patch UI element by modifying the `NinePatchContent` component, and adding an `enum` to specify which content is being set.
+To set the content of a 9-Patch UI element, you can specify an `Entity` when setting the `NinePatchData` component. This `Entity` will be set as a children of the 9-Patch UI element.
 
 ![setting several contents](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/multi_content.png)
+
+### [multi_content_with_system.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/multi_content_with_content_map.rs)
+
+When more flexibility is needed to set the content, it can be done by creating a system with a query on the `NinePatchContent` component.
 
 ### [full.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/full.rs)
 
@@ -44,24 +42,3 @@ Complete example with:
 * Some 9-Patch UI elements change size during time
 
 ![full example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/full.gif)
-
-## Without plugin
-
-### [no_plugin_simple.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs)
-
-Adding two 9-Patch UI elements next to each other.
-
-![simple example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/no_plugin_simple.png)
-
-### [no_plugin_content.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_content.rs)
-
-Adding two 9-Patch UI elements, one inside the other.
-
-![content example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/no_plugin_content.png)
-
-### [no_plugin_full.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_full.rs)
-
-Adding a 11-patch UI element with 2 zones, and content inside those zones
-
-![full example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/no_plugin_full.png)
-

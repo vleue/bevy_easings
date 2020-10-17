@@ -15,12 +15,16 @@ After adding the `NinePatchPlugin` plugin, spawning an `Entity` with the `NinePa
 A simple builder based on Godot's [NinePatchRect](https://docs.godotengine.org/en/3.2/classes/class_ninepatchrect.html) is available.
 
 ```rust
+// Texture for the base image
 let panel_texture_handle = asset_server
     .load_sync(&mut textures, "assets/glassPanel_corners.png")
     .unwrap();
 
-let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20., 20., 20., 20., ()));
+// Create a basic 9-Patch UI element with margins of 20 pixels
+let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
 
+// This entity will be placed in the center of the 9-Patch UI element
+let content_entity = commands.spawn(...).current_entity().unwrap();
 
 commands.spawn(
     NinePatchComponents {
@@ -31,11 +35,11 @@ commands.spawn(
             size: Size::new(Val::Px(500.), Val::Px(300.)),
             ..Default::default()
         },
-        nine_patch_data: NinePatchData {
-            nine_patch: nine_patch_handle,
-            texture: panel_texture_handle,
-            ..Default::default()
-        },
+        nine_patch_data: NinePatchData::with_single_content(
+            panel_texture_handle,
+            nine_patch_handle,
+            content_entity,
+        ),
         ..Default::default()
     },
 );
@@ -60,10 +64,3 @@ See [multi_content.rs example](https://github.com/mockersf/bevy_extra/blob/maste
 It is possible to set any number of patches for an image, the only constraints is that all patches in a line must have the same height. Using this methods, different parts of the image can grow at different rates, and several content zones can be created.
 
 See [full.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/full.rs) for a complete example.
-
-## Usage without a plugin
-
-9-Patch UI elements can be added without using a plugin if needed. Without the plugin, 9-Path UI elements can still be created, but changing size won't work.
-
-See [no_plugin_simple.rs example](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/no_plugin_simple.rs) for a simple example, or [the other examples without plugin](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch/examples#without-plugin).
-

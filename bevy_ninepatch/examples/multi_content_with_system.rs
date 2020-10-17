@@ -26,8 +26,13 @@ fn setup(
     let panel_texture_handle = asset_server
         .load_sync(&mut textures, "assets/glassPanel_corners.png")
         .unwrap();
-    let panel_nine_patch_handle =
-        nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20, Content::Panel));
+    let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins_with_content(
+        20,
+        20,
+        20,
+        20,
+        Content::Panel,
+    ));
 
     commands.spawn(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
@@ -57,7 +62,6 @@ fn set_content(
     asset_server: Res<AssetServer>,
     mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
-
     entity: Entity,
     mut nine_patch_content: Mut<NinePatchContent<Content>>,
 ) {
@@ -68,8 +72,9 @@ fn set_content(
                 let button_texture_handle = asset_server
                     .load_sync(&mut textures, "assets/blue_button02.png")
                     .unwrap();
-                let button_nine_patch_handle =
-                    nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6, Content::Button));
+                let button_nine_patch_handle = nine_patches.add(
+                    NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Button),
+                );
 
                 commands.spawn(
                     // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child

@@ -36,6 +36,24 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
     }
 }
 
+impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatchData<T> {
+    /// Create a NinePathData with content when there is only one content
+    pub fn with_single_content(
+        texture: Handle<Texture>,
+        nine_patch: Handle<NinePatchBuilder<T>>,
+        content: Entity,
+    ) -> NinePatchData<T> {
+        let mut content_map = std::collections::HashMap::new();
+        content_map.insert(T::default(), content);
+        NinePatchData {
+            texture,
+            nine_patch,
+            loaded: false,
+            content: content_map,
+        }
+    }
+}
+
 /// Component Bundle to place the NinePatch
 pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     /// Style of this UI node
@@ -207,8 +225,16 @@ impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> 
 
 /// Plugin that will add the system and the resource for nine patch
 #[derive(Debug, Clone, Copy)]
-pub struct NinePatchPlugin<T: Clone + Send + Sync + 'static> {
+pub struct NinePatchPlugin<T: Clone + Send + Sync + 'static = ()> {
     marker: std::marker::PhantomData<T>,
+}
+
+trait NinePatchPlugina {
+    type Zut;
+}
+
+impl<T: Clone + Send + Sync + 'static> NinePatchPlugina for NinePatchPlugin<T> {
+    type Zut = NinePatchPlugin<()>;
 }
 
 impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {

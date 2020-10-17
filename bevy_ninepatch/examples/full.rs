@@ -153,13 +153,9 @@ fn set_content(
                         asset_server.load("assets/glassPanel_corners.png").unwrap();
 
                     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
-                    let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
-                        20,
-                        20,
-                        20,
-                        20,
-                        Content::Content,
-                    ));
+                    let nine_patch_handle = nine_patches.add(
+                        NinePatchBuilder::by_margins_with_content(20, 20, 20, 20, Content::Content),
+                    );
 
                     commands
                         .spawn(
@@ -220,13 +216,9 @@ fn set_content(
                     // prepare the button
                     let button_texture_handle =
                         asset_server.load("assets/blue_button02.png").unwrap();
-                    let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(
-                        5,
-                        10,
-                        6,
-                        6,
-                        Content::Content,
-                    ));
+                    let button_nine_patch_handle = nine_patches.add(
+                        NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Content),
+                    );
 
                     commands
                         .spawn(

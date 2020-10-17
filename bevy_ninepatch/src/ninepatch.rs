@@ -47,9 +47,27 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + Default + 'static> NinePatchBuilder<T> {
     /// Create a simple nine patch split by creating fixed patch for the margins, and growing patches inside
     pub fn by_margins(
+        top_margin: u32,
+        bottom_margin: u32,
+        left_margin: u32,
+        right_margin: u32,
+    ) -> Self {
+        Self::by_margins_with_content(
+            top_margin,
+            bottom_margin,
+            left_margin,
+            right_margin,
+            T::default(),
+        )
+    }
+}
+
+impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+    /// Create a simple nine patch split by creating fixed patch for the margins, and growing patches inside
+    pub fn by_margins_with_content(
         top_margin: u32,
         bottom_margin: u32,
         left_margin: u32,
