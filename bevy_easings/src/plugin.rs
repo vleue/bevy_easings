@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use interpolation::Ease as IEase;
+use crate::MyEaser;
 
 #[cfg(feature = "ease_handle")]
 use crate::IntermediateLerp;
@@ -65,7 +65,7 @@ pub fn ease_system<T: Ease + Component>(
             } else {
                 1. - easing.timer.elapsed / easing.timer.duration
             };
-            let factor = progress.calc(easing.ease_function);
+            let factor = progress.compute(easing.ease_function);
             if let Some(ref start) = easing.start {
                 *object = interpolation::lerp(start, &easing.end, &factor).0;
             } else {
@@ -144,7 +144,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
             } else {
                 1. - easing.timer.elapsed / easing.timer.duration
             };
-            let factor = progress.calc(easing.ease_function);
+            let factor = progress.compute(easing.ease_function);
             if let Some(ref start) = easing.start {
                 *object = interpolation::lerp(&start.0, &easing.end.0, &factor);
             } else {
@@ -227,7 +227,7 @@ fn handle_ease_system<T: Ease + Component>(
             } else {
                 1. - easing.timer.elapsed / easing.timer.duration
             };
-            let factor = progress.calc(easing.ease_function);
+            let factor = progress.compute(easing.ease_function);
             let factor_simplified = (factor * 25.) as i16;
             let handle = *handle_cache
                 .0

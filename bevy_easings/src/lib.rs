@@ -19,6 +19,7 @@ use rand::Rng;
 
 use bevy::prelude::*;
 
+use interpolation::Ease as IEase;
 pub use interpolation::EaseFunction;
 pub use interpolation::Lerp;
 
@@ -74,11 +75,56 @@ impl std::ops::Not for EasingState {
     }
 }
 
+/// Describe how eased value should be computed
+#[derive(Clone, Copy)]
+pub enum EaseMethod {
+    /// Follow `EaseFunction`
+    EaseFunction(EaseFunction),
+    /// Linear interpolation, with no function
+    Linear,
+    /// Discrete interpolation, eased value will jump from start to end
+    Discrete,
+}
+
+impl Into<EaseMethod> for EaseFunction {
+    fn into(self) -> EaseMethod {
+        EaseMethod::EaseFunction(self)
+    }
+}
+
+trait MyEaser {
+    fn compute(self, function: EaseMethod) -> Self;
+}
+impl MyEaser for f32 {
+    fn compute(self, function: EaseMethod) -> f32 {
+        match function {
+            EaseMethod::Linear => {
+                let delta = 0.01;
+                if self < 0. + delta {
+                    0.
+                } else if self > 1. - delta {
+                    1.
+                } else {
+                    self
+                }
+            }
+            EaseMethod::EaseFunction(function) => self.calc(function),
+            EaseMethod::Discrete => {
+                if self > 0.5 {
+                    1.
+                } else {
+                    0.
+                }
+            }
+        }
+    }
+}
+
 /// Component to control an easing
 pub struct EasingComponent<T> {
     start: Option<EaseValue<T>>,
     end: EaseValue<T>,
-    ease_function: EaseFunction,
+    ease_function: EaseMethod,
     timer: Timer,
     /// Control if this easing is played or not
     pub state: EasingState,
@@ -94,7 +140,7 @@ impl<T: Default> EasingComponent<T> {
     pub fn ease_to(
         self,
         end: T,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingChainComponent<T> {
         #[cfg(feature = "ease_handle")]
@@ -103,7 +149,7 @@ impl<T: Default> EasingComponent<T> {
         let next = EasingComponent {
             start: None,
             end: EaseValue(end),
-            ease_function,
+            ease_function: ease_function.into(),
             timer: match easing_type {
                 EasingType::Once { duration } => Timer::new(duration, false),
                 EasingType::Loop { duration, .. } => Timer::new(duration, false),
@@ -129,7 +175,7 @@ impl<T: Default> EasingChainComponent<T> {
     pub fn ease_to(
         mut self,
         end: T,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingChainComponent<T> {
         #[cfg(feature = "ease_handle")]
@@ -138,7 +184,7 @@ impl<T: Default> EasingChainComponent<T> {
         let next = EasingComponent {
             start: None,
             end: EaseValue(end),
-            ease_function,
+            ease_function: ease_function.into(),
             timer: match easing_type {
                 EasingType::Once { duration } => Timer::new(duration, false),
                 EasingType::Loop { duration, .. } => Timer::new(duration, false),
@@ -163,7 +209,7 @@ pub trait Ease: Sized {
     fn ease(
         start: Option<Self>,
         end: Self,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
         #[cfg(feature = "ease_handle")]
@@ -172,7 +218,7 @@ pub trait Ease: Sized {
         EasingComponent {
             start: start.map(EaseValue),
             end: EaseValue(end),
-            ease_function,
+            ease_function: ease_function.into(),
             timer: match easing_type {
                 EasingType::Once { duration } => Timer::new(duration, false),
                 EasingType::Loop { duration, .. } => Timer::new(duration, false),
@@ -191,7 +237,7 @@ pub trait Ease: Sized {
     fn ease_to(
         self,
         target: Self,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
         Self::ease(Some(self), target, ease_function, easing_type)
@@ -221,7 +267,7 @@ pub trait CustomComponentEase: Sized {
     fn ease(
         start: Option<Self>,
         end: Self,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
         #[cfg(feature = "ease_handle")]
@@ -230,7 +276,7 @@ pub trait CustomComponentEase: Sized {
         EasingComponent {
             start: start.map(EaseValue),
             end: EaseValue(end),
-            ease_function,
+            ease_function: ease_function.into(),
             timer: match easing_type {
                 EasingType::Once { duration } => Timer::new(duration, false),
                 EasingType::Loop { duration, .. } => Timer::new(duration, false),
@@ -249,7 +295,7 @@ pub trait CustomComponentEase: Sized {
     fn ease_to(
         self,
         target: Self,
-        ease_function: EaseFunction,
+        ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
         Self::ease(Some(self), target, ease_function, easing_type)
