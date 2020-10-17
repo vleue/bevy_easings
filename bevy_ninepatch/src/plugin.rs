@@ -7,7 +7,6 @@ use bevy::{
     render::texture::Texture,
     sprite::ColorMaterial,
     transform::components::{GlobalTransform, Transform},
-    transform::hierarchy::BuildChildren,
     ui::{Node, Style},
 };
 
@@ -244,10 +243,6 @@ fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
                 }
                 let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
                 np.add_with_parent(&mut commands, entity, style, &data.content);
-                let parent = commands
-                    .current_entity()
-                    .expect("should have a current entity as one was created just before");
-                commands.push_children(entity, &[parent]);
                 data.loaded = true;
             }
         }
