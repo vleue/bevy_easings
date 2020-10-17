@@ -16,9 +16,7 @@ A simple builder based on Godot's [NinePatchRect](https://docs.godotengine.org/e
 
 ```rust
 // Texture for the base image
-let panel_texture_handle = asset_server
-    .load_sync(&mut textures, "assets/glassPanel_corners.png")
-    .unwrap();
+let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").unwrap();
 
 // Create a basic 9-Patch UI element with margins of 20 pixels
 let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));

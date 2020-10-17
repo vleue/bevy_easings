@@ -17,15 +17,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
     commands.spawn(UiCameraComponents::default());
 
     // prepare the button
-    let button_texture_handle = asset_server
-        .load_sync(&mut textures, "assets/blue_button02.png")
-        .unwrap();
+    let button_texture_handle = asset_server.load("assets/blue_button02.png").unwrap();
     let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6));
 
     commands

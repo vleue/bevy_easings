@@ -19,13 +19,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
     // prepare the panel
-    let panel_texture_handle = asset_server
-        .load_sync(&mut textures, "assets/glassPanel_corners.png")
-        .unwrap();
+    let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").unwrap();
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins_with_content(
         20,
         20,
@@ -60,7 +57,6 @@ fn setup(
 fn set_content(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
-    mut textures: ResMut<Assets<Texture>>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
     entity: Entity,
     mut nine_patch_content: Mut<NinePatchContent<Content>>,
@@ -69,9 +65,7 @@ fn set_content(
         match nine_patch_content.content {
             Content::Panel => {
                 // prepare the button
-                let button_texture_handle = asset_server
-                    .load_sync(&mut textures, "assets/blue_button02.png")
-                    .unwrap();
+                let button_texture_handle = asset_server.load("assets/blue_button02.png").unwrap();
                 let button_nine_patch_handle = nine_patches.add(
                     NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Button),
                 );
