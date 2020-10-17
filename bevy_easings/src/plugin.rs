@@ -66,7 +66,11 @@ pub fn ease_system<T: Ease + Component>(
                 1. - easing.timer.elapsed / easing.timer.duration
             };
             let factor = progress.calc(easing.ease_function);
-            *object = interpolation::lerp(easing.start.as_ref().unwrap(), &easing.end, &factor).0;
+            if let Some(ref start) = easing.start {
+                *object = interpolation::lerp(start, &easing.end, &factor).0;
+            } else {
+                *object = interpolation::lerp(&EaseValue(T::default()), &easing.end, &factor).0;
+            }
             if easing.timer.finished {
                 match easing.easing_type {
                     EasingType::Once { .. } => {
@@ -92,7 +96,11 @@ pub fn ease_system<T: Ease + Component>(
             if next.start.is_none() {
                 next.start = Some(EaseValue(std::mem::take(&mut object)));
             }
-            *object = interpolation::lerp(next.start.as_ref().unwrap(), &next.end, &0.).0;
+            if let Some(ref start) = next.start {
+                *object = interpolation::lerp(start, &next.end, &0.).0;
+            } else {
+                *object = interpolation::lerp(&EaseValue(T::default()), &next.end, &0.).0;
+            }
 
             commands.insert_one(entity, next);
         } else {
@@ -137,8 +145,12 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 1. - easing.timer.elapsed / easing.timer.duration
             };
             let factor = progress.calc(easing.ease_function);
-            *object =
-                interpolation::lerp(&easing.start.as_ref().unwrap().0, &easing.end.0, &factor);
+            if let Some(ref start) = easing.start {
+                *object = interpolation::lerp(&start.0, &easing.end.0, &factor);
+            } else {
+                *object = interpolation::lerp(&T::default(), &easing.end.0, &factor);
+            }
+
             if easing.timer.finished {
                 match easing.easing_type {
                     EasingType::Once { .. } => {
@@ -164,7 +176,11 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
             if next.start.is_none() {
                 next.start = Some(EaseValue(std::mem::take(&mut object)));
             }
-            *object = interpolation::lerp(&next.start.as_ref().unwrap().0, &next.end.0, &0.);
+            if let Some(ref start) = next.start {
+                *object = interpolation::lerp(&start.0, &next.end.0, &0.);
+            } else {
+                *object = interpolation::lerp(&T::default(), &next.end.0, &0.);
+            }
 
             commands.insert_one(entity, next);
         } else {
