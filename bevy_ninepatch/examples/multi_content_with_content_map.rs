@@ -72,7 +72,7 @@ fn setup(
             nine_patch_data: NinePatchData {
                 texture: button_texture_handle,
                 nine_patch: button_nine_patch_handle,
-                content: button_content,
+                content: Some(button_content),
                 ..Default::default()
             },
             ..Default::default()

@@ -22,7 +22,7 @@ pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
     /// Is the element already loaded and displayed
     pub loaded: bool,
     /// Entity that should be used for the content
-    pub content: std::collections::HashMap<T, Entity>,
+    pub content: Option<std::collections::HashMap<T, Entity>>,
 }
 
 impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
@@ -43,13 +43,13 @@ impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatc
         nine_patch: Handle<NinePatchBuilder<T>>,
         content: Entity,
     ) -> NinePatchData<T> {
-        let mut content_map = std::collections::HashMap::new();
+        let mut content_map = std::collections::HashMap::with_capacity(1);
         content_map.insert(T::default(), content);
         NinePatchData {
             texture,
             nine_patch,
             loaded: false,
-            content: content_map,
+            content: Some(content_map),
         }
     }
 }

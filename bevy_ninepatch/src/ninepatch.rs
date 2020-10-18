@@ -253,7 +253,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
         commands: &mut Commands,
         parent: Entity,
         style: &Style,
-        contents: &std::collections::HashMap<T, Entity>,
+        contents: &Option<std::collections::HashMap<T, Entity>>,
     ) {
         commands
             .insert(
@@ -347,7 +347,9 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                             loaded: false,
                             parent: parent,
                         });
-                        if let Some(content_entity) = contents.get(content_part) {
+                        if let Some(content_entity) =
+                            contents.as_ref().and_then(|m| m.get(content_part))
+                        {
                             let mut content_parent_entity = Entity::new(0);
                             row_parent.for_current_entity(|entity| content_parent_entity = entity);
                             row_parent
