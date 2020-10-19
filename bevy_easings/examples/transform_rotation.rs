@@ -57,7 +57,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     ] {
         commands
             .spawn((
-                Transform::default().with_translate(Vec3::new(x, y, 0.)),
+                Transform::from_translation(Vec3::new(x, y, 0.)),
                 GlobalTransform::default(),
             ))
             .with_children(|parent| {
@@ -71,7 +71,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                         ..Default::default()
                     })
                     .with(Transform::default().ease_to(
-                        Transform::default().with_rotation(Quat::from_rotation_ypr(
+                        Transform::from_rotation(Quat::from_rotation_ypr(
                             0.,
                             0.,
                             std::f32::consts::PI / 2.,

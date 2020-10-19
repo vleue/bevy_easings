@@ -22,7 +22,7 @@ fn setup(
     commands.spawn(UiCameraComponents::default());
 
     // prepare the button
-    let button_texture_handle = asset_server.load("assets/blue_button02.png").unwrap();
+    let button_texture_handle = asset_server.load("blue_button02.png");
     let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6));
 
     commands
@@ -44,8 +44,8 @@ fn setup(
                     ..Default::default()
                 },
                 nine_patch_data: NinePatchData {
-                    nine_patch: button_nine_patch_handle,
-                    texture: button_texture_handle,
+                    nine_patch: button_nine_patch_handle.clone(),
+                    texture: button_texture_handle.clone(),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -92,9 +92,7 @@ fn set_content(
     patch_query: Query<&PatchElement>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<()>)>,
 ) {
-    let font = asset_server
-        .load("assets/Kenney Future Narrow.ttf")
-        .expect("was able to load font");
+    let font = asset_server.load("Kenney Future Narrow.ttf");
 
     for (entity, mut nine_patch_content) in &mut patch_content.iter() {
         if !nine_patch_content.loaded {
@@ -115,7 +113,7 @@ fn set_content(
                         },
                         text: Text {
                             value: "OK".to_string(),
-                            font,
+                            font: font.clone(),
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::GREEN,
@@ -140,7 +138,7 @@ fn set_content(
                         },
                         text: Text {
                             value: "CANCEL".to_string(),
-                            font,
+                            font: font.clone(),
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::RED,

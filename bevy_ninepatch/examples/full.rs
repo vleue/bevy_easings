@@ -21,16 +21,10 @@ fn setup(
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
     // load the assets
-    let cornered_panel_texture_handle = asset_server
-        .load("assets/metalPanel_yellowCorner.png")
-        .unwrap();
-    let _panel_texture_handle: Handle<Texture> =
-        asset_server.load("assets/glassPanel_corners.png").unwrap();
-    let _button_texture_handle: Handle<Texture> =
-        asset_server.load("assets/blue_button02.png").unwrap();
-    let _font: Handle<Font> = asset_server
-        .load("assets/Kenney Future Narrow.ttf")
-        .expect("was able to load font");
+    let cornered_panel_texture_handle = asset_server.load("metalPanel_yellowCorner.png");
+    let _panel_texture_handle: Handle<Texture> = asset_server.load("glassPanel_corners.png");
+    let _button_texture_handle: Handle<Texture> = asset_server.load("blue_button02.png");
+    let _font: Handle<Font> = asset_server.load("Kenney Future Narrow.ttf");
 
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::from_patches(vec![
         vec![
@@ -150,7 +144,7 @@ fn set_content(
             ) {
                 (UiElement::Panel, Content::Content) => {
                     let panel_texture_handle: Handle<Texture> =
-                        asset_server.load("assets/glassPanel_corners.png").unwrap();
+                        asset_server.load("glassPanel_corners.png");
 
                     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
                     let nine_patch_handle = nine_patches.add(
@@ -184,9 +178,7 @@ fn set_content(
                 }
                 (UiElement::Panel, Content::Title) => {
                     // load font
-                    let font = asset_server
-                        .load("assets/Kenney Future Narrow.ttf")
-                        .expect("was able to load font");
+                    let font = asset_server.load("Kenney Future Narrow.ttf");
 
                     commands.spawn(TextComponents {
                         style: Style {
@@ -214,8 +206,7 @@ fn set_content(
                 }
                 (UiElement::InnerPanel, _) => {
                     // prepare the button
-                    let button_texture_handle =
-                        asset_server.load("assets/blue_button02.png").unwrap();
+                    let button_texture_handle = asset_server.load("blue_button02.png");
                     let button_nine_patch_handle = nine_patches.add(
                         NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Content),
                     );
@@ -239,8 +230,8 @@ fn set_content(
                                     ..Default::default()
                                 },
                                 nine_patch_data: NinePatchData {
-                                    nine_patch: button_nine_patch_handle,
-                                    texture: button_texture_handle,
+                                    nine_patch: button_nine_patch_handle.clone(),
+                                    texture: button_texture_handle.clone(),
                                     ..Default::default()
                                 },
                                 ..Default::default()
@@ -283,9 +274,7 @@ fn set_content(
                 }
                 (UiElement::ButtonOK, _) => {
                     // load font
-                    let font = asset_server
-                        .load("assets/Kenney Future Narrow.ttf")
-                        .expect("was able to load font");
+                    let font = asset_server.load("Kenney Future Narrow.ttf");
 
                     commands.spawn(TextComponents {
                         style: Style {
@@ -313,9 +302,7 @@ fn set_content(
                 }
                 (UiElement::ButtonCancel, _) => {
                     // load font
-                    let font = asset_server
-                        .load("assets/Kenney Future Narrow.ttf")
-                        .expect("was able to load font");
+                    let font = asset_server.load("Kenney Future Narrow.ttf");
 
                     commands.spawn(TextComponents {
                         style: Style {

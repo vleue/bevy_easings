@@ -64,16 +64,14 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 ..Default::default()
             })
             .with(
-                Transform::default()
-                    .with_translate(Vec3::new(x, screen_y, 0.))
-                    .ease_to(
-                        Transform::default().with_translate(Vec3::new(x, -screen_y, 0.)),
-                        *ease_function,
-                        bevy_easings::EasingType::PingPong {
-                            duration: std::time::Duration::from_secs(1),
-                            pause: std::time::Duration::from_millis(500),
-                        },
-                    ),
+                Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+                    Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+                    *ease_function,
+                    bevy_easings::EasingType::PingPong {
+                        duration: std::time::Duration::from_secs(1),
+                        pause: std::time::Duration::from_millis(500),
+                    },
+                ),
             );
         x += size * spacing;
     }
@@ -88,16 +86,14 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             ..Default::default()
         })
         .with(
-            Transform::default()
-                .with_translate(Vec3::new(x, screen_y, 0.))
-                .ease_to(
-                    Transform::default().with_translate(Vec3::new(x, -screen_y, 0.)),
-                    EaseMethod::Linear,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_secs(1),
-                        pause: std::time::Duration::from_millis(500),
-                    },
-                ),
+            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+                EaseMethod::Linear,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: std::time::Duration::from_millis(500),
+                },
+            ),
         );
     x += size * spacing;
 
@@ -111,15 +107,13 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             ..Default::default()
         })
         .with(
-            Transform::default()
-                .with_translate(Vec3::new(x, screen_y, 0.))
-                .ease_to(
-                    Transform::default().with_translate(Vec3::new(x, -screen_y, 0.)),
-                    EaseMethod::Discrete,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_secs(1),
-                        pause: std::time::Duration::from_millis(500),
-                    },
-                ),
+            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+                EaseMethod::Discrete,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: std::time::Duration::from_millis(500),
+                },
+            ),
         );
 }

@@ -1,8 +1,8 @@
 use bevy::{
     app::AppBuilder,
     app::Plugin,
-    asset::Assets,
     asset::Handle,
+    asset::{AddAsset, Assets},
     ecs::{Bundle, Commands, DynamicBundle, Entity, IntoQuerySystem, Query, ResMut},
     render::texture::Texture,
     sprite::ColorMaterial,
@@ -14,7 +14,7 @@ use crate::ninepatch::*;
 
 /// State of the current `NinePatch`
 #[derive(Debug, Clone)]
-pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
+pub struct NinePatchData<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     /// Handle of the texture
     pub texture: Handle<Texture>,
     /// Handle to the `NinePatchBuilder`
@@ -25,7 +25,7 @@ pub struct NinePatchData<T: Clone + Send + Sync + 'static> {
     pub content: Option<std::collections::HashMap<T, Entity>>,
 }
 
-impl<T: Clone + Send + Sync + 'static> Default for NinePatchData<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Default for NinePatchData<T> {
     fn default() -> Self {
         NinePatchData {
             texture: Default::default(),
@@ -55,7 +55,7 @@ impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatc
 }
 
 /// Component Bundle to place the NinePatch
-pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
+pub struct NinePatchComponents<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     /// Style of this UI node
     pub style: Style,
     /// State of the `NinePatch`
@@ -68,7 +68,7 @@ pub struct NinePatchComponents<T: Clone + Send + Sync + 'static> {
     pub global_transform: GlobalTransform,
 }
 
-impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Default for NinePatchComponents<T> {
     fn default() -> Self {
         NinePatchComponents {
             style: Default::default(),
@@ -80,7 +80,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchComponents<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Bundle for NinePatchComponents<T> {
     fn with_static_ids<V>(f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         const N: usize = 5;
         let mut xs: [(usize, std::any::TypeId); N] = [
@@ -172,7 +172,9 @@ impl<T: Clone + Send + Sync + 'static> Bundle for NinePatchComponents<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> DynamicBundle for NinePatchComponents<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> DynamicBundle
+    for NinePatchComponents<T>
+{
     fn with_ids<V>(&self, _f: impl FnOnce(&[std::any::TypeId]) -> V) -> V {
         Self::with_static_ids(_f)
     }
@@ -244,10 +246,9 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
         }
     }
 }
-
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut AppBuilder) {
-        app.init_resource::<Assets<NinePatchBuilder<T>>>()
+        app.add_asset::<NinePatchBuilder<T>>()
             .add_system(create_ninepatches::<T>.system());
     }
 }
@@ -267,7 +268,7 @@ fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
                     // texture is not available yet, will try next loop
                     continue;
                 }
-                let np = nine_patch.apply(data.texture, &mut textures, &mut materials);
+                let np = nine_patch.apply(&data.texture, &mut textures, &mut materials);
                 np.add_with_parent(&mut commands, entity, style, &data.content);
                 data.loaded = true;
             }

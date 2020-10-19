@@ -191,7 +191,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
 
 #[cfg(feature = "ease_handle")]
 #[allow(clippy::too_many_arguments)]
-fn handle_ease_system<T: Ease + Component>(
+fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
     mut commands: Commands,
     time: Res<Time>,
     mut assets: ResMut<Assets<T>>,
@@ -229,7 +229,7 @@ fn handle_ease_system<T: Ease + Component>(
             };
             let factor = progress.compute(easing.ease_function);
             let factor_simplified = (factor * 25.) as i16;
-            let handle = *handle_cache
+            let handle = handle_cache
                 .0
                 .entry(easing.id + (easing.direction * factor_simplified) as i128)
                 .or_insert_with(|| {
@@ -239,7 +239,8 @@ fn handle_ease_system<T: Ease + Component>(
                         IntermediateLerp::lerp(&EaseValue(start), &EaseValue(end), &factor);
 
                     assets.add(intermediate)
-                });
+                })
+                .clone();
             *object = handle;
             if easing.timer.finished {
                 match easing.easing_type {
@@ -264,7 +265,7 @@ fn handle_ease_system<T: Ease + Component>(
         let next = easing_chain.0.pop();
         if let Some(mut next) = next {
             if next.start.is_none() {
-                next.start = Some(EaseValue(*object));
+                next.start = Some(EaseValue(object.clone()));
             }
             commands.insert_one(entity, next);
         } else {

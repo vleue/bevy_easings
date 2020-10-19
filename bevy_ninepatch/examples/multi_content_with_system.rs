@@ -22,7 +22,7 @@ fn setup(
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
     // prepare the panel
-    let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").unwrap();
+    let panel_texture_handle = asset_server.load("glassPanel_corners.png");
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins_with_content(
         20,
         20,
@@ -65,7 +65,7 @@ fn set_content(
         match nine_patch_content.content {
             Content::Panel => {
                 // prepare the button
-                let button_texture_handle = asset_server.load("assets/blue_button02.png").unwrap();
+                let button_texture_handle = asset_server.load("blue_button02.png");
                 let button_nine_patch_handle = nine_patches.add(
                     NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Button),
                 );
@@ -100,9 +100,7 @@ fn set_content(
             }
             Content::Button => {
                 // load font
-                let font = asset_server
-                    .load("assets/Kenney Future Narrow.ttf")
-                    .expect("was able to load font");
+                let font = asset_server.load("Kenney Future Narrow.ttf");
 
                 commands.spawn(TextComponents {
                     style: Style {

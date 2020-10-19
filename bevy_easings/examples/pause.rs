@@ -26,16 +26,14 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             ..Default::default()
         })
         .with(
-            Transform::default()
-                .with_translate(Vec3::new(-500., 0., 0.))
-                .ease_to(
-                    Transform::default().with_translate(Vec3::new(500., 0., 0.)),
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_millis(500),
-                        pause: std::time::Duration::from_millis(100),
-                    },
-                ),
+            Transform::from_translation(Vec3::new(-500., 0., 0.)).ease_to(
+                Transform::from_translation(Vec3::new(500., 0., 0.)),
+                bevy_easings::EaseFunction::QuadraticInOut,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_millis(500),
+                    pause: std::time::Duration::from_millis(100),
+                },
+            ),
         )
         .with(Timer::from_seconds(0.25, true));
 }

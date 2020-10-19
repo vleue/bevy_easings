@@ -31,12 +31,12 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
 fn add_easing(mut commands: Commands, timer: &Timer, entity: Entity) {
     if timer.just_finished {
         let transform0 = Transform::default();
-        let transform1 = Transform::default().with_translate(Vec3::new(500., 0., 0.));
-        let transform2 = Transform::default().with_translate(Vec3::new(500., 300., 0.));
-        let transform3 = Transform::default().with_translate(Vec3::new(-500., 300., 0.));
-        let transform4 = Transform::default().with_translate(Vec3::new(-500., -300., 0.));
-        let transform5 = Transform::default().with_translate(Vec3::new(500., -300., 0.));
-        let transform6 = Transform::default().with_translate(Vec3::new(500., 0., 0.));
+        let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
+        let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));
+        let transform3 = Transform::from_translation(Vec3::new(-500., 300., 0.));
+        let transform4 = Transform::from_translation(Vec3::new(-500., -300., 0.));
+        let transform5 = Transform::from_translation(Vec3::new(500., -300., 0.));
+        let transform6 = Transform::from_translation(Vec3::new(500., 0., 0.));
         let transform7 = Transform::default();
 
         let duration = std::time::Duration::from_millis(500);

@@ -58,7 +58,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
         commands
             .spawn(SpriteComponents {
                 material: materials.add(Color::RED.into()),
-                transform: Transform::default().with_translate(Vec3::new(x, y, 0.)),
+                transform: Transform::from_translation(Vec3::new(x, y, 0.)),
 
                 sprite: Sprite {
                     size: Vec2::new(size, size),

@@ -19,9 +19,7 @@ fn setup(
     mut nine_patches: ResMut<Assets<NinePatchBuilder>>,
 ) {
     // prepare the text
-    let font = asset_server
-        .load("assets/Kenney Future Narrow.ttf")
-        .expect("was able to load font");
+    let font = asset_server.load("Kenney Future Narrow.ttf");
 
     commands.spawn(TextComponents {
         style: Style {
@@ -46,7 +44,7 @@ fn setup(
     let text_entity = commands.current_entity().unwrap();
 
     // prepare the button
-    let button_texture_handle = asset_server.load("assets/blue_button02.png").unwrap();
+    let button_texture_handle = asset_server.load("blue_button02.png");
     let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6));
 
     // create a `HashMap` that will list all entities used as content of the 9-Patch UI element
@@ -81,7 +79,7 @@ fn setup(
     let button_entity = commands.current_entity().unwrap();
 
     // prepare the panel
-    let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").unwrap();
+    let panel_texture_handle = asset_server.load("glassPanel_corners.png");
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
 
     commands.spawn(

@@ -22,8 +22,9 @@ impl Lerp for EaseValue<Transform> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Transform::new(
-            *self.0.value() + (*other.0.value() - *self.0.value()) * *scalar,
+        EaseValue(Transform::from_matrix(
+            self.0.compute_matrix()
+                + (other.0.compute_matrix() - self.0.compute_matrix()) * *scalar,
         ))
     }
 }
@@ -40,7 +41,7 @@ impl Lerp for EaseValue<ColorMaterial> {
         } else {
             EaseValue(ColorMaterial {
                 color: self.0.color,
-                texture: self.0.texture,
+                texture: self.0.texture.clone(),
             })
         }
     }
@@ -149,7 +150,7 @@ impl IntermediateLerp for ColorMaterial {
         } else {
             ColorMaterial {
                 color: start.0.color,
-                texture: start.0.texture,
+                texture: start.0.texture.clone(),
             }
         }
     }

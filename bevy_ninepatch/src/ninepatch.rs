@@ -10,6 +10,7 @@ use bevy::{
     },
     sprite::ColorMaterial,
     transform::hierarchy::BuildChildren,
+    type_registry::TypeUuid,
     ui::{
         entity::{ImageComponents, NodeComponents},
         AlignContent, FlexDirection, FocusPolicy, Style, Val,
@@ -29,14 +30,19 @@ pub struct Patch<T: Clone + Send + Sync + 'static> {
 
 /// Holds the patches of a nine patch texture
 #[derive(Debug)]
-pub struct NinePatchBuilder<T: Clone + Send + Sync + 'static = ()> {
+pub struct NinePatchBuilder<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static = ()> {
     /// Patches for a nine patch texture. See example `full.rs` on how to use directly
     pub patches: Vec<Vec<Patch<T>>>,
     pub(crate) patch_textures: Option<Vec<Handle<ColorMaterial>>>,
     pub(crate) original_texture: Option<Handle<Texture>>,
 }
 
-impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> TypeUuid for NinePatchBuilder<T> {
+    const TYPE_UUID: bevy::type_registry::Uuid =
+        bevy::type_registry::Uuid::from_u128(0xee097b8ab9a747e3ad5c09e4a9c9ccb0);
+}
+
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T> {
     /// Create a `NinePatchBuilder` from it's patches
     pub fn from_patches(patches: Vec<Vec<Patch<T>>>) -> Self {
         Self {
@@ -47,7 +53,7 @@ impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + Default + 'static> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatchBuilder<T> {
     /// Create a simple nine patch split by creating fixed patch for the margins, and growing patches inside
     pub fn by_margins(
         top_margin: u32,
@@ -65,7 +71,7 @@ impl<T: Clone + Send + Sync + Default + 'static> NinePatchBuilder<T> {
     }
 }
 
-impl<T: Clone + Send + Sync + 'static> NinePatchBuilder<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T> {
     /// Create a simple nine patch split by creating fixed patch for the margins, and growing patches inside
     pub fn by_margins_with_content(
         top_margin: u32,
@@ -168,18 +174,19 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
     /// the given texture according to the patches.
     pub fn apply(
         &mut self,
-        texture_handle: Handle<Texture>,
+        texture_handle: &Handle<Texture>,
         textures: &mut Assets<Texture>,
         materials: &mut Assets<ColorMaterial>,
     ) -> NinePatch<T> {
         let (texture_size, texture_data) = {
             let t = textures
-                .get(&texture_handle)
+                .get(texture_handle)
                 .expect("could not get texture from handle");
             (t.size, &t.data)
         };
         let mut textures_to_add = vec![];
-        if self.patch_textures.is_none() || self.original_texture != Some(texture_handle) {
+        if self.patch_textures.is_none() || self.original_texture.as_ref() != Some(&texture_handle)
+        {
             let mut patch_textures = vec![];
             let mut accu_y = 0.;
             for row in &self.patches {
@@ -217,7 +224,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
                 patch_textures.push(material);
             });
             self.patch_textures = Some(patch_textures);
-            self.original_texture = Some(texture_handle);
+            self.original_texture = Some(texture_handle.clone());
         }
         NinePatch {
             patches: self.patches.clone(),
@@ -268,7 +275,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         is_transparent: true,
                         ..Default::default()
                     },
-                    material: self.background,
+                    material: self.background.clone(),
                     ..Default::default()
                 },
             )
@@ -301,7 +308,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         is_transparent: true,
                         ..Default::default()
                     },
-                    material: self.background,
+                    material: self.background.clone(),
                     ..Default::default()
                 })
                 .with(FocusPolicy::Pass);
@@ -326,7 +333,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                     };
                     row_parent
                         .spawn(ImageComponents {
-                            material: self.splitted_texture[n],
+                            material: self.splitted_texture[n].clone(),
                             style: Style {
                                 size: Size::new(size_width, size_height),
                                 margin: Rect::all(Val::Px(0.)),

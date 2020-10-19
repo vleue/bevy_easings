@@ -21,7 +21,7 @@ fn setup(
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
-    let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").unwrap();
+    let panel_texture_handle = asset_server.load("glassPanel_corners.png");
 
     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
     let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
@@ -57,9 +57,7 @@ fn set_content(
 ) {
     if !nine_patch_content.loaded {
         // load font
-        let font = asset_server
-            .load("assets/Kenney Future Narrow.ttf")
-            .expect("was able to load font");
+        let font = asset_server.load("Kenney Future Narrow.ttf");
 
         commands.spawn(TextComponents {
             text: Text {
