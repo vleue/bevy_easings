@@ -13,10 +13,10 @@ readme = "README.md"
 exclude = ["examples/*.gif"]
 
 [dependencies]
-bevy = "0.2"
+bevy = { version = "0.2", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
 interpolation = "0.2"
 rand = { version = "0.7", optional = true }
 
 [features]
 default = [ "ease_handle" ]
-ease_handle = [ "rand" ]
+ease_handle = [ "rand", "bevy/bevy_sprite" ]

@@ -12,5 +12,5 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-bevy = "0.2"
+bevy = { version = "0.2", default-features = false }
 tracing = "0.1"

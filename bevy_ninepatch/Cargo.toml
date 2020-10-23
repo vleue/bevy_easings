@@ -13,4 +13,4 @@ readme = "README.md"
 exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies]
-bevy = "0.2"
+bevy = { version = "0.2", default-features = false, features = [ "render" ] }
