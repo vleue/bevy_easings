@@ -20,3 +20,7 @@ rand = { version = "0.7", optional = true }
 [features]
 default = [ "ease_handle" ]
 ease_handle = [ "rand", "bevy/bevy_sprite" ]
+
+[[example]]
+name = "transform_translation"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]

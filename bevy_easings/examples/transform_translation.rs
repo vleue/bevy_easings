@@ -116,4 +116,25 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 },
             ),
         );
+    x += size * spacing;
+
+    commands
+        .spawn(SpriteComponents {
+            material: materials.add(Color::RED.into()),
+            sprite: Sprite {
+                size: Vec2::new(size, size),
+                ..Default::default()
+            },
+            ..Default::default()
+        })
+        .with(
+            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+                EaseMethod::CustomFunction(|x| x / 4.),
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: std::time::Duration::from_millis(500),
+                },
+            ),
+        );
 }

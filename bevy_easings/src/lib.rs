@@ -84,6 +84,8 @@ pub enum EaseMethod {
     Linear,
     /// Discrete interpolation, eased value will jump from start to end
     Discrete,
+    /// Use a custom function to interpolate the value
+    CustomFunction(fn(f32) -> f32),
 }
 
 impl Into<EaseMethod> for EaseFunction {
@@ -98,6 +100,7 @@ trait MyEaser {
 impl MyEaser for f32 {
     fn compute(self, function: EaseMethod) -> f32 {
         match function {
+            EaseMethod::EaseFunction(function) => self.calc(function),
             EaseMethod::Linear => {
                 let delta = 0.01;
                 if self < 0. + delta {
@@ -108,7 +111,6 @@ impl MyEaser for f32 {
                     self
                 }
             }
-            EaseMethod::EaseFunction(function) => self.calc(function),
             EaseMethod::Discrete => {
                 if self > 0.5 {
                     1.
@@ -116,6 +118,7 @@ impl MyEaser for f32 {
                     0.
                 }
             }
+            EaseMethod::CustomFunction(function) => function(self),
         }
     }
 }
