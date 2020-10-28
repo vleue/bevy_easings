@@ -1,5 +1,5 @@
 [package]
-name = "bevy_diagnostic_entity_count"
+name = "bevy_diagnostic_counter"
 version = "0.1.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2018"
