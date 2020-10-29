@@ -66,11 +66,11 @@ impl LogDiagnosticsPlugin {
         if let Some(value) = diagnostic.value() {
             if let Some(average) = diagnostic.average() {
                 debug!(
-                    "diagnostic: {:<25}: {:<10.4}  (avg {:.4})",
+                    "diagnostic: {:<80}: {:<10.4}  (avg {:.4})",
                     diagnostic.name, value, average
                 );
             } else {
-                debug!("diagnostic: {:<25}: {:<10.4}", diagnostic.name, value);
+                debug!("diagnostic: {:<80}: {:<10.4}", diagnostic.name, value);
             }
         }
     }
