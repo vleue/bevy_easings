@@ -16,6 +16,6 @@ Easing methods for Bevy components for nice transition
 
 Reimplementation of bevy's [print_diagnostic_plugin](https://github.com/bevyengine/bevy/blob/master/crates/bevy_diagnostic/src/print_diagnostics_plugin.rs) but using debug logs instead of stdout print.
 
-## [bevy_diagnostic_entity_count](https://github.com/mockersf/bevy_extra/tree/master/bevy_diagnostic_entity_count)
+## [bevy_diagnostic_counter](https://github.com/mockersf/bevy_extra/tree/master/bevy_diagnostic_counter)
 
-Simple diagnostics that just count entities.
+Simple diagnostics that can count entities or assets.
