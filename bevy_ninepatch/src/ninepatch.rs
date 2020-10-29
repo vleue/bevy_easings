@@ -212,6 +212,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
                         ),
                         data: patch_texture_data,
                         format: TextureFormat::Rgba8UnormSrgb,
+                        ..Default::default()
                     };
                     textures_to_add.push(patch_texture);
                     accu_x += to_width(column_item.original_size, texture_size);
