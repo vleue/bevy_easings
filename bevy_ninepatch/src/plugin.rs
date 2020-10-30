@@ -261,7 +261,7 @@ fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
     mut materials: ResMut<Assets<ColorMaterial>>,
     mut patches_query: Query<(Entity, &mut NinePatchData<T>, &Style)>,
 ) {
-    for (entity, mut data, style) in &mut patches_query.iter() {
+    for (entity, mut data, style) in patches_query.iter_mut() {
         if !data.loaded {
             if let Some(nine_patch) = nine_patches.get_mut(&data.nine_patch) {
                 if textures.get(&data.texture).is_none() {

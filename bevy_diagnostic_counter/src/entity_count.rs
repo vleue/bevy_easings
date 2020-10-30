@@ -21,7 +21,7 @@ impl EntityCountDiagnosticsPlugin {
         diagnostics.add(Diagnostic::new(Self::ENTITY_COUNT, "entity_count", 20));
     }
 
-    pub fn diagnostic_system(mut diagnostics: ResMut<Diagnostics>, mut query: Query<Entity>) {
+    pub fn diagnostic_system(mut diagnostics: ResMut<Diagnostics>, query: Query<Entity>) {
         let mut count = 0.;
         for _entity in &mut query.iter() {
             count += 1.;
