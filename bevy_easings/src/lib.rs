@@ -138,6 +138,16 @@ pub struct EasingComponent<T> {
     direction: i16,
 }
 
+impl<T: std::fmt::Debug> std::fmt::Debug for EasingComponent<T> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("EasingComponent")
+            .field("start", &self.start)
+            .field("end", &self.end)
+            .field("state", &self.state)
+            .finish()
+    }
+}
+
 impl<T: Default> EasingComponent<T> {
     /// Start a chain of easing, adding a new one after the first one
     pub fn ease_to(
