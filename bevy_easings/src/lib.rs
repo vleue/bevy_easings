@@ -44,14 +44,14 @@ pub enum EasingType {
         /// duration of the easing
         duration: Duration,
         /// duration of the pause between two loops
-        pause: Duration,
+        pause: Option<Duration>,
     },
     /// Repeat the animation back and forth
     PingPong {
         /// duration of the easing
         duration: Duration,
         /// duration of the pause before starting again in the other direction
-        pause: Duration,
+        pause: Option<Duration>,
     },
 }
 

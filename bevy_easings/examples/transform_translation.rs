@@ -69,7 +69,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                     *ease_function,
                     bevy_easings::EasingType::PingPong {
                         duration: std::time::Duration::from_secs(1),
-                        pause: std::time::Duration::from_millis(500),
+                        pause: Some(std::time::Duration::from_millis(500)),
                     },
                 ),
             );
@@ -91,7 +91,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 EaseMethod::Linear,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
-                    pause: std::time::Duration::from_millis(500),
+                    pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
         );
@@ -112,7 +112,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 EaseMethod::Discrete,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
-                    pause: std::time::Duration::from_millis(500),
+                    pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
         );
@@ -133,7 +133,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 EaseMethod::CustomFunction(|x| x / 4.),
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
-                    pause: std::time::Duration::from_millis(500),
+                    pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
         );

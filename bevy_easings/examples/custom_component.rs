@@ -53,7 +53,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
             bevy_easings::EaseFunction::QuadraticInOut,
             bevy_easings::EasingType::PingPong {
                 duration: std::time::Duration::from_secs(1),
-                pause: std::time::Duration::from_millis(500),
+                pause: Some(std::time::Duration::from_millis(500)),
             },
         ))
         .with(Timer::from_seconds(0.2, true));

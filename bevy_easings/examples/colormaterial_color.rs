@@ -71,7 +71,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
-                    pause: std::time::Duration::from_millis(500),
+                    pause: Some(std::time::Duration::from_millis(500)),
                 },
             ));
         y -= size * spacing;

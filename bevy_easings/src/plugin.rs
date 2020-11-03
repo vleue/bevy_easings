@@ -77,14 +77,18 @@ pub fn ease_system<T: Ease + Component>(
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
                     EasingType::Loop { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                     }
                     EasingType::PingPong { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                         easing.direction *= -1;
                     }
                 }
@@ -129,7 +133,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 match easing.easing_type {
                     EasingType::Once { duration } => easing.timer.duration = duration.as_secs_f32(),
                     EasingType::Loop { duration, .. } => {
-                        easing.timer.duration = duration.as_secs_f32()
+                        easing.timer.duration = duration.as_secs_f32();
                     }
                     EasingType::PingPong { duration, .. } => {
                         easing.timer.duration = duration.as_secs_f32()
@@ -157,14 +161,18 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
                     EasingType::Loop { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                     }
                     EasingType::PingPong { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                         easing.direction *= -1;
                     }
                 }
@@ -248,14 +256,18 @@ fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
                         commands.remove_one::<EasingComponent<T>>(entity);
                     }
                     EasingType::Loop { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                     }
                     EasingType::PingPong { pause, .. } => {
-                        easing.timer.duration = pause.as_secs_f32();
+                        if let Some(pause) = pause {
+                            easing.timer.duration = pause.as_secs_f32();
+                            easing.paused = true;
+                        }
                         easing.timer.reset();
-                        easing.paused = true;
                         easing.direction *= -1;
                     }
                 }
