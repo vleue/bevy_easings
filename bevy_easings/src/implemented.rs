@@ -22,10 +22,11 @@ impl Lerp for EaseValue<Transform> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Transform::from_matrix(
-            self.0.compute_matrix()
-                + (other.0.compute_matrix() - self.0.compute_matrix()) * *scalar,
-        ))
+        EaseValue(Transform {
+            translation: self.0.translation.lerp(other.0.translation, *scalar),
+            scale: self.0.scale.lerp(other.0.scale, *scalar),
+            rotation: self.0.rotation.lerp(other.0.rotation, *scalar),
+        })
     }
 }
 

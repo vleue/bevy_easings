@@ -71,9 +71,8 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                         ..Default::default()
                     })
                     .with(Transform::default().ease_to(
-                        Transform::from_rotation(Quat::from_rotation_ypr(
-                            0.,
-                            0.,
+                        Transform::from_rotation(Quat::from_axis_angle(
+                            Vec3::unit_z(),
                             std::f32::consts::PI / 2.,
                         )),
                         *ease_function,
