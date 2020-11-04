@@ -2,11 +2,15 @@
 
 ## [bevy_ninepatch](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninepatch)
 
+[![Crates.io](https://img.shields.io/crates/v/bevy_ninepatch.svg)](https://crates.io/crates/bevy_ninepatch)
+
 Implementation of 9-patch images in Bevy. Let you have a UI that scale only the right parts of your images.
 
 ![9 patch example](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/result.png)
 
 ## [bevy_easings](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings)
+
+[![Crates.io](https://img.shields.io/crates/v/bevy_easings.svg)](https://crates.io/crates/bevy_easings)
 
 Easing methods for Bevy components for nice transition
 
