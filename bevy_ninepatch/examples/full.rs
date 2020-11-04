@@ -4,7 +4,7 @@ use bevy_ninepatch::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
-        .add_default_plugins()
+        .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<Content>::default())
         .add_startup_system(setup.system())
@@ -134,11 +134,11 @@ fn set_content(
     mut patch_content: Query<(Entity, &mut NinePatchContent<Content>)>,
     ui_element_query: Query<&UiElement>,
 ) {
-    for (entity, mut nine_patch_content) in &mut patch_content.iter() {
+    for (entity, mut nine_patch_content) in &mut patch_content.iter_mut() {
         if !nine_patch_content.loaded {
             match (
                 *ui_element_query
-                    .get::<UiElement>(nine_patch_content.parent)
+                    .get_component::<UiElement>(nine_patch_content.parent)
                     .unwrap(),
                 &nine_patch_content.content,
             ) {

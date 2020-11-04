@@ -6,7 +6,7 @@ use bevy_ninepatch::{
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
-        .add_default_plugins()
+        .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())
         .add_startup_system(setup.system())

@@ -1,6 +1,6 @@
 [package]
 name = "bevy_ninepatch"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2018"
 description = "Displays 9-Patch UI elements in Bevy"
@@ -13,4 +13,32 @@ readme = "README.md"
 exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies]
-bevy = { version = "0.2", default-features = false, features = [ "render" ] }
+bevy = { version = "0.3", default-features = false, features = [ "render" ] }
+
+[[example]]
+name = "change_size"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "content"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "full"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "multi_content_with_content_map"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "multi_content_with_system"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "multiple_same_components"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "plugin"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]

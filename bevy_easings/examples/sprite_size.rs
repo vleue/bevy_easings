@@ -4,7 +4,7 @@ use bevy_easings::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
-        .add_default_plugins()
+        .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup.system())
         .run();

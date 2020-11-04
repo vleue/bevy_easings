@@ -1,6 +1,6 @@
 [package]
 name = "bevy_easings"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2018"
 description = "Easing plugin for Bevy"
@@ -13,7 +13,7 @@ readme = "README.md"
 exclude = ["examples/*.gif"]
 
 [dependencies]
-bevy = { version = "0.2", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
+bevy = { version = "0.3", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
 interpolation = "0.2"
 rand = { version = "0.7", optional = true }
 
@@ -22,5 +22,33 @@ default = [ "ease_handle" ]
 ease_handle = [ "rand", "bevy/bevy_sprite" ]
 
 [[example]]
+name = "chain"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "colormaterial_color"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "custom_component"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "pause"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "sprite_size"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "transform_rotation"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
 name = "transform_translation"
+required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+
+[[example]]
+name = "ui_style"
 required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]

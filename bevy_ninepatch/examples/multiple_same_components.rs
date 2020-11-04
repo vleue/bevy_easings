@@ -4,7 +4,7 @@ use bevy_ninepatch::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
-        .add_default_plugins()
+        .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())
         .add_startup_system(setup.system())
@@ -94,10 +94,10 @@ fn set_content(
 ) {
     let font = asset_server.load("Kenney Future Narrow.ttf");
 
-    for (entity, mut nine_patch_content) in &mut patch_content.iter() {
+    for (entity, mut nine_patch_content) in &mut patch_content.iter_mut() {
         if !nine_patch_content.loaded {
             match *patch_query
-                .get::<PatchElement>(nine_patch_content.parent)
+                .get_component::<PatchElement>(nine_patch_content.parent)
                 .expect("couldn't find tagged parent 9-Patch UI element")
             {
                 PatchElement::ButtonOk => {
