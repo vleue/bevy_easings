@@ -1,6 +1,6 @@
 use bevy::asset::Asset;
 use bevy::diagnostic::{Diagnostic, DiagnosticId, Diagnostics};
-use bevy::ecs::{IntoQuerySystem, ResMut};
+use bevy::ecs::ResMut;
 use bevy::prelude::*;
 
 /// Adds "asset count" diagnostic to an App

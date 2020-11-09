@@ -1,6 +1,7 @@
-use bevy::app::prelude::*;
-use bevy::diagnostic::{Diagnostic, DiagnosticId, Diagnostics};
-use bevy::ecs::{Entity, IntoQuerySystem, Query, ResMut};
+use bevy::{
+    diagnostic::{Diagnostic, DiagnosticId, Diagnostics},
+    prelude::*,
+};
 
 /// Adds "entity count" diagnostic to an App
 #[derive(Default)]
