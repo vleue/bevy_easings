@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
@@ -128,7 +128,7 @@ fn setup(
 }
 
 fn set_content(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<Content>)>,
@@ -348,19 +348,21 @@ enum UiElement {
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut style: Mut<Style>, panel: &UiElement) {
-    let (x, y) = time.seconds_since_startup.sin_cos();
+fn update_size(time: Res<Time>, mut query: Query<(&mut Style, &UiElement)>) {
+    for (mut style, panel) in query.iter_mut() {
+        let (x, y) = time.seconds_since_startup.sin_cos();
 
-    match panel {
-        UiElement::Panel => {
-            style.size.width = Val::Px((900. + 50. * x as f32).ceil());
-            style.size.height = Val::Px((600. + 50. * y as f32).ceil());
+        match panel {
+            UiElement::Panel => {
+                style.size.width = Val::Px((900. + 50. * x as f32).ceil());
+                style.size.height = Val::Px((600. + 50. * y as f32).ceil());
+            }
+            UiElement::InnerPanel => {
+                style.size.width = Val::Px((850. + 50. * x as f32).ceil());
+                style.size.height = Val::Px((550. + 50. * y as f32).ceil());
+            }
+            UiElement::ButtonOK => style.size.width = Val::Px((300. + 50. * x as f32).ceil()),
+            UiElement::ButtonCancel => style.size.height = Val::Px((90. + 10. * y as f32).ceil()),
         }
-        UiElement::InnerPanel => {
-            style.size.width = Val::Px((850. + 50. * x as f32).ceil());
-            style.size.height = Val::Px((550. + 50. * y as f32).ceil());
-        }
-        UiElement::ButtonOK => style.size.width = Val::Px((300. + 50. * x as f32).ceil()),
-        UiElement::ButtonCancel => style.size.height = Val::Px((90. + 10. * y as f32).ceil()),
     }
 }

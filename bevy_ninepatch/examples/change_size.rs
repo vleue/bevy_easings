@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -49,9 +49,15 @@ fn setup(
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
-fn update_size(time: Res<Time>, mut style: Mut<Style>, _np_component: &NinePatchData<()>) {
-    let (x, y) = time.seconds_since_startup.sin_cos();
+fn update_size(
+    time: Res<Time>,
+    mut query: Query<With<NinePatchData<()>, &mut Style>>,
+    // mut style: Mut<Style>, _np_component: &NinePatchData<()>
+) {
+    for mut style in query.iter_mut() {
+        let (x, y) = time.seconds_since_startup.sin_cos();
 
-    style.size.width = Val::Px((250. + 200. * x as f32).ceil());
-    style.size.height = Val::Px((250. + 200. * y as f32).ceil());
+        style.size.width = Val::Px((250. + 200. * x as f32).ceil());
+        style.size.height = Val::Px((250. + 200. * y as f32).ceil());
+    }
 }

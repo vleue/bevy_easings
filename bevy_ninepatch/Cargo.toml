@@ -13,7 +13,7 @@ readme = "README.md"
 exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies]
-bevy = { version = "0.3", default-features = false, features = [ "render" ] }
+bevy = { git = "https://github.com/bevyengine/bevy", default-features = false, features = [ "render" ] }
 
 [[example]]
 name = "change_size"

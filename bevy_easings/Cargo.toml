@@ -13,7 +13,7 @@ readme = "README.md"
 exclude = ["examples/*.gif"]
 
 [dependencies]
-bevy = { version = "0.3", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
+bevy = { git = "https://github.com/bevyengine/bevy", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
 interpolation = "0.2"
 rand = { version = "0.7", optional = true }
 

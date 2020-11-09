@@ -24,7 +24,7 @@ impl bevy_easings::Lerp for CustomComponent {
     }
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     commands.spawn(UiCameraComponents::default());
 
     commands
@@ -59,8 +59,10 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
         .with(Timer::from_seconds(0.2, true));
 }
 
-fn check_value(timer: &Timer, custom: &CustomComponent) {
-    if timer.just_finished {
-        println!("got {:?}", custom.0);
+fn check_value(query: Query<(&Timer, &CustomComponent)>) {
+    for (timer, custom) in query.iter() {
+        if timer.just_finished {
+            println!("got {:?}", custom.0);
+        }
     }
 }

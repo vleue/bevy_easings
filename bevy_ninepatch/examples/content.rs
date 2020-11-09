@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -50,28 +50,29 @@ fn setup(
 }
 
 fn set_content(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
-    entity: Entity,
-    mut nine_patch_content: Mut<NinePatchContent<()>>,
+    mut query: Query<(Entity, &mut NinePatchContent<()>)>,
 ) {
-    if !nine_patch_content.loaded {
-        // load font
-        let font = asset_server.load("Kenney Future Narrow.ttf");
+    for (entity, mut nine_patch_content) in query.iter_mut() {
+        if !nine_patch_content.loaded {
+            // load font
+            let font = asset_server.load("Kenney Future Narrow.ttf");
 
-        commands.spawn(TextComponents {
-            text: Text {
-                value: "Hello".to_string(),
-                font,
-                style: TextStyle {
-                    font_size: 50.,
-                    color: Color::GREEN,
+            commands.spawn(TextComponents {
+                text: Text {
+                    value: "Hello".to_string(),
+                    font,
+                    style: TextStyle {
+                        font_size: 50.,
+                        color: Color::GREEN,
+                    },
                 },
-            },
-            ..Default::default()
-        });
-        let content_entity = commands.current_entity().unwrap();
-        commands.push_children(entity, &[content_entity]);
-        nine_patch_content.loaded = true;
+                ..Default::default()
+            });
+            let content_entity = commands.current_entity().unwrap();
+            commands.push_children(entity, &[content_entity]);
+            nine_patch_content.loaded = true;
+        }
     }
 }

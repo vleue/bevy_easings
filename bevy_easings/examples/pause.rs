@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     commands.spawn(Camera2dComponents::default());
 
     commands
@@ -38,8 +38,10 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
         .with(Timer::from_seconds(0.25, true));
 }
 
-fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>>) {
-    if timer.just_finished {
-        easing.state = !easing.state;
+fn pause(mut query: Query<(&Timer, &mut bevy_easings::EasingComponent<Transform>)>) {
+    for (timer, mut easing) in query.iter_mut() {
+        if timer.just_finished {
+            easing.state = !easing.state;
+        }
     }
 }

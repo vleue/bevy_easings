@@ -14,7 +14,7 @@
 
 use bevy::core::{Time, Timer};
 use bevy::diagnostic::{Diagnostic, DiagnosticId, Diagnostics};
-use bevy::ecs::{IntoQuerySystem, Res, ResMut};
+use bevy::ecs::{IntoSystem, Res, ResMut};
 use bevy::prelude::stage;
 use std::time::Duration;
 use tracing::debug;

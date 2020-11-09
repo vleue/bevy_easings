@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -87,7 +87,7 @@ enum PatchElement {
 }
 
 fn set_content(
-    mut commands: Commands,
+    commands: &mut Commands,
     asset_server: Res<AssetServer>,
     patch_query: Query<&PatchElement>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<()>)>,
