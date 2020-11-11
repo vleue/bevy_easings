@@ -13,42 +13,42 @@ readme = "README.md"
 exclude = ["examples/*.gif"]
 
 [dependencies]
-bevy = { git = "https://github.com/bevyengine/bevy", default-features = false, features = [ "bevy_ui", "bevy_render" ]  }
+bevy = { git = "https://github.com/bevyengine/bevy", default-features = false, features = [ "render" ]  }
 interpolation = "0.2"
 rand = { version = "0.7", optional = true }
 
 [features]
 default = [ "ease_handle" ]
-ease_handle = [ "rand", "bevy/bevy_sprite" ]
+ease_handle = [ "rand" ]
 
 [[example]]
 name = "chain"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "colormaterial_color"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "custom_component"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "pause"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "sprite_size"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "transform_rotation"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "transform_translation"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
 
 [[example]]
 name = "ui_style"
-required-features = [ "bevy/bevy_winit", "bevy/render", "bevy/bevy_wgpu" ]
+required-features = [ "bevy/bevy_winit", "bevy/bevy_wgpu" ]
