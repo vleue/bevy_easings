@@ -14,7 +14,7 @@ All assets are created by [Kenney](https://www.kenney.nl).
 
 ### [plugin.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_ninepatch/examples/plugin.rs)
 
-Adding a simple 9-Patch UI element by using the `NinePatchComponents` component bundle.
+Adding a simple 9-Patch UI element by using the `NinePatchBundle` component bundle.
 
 ![example with plugin](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_ninepatch/examples/plugin.png)
 

@@ -23,7 +23,7 @@ And then just ease your components to their new state!
 
 ```rust
 commands
-    .spawn(SpriteComponents {
+    .spawn(SpriteBundle {
         material: materials.add(Color::RED.into()),
         ..Default::default()
     })
@@ -54,7 +54,7 @@ You can chain easings, if they are not set to repeat they will happen in sequenc
 
 ```rust
 commands
-    .spawn(SpriteComponents {
+    .spawn(SpriteBundle {
         material: materials.add(Color::RED.into()),
         ..Default::default()
     })
@@ -87,7 +87,7 @@ commands
     );
 ```
 
-## Components Supported
+## Bundle Supported
 
 - [`ColorMaterial`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.ColorMaterial.html)
 - [`Sprite`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Sprite.html)

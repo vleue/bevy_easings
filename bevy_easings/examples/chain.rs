@@ -14,10 +14,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dComponents::default());
+    commands.spawn(Camera2dBundle::default());
 
     commands
-        .spawn(SpriteComponents {
+        .spawn(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(100., 100.),

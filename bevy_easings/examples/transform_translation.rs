@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dComponents::default());
+    commands.spawn(Camera2dBundle::default());
 
     let size = 25.;
 
@@ -55,7 +55,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn(SpriteComponents {
+            .spawn(SpriteBundle {
                 material: materials.add(Color::RED.into()),
                 sprite: Sprite {
                     size: Vec2::new(size, size),
@@ -77,7 +77,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     }
 
     commands
-        .spawn(SpriteComponents {
+        .spawn(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),
@@ -98,7 +98,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     x += size * spacing;
 
     commands
-        .spawn(SpriteComponents {
+        .spawn(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),
@@ -119,7 +119,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     x += size * spacing;
 
     commands
-        .spawn(SpriteComponents {
+        .spawn(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),

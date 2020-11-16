@@ -25,10 +25,10 @@ impl bevy_easings::Lerp for CustomComponent {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(UiCameraComponents::default());
+    commands.spawn(UiCameraBundle::default());
 
     commands
-        .spawn(ImageComponents {
+        .spawn(ImageBundle {
             material: materials.add(Color::RED.into()),
             style: Style {
                 size: Size {

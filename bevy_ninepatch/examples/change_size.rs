@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use bevy_ninepatch::{NinePatchBuilder, NinePatchComponents, NinePatchData, NinePatchPlugin};
+use bevy_ninepatch::{NinePatchBuilder, NinePatchBundle, NinePatchData, NinePatchPlugin};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::build()
@@ -28,7 +28,7 @@ fn setup(
     commands.spawn(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
         // of this entity
-        NinePatchComponents {
+        NinePatchBundle {
             style: Style {
                 margin: Rect::all(Val::Auto),
                 justify_content: JustifyContent::Center,
@@ -45,7 +45,7 @@ fn setup(
         },
     );
 
-    commands.spawn(UiCameraComponents::default());
+    commands.spawn(UiCameraBundle::default());
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized

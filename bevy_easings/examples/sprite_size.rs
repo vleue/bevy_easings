@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dComponents::default());
+    commands.spawn(Camera2dBundle::default());
 
     let initial_size = 10.;
     let final_size = 100.;
@@ -57,7 +57,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn(SpriteComponents {
+            .spawn(SpriteBundle {
                 material: materials.add(Color::RED.into()),
                 transform: Transform::from_translation(Vec3::new(x, y, 0.)),
                 ..Default::default()

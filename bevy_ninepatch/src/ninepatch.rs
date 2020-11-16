@@ -12,7 +12,7 @@ use bevy::{
     transform::hierarchy::BuildChildren,
     type_registry::TypeUuid,
     ui::{
-        entity::{ImageComponents, NodeComponents},
+        entity::{ImageBundle, NodeBundle},
         AlignContent, FlexDirection, FocusPolicy, Style, Val,
     },
 };
@@ -266,7 +266,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
         commands
             .insert(
                 parent,
-                NodeComponents {
+                NodeBundle {
                     style: Style {
                         flex_direction: FlexDirection::ColumnReverse,
                         align_content: AlignContent::Stretch,
@@ -295,7 +295,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                 .unwrap_or((Val::Undefined, 0.));
 
             commands
-                .spawn(NodeComponents {
+                .spawn(NodeBundle {
                     style: Style {
                         size: Size::new(Val::Percent(100.), size_height),
                         flex_direction: FlexDirection::Row,
@@ -333,7 +333,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         other => other,
                     };
                     row_parent
-                        .spawn(ImageComponents {
+                        .spawn(ImageBundle {
                             material: self.splitted_texture[n].clone(),
                             style: Style {
                                 size: Size::new(size_width, size_height),

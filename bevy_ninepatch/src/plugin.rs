@@ -46,7 +46,7 @@ impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatc
 
 #[derive(Bundle)]
 /// Component Bundle to place the NinePatch
-pub struct NinePatchComponents<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
+pub struct NinePatchBundle<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     /// Style of this UI node
     pub style: Style,
     /// State of the `NinePatch`
@@ -59,9 +59,9 @@ pub struct NinePatchComponents<T: Clone + Send + Sync + Eq + std::hash::Hash + '
     pub global_transform: GlobalTransform,
 }
 
-impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Default for NinePatchComponents<T> {
+impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Default for NinePatchBundle<T> {
     fn default() -> Self {
-        NinePatchComponents {
+        NinePatchBundle {
             style: Default::default(),
             nine_patch_data: Default::default(),
             node: Default::default(),

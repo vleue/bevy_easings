@@ -1,7 +1,7 @@
 use bevy::prelude::*;
 
 use bevy_ninepatch::{
-    NinePatchBuilder, NinePatchComponents, NinePatchContent, NinePatchData, NinePatchPlugin,
+    NinePatchBuilder, NinePatchBundle, NinePatchContent, NinePatchData, NinePatchPlugin,
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -34,7 +34,7 @@ fn setup(
     commands.spawn(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
         // of this entity
-        NinePatchComponents {
+        NinePatchBundle {
             style: Style {
                 margin: Rect::all(Val::Auto),
                 justify_content: JustifyContent::Center,
@@ -51,7 +51,7 @@ fn setup(
         },
     );
 
-    commands.spawn(UiCameraComponents::default());
+    commands.spawn(UiCameraBundle::default());
 }
 
 fn set_content(
@@ -73,7 +73,7 @@ fn set_content(
                     commands.spawn(
                         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                         // of this entity
-                        NinePatchComponents {
+                        NinePatchBundle {
                             style: Style {
                                 margin: Rect {
                                     left: Val::Auto,
@@ -102,7 +102,7 @@ fn set_content(
                     // load font
                     let font = asset_server.load("Kenney Future Narrow.ttf");
 
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Px(60.),

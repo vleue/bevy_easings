@@ -106,7 +106,7 @@ fn setup(
         .spawn(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
-            NinePatchComponents {
+            NinePatchBundle {
                 style: Style {
                     margin: Rect::all(Val::Auto),
                     justify_content: JustifyContent::Center,
@@ -124,7 +124,7 @@ fn setup(
         )
         .with(UiElement::Panel);
 
-    commands.spawn(UiCameraComponents::default());
+    commands.spawn(UiCameraBundle::default());
 }
 
 fn set_content(
@@ -155,7 +155,7 @@ fn set_content(
                         .spawn(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
-                            NinePatchComponents {
+                            NinePatchBundle {
                                 style: Style {
                                     margin: Rect::all(Val::Auto),
                                     justify_content: JustifyContent::Center,
@@ -180,7 +180,7 @@ fn set_content(
                     // load font
                     let font = asset_server.load("Kenney Future Narrow.ttf");
 
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Undefined,
@@ -215,7 +215,7 @@ fn set_content(
                         .spawn(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
-                            NinePatchComponents {
+                            NinePatchBundle {
                                 style: Style {
                                     margin: Rect {
                                         left: Val::Px(0.),
@@ -244,7 +244,7 @@ fn set_content(
                         .spawn(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
-                            NinePatchComponents {
+                            NinePatchBundle {
                                 style: Style {
                                     margin: Rect {
                                         left: Val::Auto,
@@ -276,7 +276,7 @@ fn set_content(
                     // load font
                     let font = asset_server.load("Kenney Future Narrow.ttf");
 
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Px(110.),
@@ -304,7 +304,7 @@ fn set_content(
                     // load font
                     let font = asset_server.load("Kenney Future Narrow.ttf");
 
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Px(50.),

@@ -19,7 +19,7 @@ fn setup(
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
-    commands.spawn(UiCameraComponents::default());
+    commands.spawn(UiCameraBundle::default());
 
     // prepare the button
     let button_texture_handle = asset_server.load("blue_button02.png");
@@ -29,7 +29,7 @@ fn setup(
         .spawn(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
-            NinePatchComponents {
+            NinePatchBundle {
                 style: Style {
                     margin: Rect {
                         left: Val::Px(0.),
@@ -56,7 +56,7 @@ fn setup(
         .spawn(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
-            NinePatchComponents {
+            NinePatchBundle {
                 style: Style {
                     margin: Rect {
                         left: Val::Px(0.),
@@ -101,7 +101,7 @@ fn set_content(
                 .expect("couldn't find tagged parent 9-Patch UI element")
             {
                 PatchElement::ButtonOk => {
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Px(50.),
@@ -126,7 +126,7 @@ fn set_content(
                     nine_patch_content.loaded = true;
                 }
                 PatchElement::ButtonCancel => {
-                    commands.spawn(TextComponents {
+                    commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
                                 left: Val::Px(50.),

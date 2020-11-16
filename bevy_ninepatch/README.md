@@ -10,7 +10,7 @@ See [the examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_ninep
 
 ## Simple usage
 
-After adding the `NinePatchPlugin` plugin, spawning an `Entity` with the `NinePatchComponents` component bundle will add a 9-patch UI element.
+After adding the `NinePatchPlugin` plugin, spawning an `Entity` with the `NinePatchBundle` component bundle will add a 9-patch UI element.
 
 A simple builder based on Godot's [NinePatchRect](https://docs.godotengine.org/en/3.2/classes/class_ninepatchrect.html) is available.
 
@@ -25,7 +25,7 @@ let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20
 let content_entity = commands.spawn(...).current_entity().unwrap();
 
 commands.spawn(
-    NinePatchComponents {
+    NinePatchBundle {
         style: Style {
             margin: Rect::all(Val::Auto),
             justify_content: JustifyContent::Center,

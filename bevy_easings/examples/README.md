@@ -99,7 +99,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```rust
     commands
-        .spawn(ImageComponents {
+        .spawn(ImageBundle {
             ..Default::default()
         })
         // as `CustomComponent` is not already part of the components of the entity, 

@@ -13,4 +13,5 @@ readme = "README.md"
 
 [dependencies]
 bevy = { git = "https://github.com/bevyengine/bevy", default-features = false }
+
 tracing = "0.1"
