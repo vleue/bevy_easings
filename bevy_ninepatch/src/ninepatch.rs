@@ -353,7 +353,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         row_parent.with(NinePatchContent {
                             content: content_part.clone(),
                             loaded: false,
-                            parent: parent,
+                            parent,
                         });
                         if let Some(content_entity) =
                             contents.as_ref().and_then(|m| m.get(content_part))
