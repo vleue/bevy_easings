@@ -62,16 +62,19 @@ pub fn ease_system<T: Ease + Component>(
                     easing.paused = false;
                 }
             } else {
-                let progress = if easing.direction.is_positive() {
-                    easing.timer.elapsed / easing.timer.duration
-                } else {
-                    1. - easing.timer.elapsed / easing.timer.duration
-                };
-                let factor = progress.compute(easing.ease_function);
-                if let Some(ref start) = easing.start {
-                    *object = interpolation::lerp(start, &easing.end, &factor).0;
-                } else {
-                    *object = interpolation::lerp(&EaseValue(T::default()), &easing.end, &factor).0;
+                if easing.timer.duration != 0. {
+                    let progress = if easing.direction.is_positive() {
+                        easing.timer.elapsed / easing.timer.duration
+                    } else {
+                        1. - easing.timer.elapsed / easing.timer.duration
+                    };
+                    let factor = progress.compute(easing.ease_function);
+                    if let Some(ref start) = easing.start {
+                        *object = interpolation::lerp(start, &easing.end, &factor).0;
+                    } else {
+                        *object =
+                            interpolation::lerp(&EaseValue(T::default()), &easing.end, &factor).0;
+                    }
                 }
                 if easing.timer.finished {
                     match easing.easing_type {
@@ -148,18 +151,19 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                     easing.paused = false;
                 }
             } else {
-                let progress = if easing.direction.is_positive() {
-                    easing.timer.elapsed / easing.timer.duration
-                } else {
-                    1. - easing.timer.elapsed / easing.timer.duration
-                };
-                let factor = progress.compute(easing.ease_function);
-                if let Some(ref start) = easing.start {
-                    *object = interpolation::lerp(&start.0, &easing.end.0, &factor);
-                } else {
-                    *object = interpolation::lerp(&T::default(), &easing.end.0, &factor);
+                if easing.timer.duration != 0. {
+                    let progress = if easing.direction.is_positive() {
+                        easing.timer.elapsed / easing.timer.duration
+                    } else {
+                        1. - easing.timer.elapsed / easing.timer.duration
+                    };
+                    let factor = progress.compute(easing.ease_function);
+                    if let Some(ref start) = easing.start {
+                        *object = interpolation::lerp(&start.0, &easing.end.0, &factor);
+                    } else {
+                        *object = interpolation::lerp(&T::default(), &easing.end.0, &factor);
+                    }
                 }
-
                 if easing.timer.finished {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
@@ -238,26 +242,28 @@ fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
                     easing.paused = false;
                 }
             } else {
-                let progress = if easing.direction.is_positive() {
-                    easing.timer.elapsed / easing.timer.duration
-                } else {
-                    1. - easing.timer.elapsed / easing.timer.duration
-                };
-                let factor = progress.compute(easing.ease_function);
-                let factor_simplified = (factor * 25.) as i16;
-                let handle = handle_cache
-                    .0
-                    .entry(easing.id + (easing.direction * factor_simplified) as i128)
-                    .or_insert_with(|| {
-                        let start = assets.get(&easing.start.as_ref().unwrap().0).unwrap();
-                        let end = assets.get(&easing.end.0).unwrap();
-                        let intermediate =
-                            IntermediateLerp::lerp(&EaseValue(start), &EaseValue(end), &factor);
+                if easing.timer.duration != 0. {
+                    let progress = if easing.direction.is_positive() {
+                        easing.timer.elapsed / easing.timer.duration
+                    } else {
+                        1. - easing.timer.elapsed / easing.timer.duration
+                    };
+                    let factor = progress.compute(easing.ease_function);
+                    let factor_simplified = (factor * 25.) as i16;
+                    let handle = handle_cache
+                        .0
+                        .entry(easing.id + (easing.direction * factor_simplified) as i128)
+                        .or_insert_with(|| {
+                            let start = assets.get(&easing.start.as_ref().unwrap().0).unwrap();
+                            let end = assets.get(&easing.end.0).unwrap();
+                            let intermediate =
+                                IntermediateLerp::lerp(&EaseValue(start), &EaseValue(end), &factor);
 
-                        assets.add(intermediate)
-                    })
-                    .clone();
-                *object = handle;
+                            assets.add(intermediate)
+                        })
+                        .clone();
+                    *object = handle;
+                }
                 if easing.timer.finished {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
