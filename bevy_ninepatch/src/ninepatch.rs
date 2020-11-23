@@ -2,11 +2,11 @@ use bevy::prelude::*;
 use bevy::{
     asset::{Assets, Handle},
     ecs::Entity,
-    math::{Rect, Size, Vec2},
+    math::{Rect, Size},
     render::{
         color::Color,
         draw::Draw,
-        texture::{Texture, TextureFormat},
+        texture::{Extent3d, Texture, TextureFormat},
     },
     sprite::ColorMaterial,
     transform::hierarchy::BuildChildren,
@@ -154,18 +154,18 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
     }
 }
 
-fn to_width(patch: Size<i32>, total: Vec2) -> f32 {
+fn to_width(patch: Size<i32>, total: Extent3d) -> u32 {
     if patch.width > 0 {
-        patch.width as f32
+        patch.width as u32
     } else {
-        total.x() + patch.width as f32
+        (total.width as i32 + patch.width) as u32
     }
 }
-fn to_height(patch: Size<i32>, total: Vec2) -> f32 {
+fn to_height(patch: Size<i32>, total: Extent3d) -> u32 {
     if patch.height > 0 {
-        patch.height as f32
+        patch.height as u32
     } else {
-        total.y() + patch.height as f32
+        (total.height as i32 + patch.height) as u32
     }
 }
 
@@ -188,9 +188,9 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
         if self.patch_textures.is_none() || self.original_texture.as_ref() != Some(&texture_handle)
         {
             let mut patch_textures = vec![];
-            let mut accu_y = 0.;
+            let mut accu_y = 0;
             for row in &self.patches {
-                let mut accu_x = 0.;
+                let mut accu_x = 0;
                 for column_item in row {
                     let start_x = accu_x;
                     let end_x = accu_x + to_width(column_item.original_size, texture_size);
@@ -200,15 +200,16 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
 
                     let mut patch_texture_data = vec![];
                     for j in start_y as usize..end_y as usize {
-                        let start_line = (start_x as usize + j * texture_size.x() as usize) * 4;
-                        let end_line = (end_x as usize + j * texture_size.x() as usize) * 4;
+                        let start_line = (start_x as usize + j * texture_size.width as usize) * 4;
+                        let end_line = (end_x as usize + j * texture_size.width as usize) * 4;
                         patch_texture_data.extend_from_slice(&texture_data[start_line..end_line]);
                     }
 
                     let patch_texture = Texture {
-                        size: Vec2::new(
+                        size: Extent3d::new(
                             to_width(column_item.original_size, texture_size),
                             to_height(column_item.original_size, texture_size),
+                            texture_size.depth,
                         ),
                         data: patch_texture_data,
                         format: TextureFormat::Rgba8UnormSrgb,
@@ -251,7 +252,7 @@ pub struct NinePatchContent<T: Send + Sync + 'static> {
 #[derive(Debug)]
 pub struct NinePatch<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     patches: Vec<Vec<Patch<T>>>,
-    texture_size: Vec2,
+    texture_size: Extent3d,
     background: Handle<ColorMaterial>,
     splitted_texture: Vec<Handle<ColorMaterial>>,
 }
@@ -287,7 +288,10 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
             let (size_height, growth) = row
                 .get(0)
                 .map(|p| match p.target_size.height {
-                    Val::Undefined => (Val::Px(to_height(p.original_size, self.texture_size)), 0.),
+                    Val::Undefined => (
+                        Val::Px(to_height(p.original_size, self.texture_size) as f32),
+                        0.,
+                    ),
                     Val::Px(i) => (Val::Px(i), 0.),
                     Val::Auto => (Val::Auto, 1.),
                     Val::Percent(x) => (Val::Auto, x / 100.),
@@ -318,7 +322,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                 for column_item in row.iter() {
                     let (size_width, growth) = match column_item.target_size.width {
                         Val::Undefined => (
-                            Val::Px(to_width(column_item.original_size, self.texture_size)),
+                            Val::Px(to_width(column_item.original_size, self.texture_size) as f32),
                             0.,
                         ),
                         Val::Px(i) => (Val::Px(i), 0.),
@@ -327,7 +331,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                     };
                     let size_height = match column_item.target_size.height {
                         Val::Undefined => {
-                            Val::Px(to_height(column_item.original_size, self.texture_size))
+                            Val::Px(to_height(column_item.original_size, self.texture_size) as f32)
                         }
                         Val::Percent(_) => Val::Auto,
                         other => other,
