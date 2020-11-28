@@ -138,7 +138,7 @@ transform0
 
 ```rust
 fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>>) {
-    if timer.just_finished {
+    if timer.just_finished() {
         easing.state = !easing.state;
     }
 }

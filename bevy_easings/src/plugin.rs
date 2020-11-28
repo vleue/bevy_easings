@@ -43,30 +43,30 @@ pub fn ease_system<T: Ease + Component>(
     for (entity, mut object) in query.iter_mut() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
-                easing.timer.tick(time.delta_seconds);
+                easing.timer.tick(time.delta_seconds());
             }
             if easing.paused {
-                if easing.timer.just_finished {
+                if easing.timer.just_finished() {
                     match easing.easing_type {
                         EasingType::Once { duration } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::Loop { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::PingPong { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                     }
                     easing.timer.reset();
                     easing.paused = false;
                 }
             } else {
-                if easing.timer.duration != 0. {
+                if easing.timer.duration() != 0. {
                     let progress = if easing.direction.is_positive() {
-                        easing.timer.elapsed / easing.timer.duration
+                        easing.timer.elapsed() / easing.timer.duration()
                     } else {
-                        1. - easing.timer.elapsed / easing.timer.duration
+                        1. - easing.timer.elapsed() / easing.timer.duration()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {
@@ -76,21 +76,21 @@ pub fn ease_system<T: Ease + Component>(
                             interpolation::lerp(&EaseValue(T::default()), &easing.end, &factor).0;
                     }
                 }
-                if easing.timer.finished {
+                if easing.timer.finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
                             commands.remove_one::<EasingComponent<T>>(entity);
                         }
                         EasingType::Loop { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();
                         }
                         EasingType::PingPong { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();
@@ -132,30 +132,30 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
     for (entity, mut object) in query.iter_mut() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
-                easing.timer.tick(time.delta_seconds);
+                easing.timer.tick(time.delta_seconds());
             }
             if easing.paused {
-                if easing.timer.just_finished {
+                if easing.timer.just_finished() {
                     match easing.easing_type {
                         EasingType::Once { duration } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::Loop { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32();
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::PingPong { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                     }
                     easing.timer.reset();
                     easing.paused = false;
                 }
             } else {
-                if easing.timer.duration != 0. {
+                if easing.timer.duration() != 0. {
                     let progress = if easing.direction.is_positive() {
-                        easing.timer.elapsed / easing.timer.duration
+                        easing.timer.elapsed() / easing.timer.duration()
                     } else {
-                        1. - easing.timer.elapsed / easing.timer.duration
+                        1. - easing.timer.elapsed() / easing.timer.duration()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {
@@ -164,21 +164,21 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                         *object = interpolation::lerp(&T::default(), &easing.end.0, &factor);
                     }
                 }
-                if easing.timer.finished {
+                if easing.timer.finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
                             commands.remove_one::<EasingComponent<T>>(entity);
                         }
                         EasingType::Loop { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();
                         }
                         EasingType::PingPong { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();
@@ -209,7 +209,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
 
 #[cfg(feature = "ease_handle")]
 #[allow(clippy::too_many_arguments)]
-fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
+fn handle_ease_system<T: Ease + Component + bevy::reflect::TypeUuid>(
     commands: &mut Commands,
     time: Res<Time>,
     mut assets: ResMut<Assets<T>>,
@@ -223,30 +223,30 @@ fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
     for (entity, mut object) in query.iter_mut() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
-                easing.timer.tick(time.delta_seconds);
+                easing.timer.tick(time.delta_seconds());
             }
             if easing.paused {
-                if easing.timer.just_finished {
+                if easing.timer.just_finished() {
                     match easing.easing_type {
                         EasingType::Once { duration } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::Loop { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                         EasingType::PingPong { duration, .. } => {
-                            easing.timer.duration = duration.as_secs_f32()
+                            easing.timer.set_duration(duration.as_secs_f32());
                         }
                     }
                     easing.timer.reset();
                     easing.paused = false;
                 }
             } else {
-                if easing.timer.duration != 0. {
+                if easing.timer.duration() != 0. {
                     let progress = if easing.direction.is_positive() {
-                        easing.timer.elapsed / easing.timer.duration
+                        easing.timer.elapsed() / easing.timer.duration()
                     } else {
-                        1. - easing.timer.elapsed / easing.timer.duration
+                        1. - easing.timer.elapsed() / easing.timer.duration()
                     };
                     let factor = progress.compute(easing.ease_function);
                     let factor_simplified = (factor * 25.) as i16;
@@ -264,21 +264,21 @@ fn handle_ease_system<T: Ease + Component + bevy::type_registry::TypeUuid>(
                         .clone();
                     *object = handle;
                 }
-                if easing.timer.finished {
+                if easing.timer.finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
                             commands.remove_one::<EasingComponent<T>>(entity);
                         }
                         EasingType::Loop { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();
                         }
                         EasingType::PingPong { pause, .. } => {
                             if let Some(pause) = pause {
-                                easing.timer.duration = pause.as_secs_f32();
+                                easing.timer.set_duration(pause.as_secs_f32());
                                 easing.paused = true;
                             }
                             easing.timer.reset();

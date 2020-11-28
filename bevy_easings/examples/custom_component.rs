@@ -61,7 +61,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
 
 fn check_value(query: Query<(&Timer, &CustomComponent)>) {
     for (timer, custom) in query.iter() {
-        if timer.just_finished {
+        if timer.just_finished() {
             println!("got {:?}", custom.0);
         }
     }

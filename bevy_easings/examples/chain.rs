@@ -30,7 +30,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
 
 fn add_easing(commands: &mut Commands, query: Query<(&Timer, Entity)>) {
     for (timer, entity) in query.iter() {
-        if timer.just_finished {
+        if timer.just_finished() {
             let transform0 = Transform::default();
             let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
             let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));

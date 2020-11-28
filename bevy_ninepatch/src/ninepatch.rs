@@ -3,6 +3,7 @@ use bevy::{
     asset::{Assets, Handle},
     ecs::Entity,
     math::{Rect, Size},
+    reflect::TypeUuid,
     render::{
         color::Color,
         draw::Draw,
@@ -10,7 +11,6 @@ use bevy::{
     },
     sprite::ColorMaterial,
     transform::hierarchy::BuildChildren,
-    type_registry::TypeUuid,
     ui::{
         entity::{ImageBundle, NodeBundle},
         AlignContent, FlexDirection, FocusPolicy, Style, Val,
@@ -38,8 +38,8 @@ pub struct NinePatchBuilder<T: Clone + Send + Sync + Eq + std::hash::Hash + 'sta
 }
 
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> TypeUuid for NinePatchBuilder<T> {
-    const TYPE_UUID: bevy::type_registry::Uuid =
-        bevy::type_registry::Uuid::from_u128(0xee097b8ab9a747e3ad5c09e4a9c9ccb0);
+    const TYPE_UUID: bevy::reflect::Uuid =
+        bevy::reflect::Uuid::from_u128(0xee097b8ab9a747e3ad5c09e4a9c9ccb0);
 }
 
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T> {

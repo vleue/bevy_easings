@@ -40,7 +40,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
 
 fn pause(mut query: Query<(&Timer, &mut bevy_easings::EasingComponent<Transform>)>) {
     for (timer, mut easing) in query.iter_mut() {
-        if timer.just_finished {
+        if timer.just_finished() {
             easing.state = !easing.state;
         }
     }

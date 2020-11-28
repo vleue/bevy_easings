@@ -80,8 +80,8 @@ impl LogDiagnosticsPlugin {
         time: Res<Time>,
         diagnostics: Res<Diagnostics>,
     ) {
-        state.timer.tick(time.delta_seconds);
-        if state.timer.finished {
+        state.timer.tick(time.delta_seconds());
+        if state.timer.finished() {
             if let Some(ref filter) = state.filter {
                 for diagnostic in filter.iter().map(|id| diagnostics.get(*id).unwrap()) {
                     Self::log_diagnostic(diagnostic);
