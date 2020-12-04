@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::reflect::TypeUuid;
 
 use crate::MyEaser;
 
@@ -10,7 +11,7 @@ use crate::{
 };
 
 #[derive(Default)]
-struct HandleCache<T: 'static>(std::collections::HashMap<i128, Handle<T>>);
+struct HandleCache<T: 'static + TypeUuid + Sync + Send>(std::collections::HashMap<i128, Handle<T>>);
 
 /// Plugin to add systems related to easing
 #[derive(Debug, Clone, Copy)]
