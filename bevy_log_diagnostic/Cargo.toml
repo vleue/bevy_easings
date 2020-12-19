@@ -1,6 +1,6 @@
 [package]
 name = "bevy_log_diagnostic"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2018"
 description = "Logs diagnostic informations from Bevy"
