@@ -45,17 +45,13 @@ fn setup(
         },
     );
 
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
-fn update_size(
-    time: Res<Time>,
-    mut query: Query<With<NinePatchData<()>, &mut Style>>,
-    // mut style: Mut<Style>, _np_component: &NinePatchData<()>
-) {
+fn update_size(time: Res<Time>, mut query: Query<&mut Style, With<NinePatchData<()>>>) {
     for mut style in query.iter_mut() {
-        let (x, y) = time.seconds_since_startup.sin_cos();
+        let (x, y) = time.seconds_since_startup().sin_cos();
 
         style.size.width = Val::Px((250. + 200. * x as f32).ceil());
         style.size.height = Val::Px((250. + 200. * y as f32).ceil());

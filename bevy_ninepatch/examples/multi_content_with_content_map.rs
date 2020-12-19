@@ -37,6 +37,7 @@ fn setup(
             style: TextStyle {
                 font_size: 50.,
                 color: Color::GREEN,
+                ..Default::default()
             },
         },
         ..Default::default()
@@ -103,5 +104,5 @@ fn setup(
         },
     );
 
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 }

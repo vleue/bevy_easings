@@ -210,7 +210,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
 
 #[cfg(feature = "ease_handle")]
 #[allow(clippy::too_many_arguments)]
-fn handle_ease_system<T: Ease + Component + bevy::reflect::TypeUuid>(
+fn handle_ease_system<T: Ease + Component + TypeUuid>(
     commands: &mut Commands,
     time: Res<Time>,
     mut assets: ResMut<Assets<T>>,

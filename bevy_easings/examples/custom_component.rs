@@ -25,7 +25,7 @@ impl bevy_easings::Lerp for CustomComponent {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 
     commands
         .spawn(ImageBundle {

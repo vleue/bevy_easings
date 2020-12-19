@@ -6,7 +6,6 @@ use bevy::{
     reflect::TypeUuid,
     render::{
         color::Color,
-        draw::Draw,
         texture::{Extent3d, Texture, TextureFormat},
     },
     sprite::ColorMaterial,
@@ -273,10 +272,6 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         align_content: AlignContent::Stretch,
                         ..*style
                     },
-                    draw: Draw {
-                        is_transparent: true,
-                        ..Default::default()
-                    },
                     material: self.background.clone(),
                     ..Default::default()
                 },
@@ -307,10 +302,6 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         flex_grow: growth,
                         flex_shrink: growth,
                         margin: Rect::all(Val::Px(0.)),
-                        ..Default::default()
-                    },
-                    draw: Draw {
-                        is_transparent: true,
                         ..Default::default()
                     },
                     material: self.background.clone(),
@@ -344,10 +335,6 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                                 margin: Rect::all(Val::Px(0.)),
                                 flex_grow: growth,
                                 flex_shrink: growth,
-                                ..Default::default()
-                            },
-                            draw: Draw {
-                                is_transparent: true,
                                 ..Default::default()
                             },
                             ..Default::default()

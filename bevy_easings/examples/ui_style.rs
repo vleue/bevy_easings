@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 
     for ease_function in &[
         bevy_easings::EaseFunction::QuadraticIn,

@@ -12,6 +12,6 @@ license = "MIT"
 readme = "README.md"
 
 [dependencies]
-bevy = { git = "https://github.com/bevyengine/bevy", default-features = false }
+bevy = { version = "0.4", default-features = false }
 
 tracing = "0.1"

@@ -24,7 +24,6 @@ fn setup(
     let cornered_panel_texture_handle = asset_server.load("metalPanel_yellowCorner.png");
     let _panel_texture_handle: Handle<Texture> = asset_server.load("glassPanel_corners.png");
     let _button_texture_handle: Handle<Texture> = asset_server.load("blue_button02.png");
-    let _font: Handle<Font> = asset_server.load("Kenney Future Narrow.ttf");
 
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::from_patches(vec![
         vec![
@@ -124,7 +123,7 @@ fn setup(
         )
         .with(UiElement::Panel);
 
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 }
 
 fn set_content(
@@ -133,7 +132,10 @@ fn set_content(
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<Content>)>,
     ui_element_query: Query<&UiElement>,
+    mut font: Local<Handle<Font>>,
 ) {
+    *font = asset_server.load("Kenney Future Narrow.ttf");
+
     for (entity, mut nine_patch_content) in &mut patch_content.iter_mut() {
         if !nine_patch_content.loaded {
             match (
@@ -177,9 +179,6 @@ fn set_content(
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::Panel, Content::Title) => {
-                    // load font
-                    let font = asset_server.load("Kenney Future Narrow.ttf");
-
                     commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
@@ -192,10 +191,11 @@ fn set_content(
                         },
                         text: Text {
                             value: "Example Title".to_string(),
-                            font,
+                            font: font.clone(),
                             style: TextStyle {
                                 font_size: 25.,
                                 color: Color::BLUE,
+                                ..Default::default()
                             },
                         },
                         ..Default::default()
@@ -273,9 +273,6 @@ fn set_content(
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::ButtonOK, _) => {
-                    // load font
-                    let font = asset_server.load("Kenney Future Narrow.ttf");
-
                     commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
@@ -288,10 +285,11 @@ fn set_content(
                         },
                         text: Text {
                             value: "OK".to_string(),
-                            font,
+                            font: font.clone(),
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::GREEN,
+                                ..Default::default()
                             },
                         },
                         ..Default::default()
@@ -301,9 +299,6 @@ fn set_content(
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::ButtonCancel, _) => {
-                    // load font
-                    let font = asset_server.load("Kenney Future Narrow.ttf");
-
                     commands.spawn(TextBundle {
                         style: Style {
                             margin: Rect {
@@ -316,10 +311,11 @@ fn set_content(
                         },
                         text: Text {
                             value: "CANCEL".to_string(),
-                            font,
+                            font: font.clone(),
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::RED,
+                                ..Default::default()
                             },
                         },
                         ..Default::default()
@@ -350,7 +346,7 @@ enum UiElement {
 // by changing the component `Style.size`, the 9-Patch UI element will be resized
 fn update_size(time: Res<Time>, mut query: Query<(&mut Style, &UiElement)>) {
     for (mut style, panel) in query.iter_mut() {
-        let (x, y) = time.seconds_since_startup.sin_cos();
+        let (x, y) = time.seconds_since_startup().sin_cos();
 
         match panel {
             UiElement::Panel => {

@@ -19,7 +19,7 @@ fn setup(
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
-    commands.spawn(UiCameraBundle::default());
+    commands.spawn(CameraUiBundle::default());
 
     // prepare the button
     let button_texture_handle = asset_server.load("blue_button02.png");
@@ -117,6 +117,7 @@ fn set_content(
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::GREEN,
+                                ..Default::default()
                             },
                         },
                         ..Default::default()
@@ -142,6 +143,7 @@ fn set_content(
                             style: TextStyle {
                                 font_size: 50.,
                                 color: Color::RED,
+                                ..Default::default()
                             },
                         },
                         ..Default::default()
