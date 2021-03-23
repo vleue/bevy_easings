@@ -14,6 +14,7 @@ impl Lerp for EaseValue<Sprite> {
                 SpriteResizeMode::Manual => SpriteResizeMode::Manual,
                 SpriteResizeMode::Automatic => SpriteResizeMode::Automatic,
             },
+            ..Default::default()
         })
     }
 }
