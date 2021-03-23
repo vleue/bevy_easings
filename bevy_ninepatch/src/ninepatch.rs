@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use bevy::{
     asset::{Assets, Handle},
-    ecs::Entity,
     math::{Rect, Size},
     reflect::TypeUuid,
     render::{
@@ -264,19 +263,17 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
         contents: &Option<std::collections::HashMap<T, Entity>>,
     ) {
         commands
-            .insert(
-                parent,
-                NodeBundle {
-                    style: Style {
-                        flex_direction: FlexDirection::ColumnReverse,
-                        align_content: AlignContent::Stretch,
-                        ..*style
-                    },
-                    material: self.background.clone(),
-                    ..Default::default()
+            .entity(parent)
+            .insert_bundle(NodeBundle {
+                style: Style {
+                    flex_direction: FlexDirection::ColumnReverse,
+                    align_content: AlignContent::Stretch,
+                    ..*style
                 },
-            )
-            .insert_one(parent, FocusPolicy::Pass);
+                material: self.background.clone(),
+                ..Default::default()
+            })
+            .insert(FocusPolicy::Pass);
         let mut rows = vec![];
         let mut n = 0;
         for row in self.patches.iter() {
@@ -293,8 +290,8 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                 })
                 .unwrap_or((Val::Undefined, 0.));
 
-            commands
-                .spawn(NodeBundle {
+            let id = commands
+                .spawn_bundle(NodeBundle {
                     style: Style {
                         size: Size::new(Val::Percent(100.), size_height),
                         flex_direction: FlexDirection::Row,
@@ -307,9 +304,10 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                     material: self.background.clone(),
                     ..Default::default()
                 })
-                .with(FocusPolicy::Pass);
-            rows.push(commands.current_entity().unwrap());
-            commands.with_children(|row_parent| {
+                .insert(FocusPolicy::Pass)
+                .id();
+            rows.push(id);
+            commands.entity(id).with_children(|row_parent| {
                 for column_item in row.iter() {
                     let (size_width, growth) = match column_item.target_size.width {
                         Val::Undefined => (
@@ -327,21 +325,20 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         Val::Percent(_) => Val::Auto,
                         other => other,
                     };
-                    row_parent
-                        .spawn(ImageBundle {
-                            material: self.splitted_texture[n].clone(),
-                            style: Style {
-                                size: Size::new(size_width, size_height),
-                                margin: Rect::all(Val::Px(0.)),
-                                flex_grow: growth,
-                                flex_shrink: growth,
-                                ..Default::default()
-                            },
+                    let mut child = row_parent.spawn_bundle(ImageBundle {
+                        material: self.splitted_texture[n].clone(),
+                        style: Style {
+                            size: Size::new(size_width, size_height),
+                            margin: Rect::all(Val::Px(0.)),
+                            flex_grow: growth,
+                            flex_shrink: growth,
                             ..Default::default()
-                        })
-                        .with(FocusPolicy::Pass);
+                        },
+                        ..Default::default()
+                    });
+                    child.insert(FocusPolicy::Pass);
                     if let Some(content_part) = column_item.content.as_ref() {
-                        row_parent.with(NinePatchContent {
+                        child.insert(NinePatchContent {
                             content: content_part.clone(),
                             loaded: false,
                             parent,
@@ -349,16 +346,13 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         if let Some(content_entity) =
                             contents.as_ref().and_then(|m| m.get(content_part))
                         {
-                            let mut content_parent_entity = Entity::new(0);
-                            row_parent.for_current_entity(|entity| content_parent_entity = entity);
-                            row_parent
-                                .push_children(content_parent_entity, &[content_entity.clone()]);
+                            child.push_children(&[content_entity.clone()]);
                         }
                     }
                     n += 1;
                 }
             });
         }
-        commands.push_children(parent, &rows);
+        commands.entity(parent).push_children(&rows);
     }
 }

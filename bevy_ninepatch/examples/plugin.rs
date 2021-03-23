@@ -14,7 +14,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -43,5 +43,5 @@ fn setup(
         },
     );
 
-    commands.spawn(CameraUiBundle::default());
+    commands.spawn(UiCameraBundle::default());
 }

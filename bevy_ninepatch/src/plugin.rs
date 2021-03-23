@@ -101,7 +101,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePat
 
 #[allow(clippy::type_complexity)]
 fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
-    commands: &mut Commands,
+    mut commands: Commands,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
@@ -115,7 +115,7 @@ fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
                     continue;
                 }
                 let np = nine_patch.apply(&data.texture, &mut textures, &mut materials);
-                np.add_with_parent(commands, entity, style, &data.content);
+                np.add_with_parent(&mut commands, entity, style, &data.content);
                 data.loaded = true;
             }
         }

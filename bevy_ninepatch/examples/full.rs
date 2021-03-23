@@ -1,4 +1,7 @@
-use bevy::prelude::*;
+use bevy::{
+    diagnostic::{FrameTimeDiagnosticsPlugin, PrintDiagnosticsPlugin},
+    prelude::*,
+};
 
 use bevy_ninepatch::*;
 
@@ -7,6 +10,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<Content>::default())
+        .add_plugin(FrameTimeDiagnosticsPlugin::default())
+        // Adds a system that prints diagnostics to the console
+        .add_plugin(PrintDiagnosticsPlugin::default())
         .add_startup_system(setup.system())
         .add_system(set_content.system())
         .add_system(update_size.system())
