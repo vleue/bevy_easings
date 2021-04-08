@@ -1,7 +1,5 @@
 [workspace]
 members = [
-    "bevy_log_diagnostic",
-    "bevy_diagnostic_counter",
     "bevy_ninepatch",
     "bevy_easings",
 ]
