@@ -1,5 +1,5 @@
 use bevy::{
-    diagnostic::{FrameTimeDiagnosticsPlugin, PrintDiagnosticsPlugin},
+    diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin},
     prelude::*,
 };
 
@@ -12,7 +12,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugin(NinePatchPlugin::<Content>::default())
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         // Adds a system that prints diagnostics to the console
-        .add_plugin(PrintDiagnosticsPlugin::default())
+        .add_plugin(LogDiagnosticsPlugin::default())
         .add_startup_system(setup.system())
         .add_system(set_content.system())
         .add_system(update_size.system())
@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
 ) {
@@ -108,7 +108,7 @@ fn setup(
     ]));
 
     commands
-        .spawn(
+        .spawn_bundle(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
             NinePatchBundle {
@@ -127,13 +127,13 @@ fn setup(
                 ..Default::default()
             },
         )
-        .with(UiElement::Panel);
+        .insert(UiElement::Panel);
 
-    commands.spawn(CameraUiBundle::default());
+    commands.spawn_bundle(UiCameraBundle::default());
 }
 
 fn set_content(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<Content>>>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<Content>)>,
@@ -159,8 +159,8 @@ fn set_content(
                         NinePatchBuilder::by_margins_with_content(20, 20, 20, 20, Content::Content),
                     );
 
-                    commands
-                        .spawn(
+                    let content_entity = commands
+                        .spawn_bundle(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
                             NinePatchBundle {
@@ -179,35 +179,36 @@ fn set_content(
                                 ..Default::default()
                             },
                         )
-                        .with(UiElement::InnerPanel);
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                        .insert(UiElement::InnerPanel)
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::Panel, Content::Title) => {
-                    commands.spawn(TextBundle {
-                        style: Style {
-                            margin: Rect {
-                                left: Val::Undefined,
-                                right: Val::Auto,
-                                top: Val::Auto,
-                                bottom: Val::Px(8.),
-                            },
-                            ..Default::default()
-                        },
-                        text: Text {
-                            value: "Example Title".to_string(),
-                            font: font.clone(),
-                            style: TextStyle {
-                                font_size: 25.,
-                                color: Color::BLUE,
+                    let content_entity = commands
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                margin: Rect {
+                                    left: Val::Undefined,
+                                    right: Val::Auto,
+                                    top: Val::Auto,
+                                    bottom: Val::Px(8.),
+                                },
                                 ..Default::default()
                             },
-                        },
-                        ..Default::default()
-                    });
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                            text: Text::with_section(
+                                "Example Title",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 25.0,
+                                    color: Color::BLUE,
+                                },
+                                TextAlignment::default(),
+                            ),
+                            ..Default::default()
+                        })
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::InnerPanel, _) => {
@@ -217,8 +218,8 @@ fn set_content(
                         NinePatchBuilder::by_margins_with_content(5, 10, 6, 6, Content::Content),
                     );
 
-                    commands
-                        .spawn(
+                    let button_cancel_entity = commands
+                        .spawn_bundle(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
                             NinePatchBundle {
@@ -243,11 +244,11 @@ fn set_content(
                                 ..Default::default()
                             },
                         )
-                        .with(UiElement::ButtonCancel);
-                    let button_cancel_entity = commands.current_entity().unwrap();
+                        .insert(UiElement::ButtonCancel)
+                        .id();
 
-                    commands
-                        .spawn(
+                    let button_ok_entity = commands
+                        .spawn_bundle(
                             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
                             // of this entity
                             NinePatchBundle {
@@ -271,63 +272,67 @@ fn set_content(
                                 ..Default::default()
                             },
                         )
-                        .with(UiElement::ButtonOK);
+                        .insert(UiElement::ButtonOK)
+                        .id();
 
-                    let button_ok_entity = commands.current_entity().unwrap();
-
-                    commands.push_children(entity, &[button_cancel_entity, button_ok_entity]);
+                    commands
+                        .entity(entity)
+                        .push_children(&[button_cancel_entity, button_ok_entity]);
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::ButtonOK, _) => {
-                    commands.spawn(TextBundle {
-                        style: Style {
-                            margin: Rect {
-                                left: Val::Px(110.),
-                                right: Val::Auto,
-                                top: Val::Auto,
-                                bottom: Val::Px(10.),
-                            },
-                            ..Default::default()
-                        },
-                        text: Text {
-                            value: "OK".to_string(),
-                            font: font.clone(),
-                            style: TextStyle {
-                                font_size: 50.,
-                                color: Color::GREEN,
+                    let content_entity = commands
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                margin: Rect {
+                                    left: Val::Px(110.),
+                                    right: Val::Auto,
+                                    top: Val::Auto,
+                                    bottom: Val::Px(10.),
+                                },
                                 ..Default::default()
                             },
-                        },
-                        ..Default::default()
-                    });
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                            text: Text::with_section(
+                                "OK",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 50.0,
+                                    color: Color::GREEN,
+                                },
+                                TextAlignment::default(),
+                            ),
+
+                            ..Default::default()
+                        })
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
                 (UiElement::ButtonCancel, _) => {
-                    commands.spawn(TextBundle {
-                        style: Style {
-                            margin: Rect {
-                                left: Val::Px(50.),
-                                right: Val::Auto,
-                                top: Val::Auto,
-                                bottom: Val::Px(10.),
-                            },
-                            ..Default::default()
-                        },
-                        text: Text {
-                            value: "CANCEL".to_string(),
-                            font: font.clone(),
-                            style: TextStyle {
-                                font_size: 50.,
-                                color: Color::RED,
+                    let content_entity = commands
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                margin: Rect {
+                                    left: Val::Px(50.),
+                                    right: Val::Auto,
+                                    top: Val::Auto,
+                                    bottom: Val::Px(10.),
+                                },
                                 ..Default::default()
                             },
-                        },
-                        ..Default::default()
-                    });
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                            text: Text::with_section(
+                                "CANCEL",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 50.0,
+                                    color: Color::RED,
+                                },
+                                TextAlignment::default(),
+                            ),
+                            ..Default::default()
+                        })
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
             }

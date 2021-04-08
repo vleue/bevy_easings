@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -26,7 +26,7 @@ fn setup(
     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
     let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
 
-    commands.spawn(
+    commands.spawn_bundle(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
         // of this entity
         NinePatchBundle {
@@ -46,11 +46,11 @@ fn setup(
         },
     );
 
-    commands.spawn(CameraUiBundle::default());
+    commands.spawn_bundle(UiCameraBundle::default());
 }
 
 fn set_content(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut query: Query<(Entity, &mut NinePatchContent<()>)>,
 ) {
@@ -59,20 +59,21 @@ fn set_content(
             // load font
             let font = asset_server.load("Kenney Future Narrow.ttf");
 
-            commands.spawn(TextBundle {
-                text: Text {
-                    value: "Hello".to_string(),
-                    font,
-                    style: TextStyle {
-                        font_size: 50.,
-                        color: Color::GREEN,
-                        ..Default::default()
-                    },
-                },
-                ..Default::default()
-            });
-            let content_entity = commands.current_entity().unwrap();
-            commands.push_children(entity, &[content_entity]);
+            let content_entity = commands
+                .spawn_bundle(TextBundle {
+                    text: Text::with_section(
+                        "Hello!",
+                        TextStyle {
+                            font,
+                            font_size: 50.0,
+                            color: Color::GREEN,
+                        },
+                        TextAlignment::default(),
+                    ),
+                    ..Default::default()
+                })
+                .id();
+            commands.entity(entity).push_children(&[content_entity]);
             nine_patch_content.loaded = true;
         }
     }

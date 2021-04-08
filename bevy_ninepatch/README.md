@@ -22,9 +22,9 @@ let panel_texture_handle = asset_server.load("assets/glassPanel_corners.png").un
 let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
 
 // This entity will be placed in the center of the 9-Patch UI element
-let content_entity = commands.spawn(...).current_entity().unwrap();
+let content_entity = commands.spawn_bundle(...).current_entity().unwrap();
 
-commands.spawn(
+commands.spawn_bundle(
     NinePatchBundle {
         style: Style {
             margin: Rect::all(Val::Auto),

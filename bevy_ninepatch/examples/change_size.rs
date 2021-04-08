@@ -16,7 +16,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
@@ -25,7 +25,7 @@ fn setup(
     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`
     let nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(20, 20, 20, 20));
 
-    commands.spawn(
+    commands.spawn_bundle(
         // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
         // of this entity
         NinePatchBundle {
@@ -45,7 +45,7 @@ fn setup(
         },
     );
 
-    commands.spawn(CameraUiBundle::default());
+    commands.spawn_bundle(UiCameraBundle::default());
 }
 
 // by changing the component `Style.size`, the 9-Patch UI element will be resized

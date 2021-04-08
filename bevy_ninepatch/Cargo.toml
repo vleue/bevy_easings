@@ -1,6 +1,6 @@
 [package]
 name = "bevy_ninepatch"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2018"
 description = "Displays 9-Patch UI elements in Bevy"
@@ -13,9 +13,7 @@ readme = "README.md"
 exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies.bevy]
-version = "0.4"
-git = "https://github.com/bevyengine/bevy"
-branch = "main"
+version = "0.5"
 default-features = false
 features = [ "render" ]
 

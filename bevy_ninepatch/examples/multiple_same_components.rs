@@ -15,18 +15,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<()>>>,
 ) {
-    commands.spawn(CameraUiBundle::default());
+    commands.spawn_bundle(UiCameraBundle::default());
 
     // prepare the button
     let button_texture_handle = asset_server.load("blue_button02.png");
     let button_nine_patch_handle = nine_patches.add(NinePatchBuilder::by_margins(5, 10, 6, 6));
 
     commands
-        .spawn(
+        .spawn_bundle(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
             NinePatchBundle {
@@ -51,9 +51,9 @@ fn setup(
                 ..Default::default()
             },
         )
-        .with(PatchElement::ButtonCancel);
+        .insert(PatchElement::ButtonCancel);
     commands
-        .spawn(
+        .spawn_bundle(
             // this component bundle will be detected by the plugin, and the 9-Patch UI element will be added as a child
             // of this entity
             NinePatchBundle {
@@ -78,7 +78,7 @@ fn setup(
                 ..Default::default()
             },
         )
-        .with(PatchElement::ButtonOk);
+        .insert(PatchElement::ButtonOk);
 }
 
 enum PatchElement {
@@ -87,7 +87,7 @@ enum PatchElement {
 }
 
 fn set_content(
-    commands: &mut Commands,
+    mut commands: Commands,
     asset_server: Res<AssetServer>,
     patch_query: Query<&PatchElement>,
     mut patch_content: Query<(Entity, &mut NinePatchContent<()>)>,
@@ -101,55 +101,57 @@ fn set_content(
                 .expect("couldn't find tagged parent 9-Patch UI element")
             {
                 PatchElement::ButtonOk => {
-                    commands.spawn(TextBundle {
-                        style: Style {
-                            margin: Rect {
-                                left: Val::Px(50.),
-                                right: Val::Auto,
-                                top: Val::Auto,
-                                bottom: Val::Px(10.),
-                            },
-                            ..Default::default()
-                        },
-                        text: Text {
-                            value: "OK".to_string(),
-                            font: font.clone(),
-                            style: TextStyle {
-                                font_size: 50.,
-                                color: Color::GREEN,
+                    let content_entity = commands
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                margin: Rect {
+                                    left: Val::Px(50.),
+                                    right: Val::Auto,
+                                    top: Val::Auto,
+                                    bottom: Val::Px(10.),
+                                },
                                 ..Default::default()
                             },
-                        },
-                        ..Default::default()
-                    });
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                            text: Text::with_section(
+                                "OK",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 50.0,
+                                    color: Color::GREEN,
+                                },
+                                TextAlignment::default(),
+                            ),
+                            ..Default::default()
+                        })
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
                 PatchElement::ButtonCancel => {
-                    commands.spawn(TextBundle {
-                        style: Style {
-                            margin: Rect {
-                                left: Val::Px(50.),
-                                right: Val::Auto,
-                                top: Val::Auto,
-                                bottom: Val::Px(10.),
-                            },
-                            ..Default::default()
-                        },
-                        text: Text {
-                            value: "CANCEL".to_string(),
-                            font: font.clone(),
-                            style: TextStyle {
-                                font_size: 50.,
-                                color: Color::RED,
+                    let content_entity = commands
+                        .spawn_bundle(TextBundle {
+                            style: Style {
+                                margin: Rect {
+                                    left: Val::Px(50.),
+                                    right: Val::Auto,
+                                    top: Val::Auto,
+                                    bottom: Val::Px(10.),
+                                },
                                 ..Default::default()
                             },
-                        },
-                        ..Default::default()
-                    });
-                    let content_entity = commands.current_entity().unwrap();
-                    commands.push_children(entity, &[content_entity]);
+                            text: Text::with_section(
+                                "CANCEL",
+                                TextStyle {
+                                    font: font.clone(),
+                                    font_size: 50.0,
+                                    color: Color::RED,
+                                },
+                                TextAlignment::default(),
+                            ),
+                            ..Default::default()
+                        })
+                        .id();
+                    commands.entity(entity).push_children(&[content_entity]);
                     nine_patch_content.loaded = true;
                 }
             }
