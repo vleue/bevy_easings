@@ -13,11 +13,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dBundle::default());
+fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(100., 100.),
@@ -25,7 +25,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
             },
             ..Default::default()
         })
-        .with(
+        .insert(
             Transform::from_translation(Vec3::new(-500., 0., 0.)).ease_to(
                 Transform::from_translation(Vec3::new(500., 0., 0.)),
                 bevy_easings::EaseFunction::QuadraticInOut,
@@ -35,12 +35,15 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
                 },
             ),
         )
-        .with(Timer::from_seconds(0.25, true));
+        .insert(Timer::from_seconds(0.25, true));
 }
 
-fn pause(mut query: Query<(&Timer, &mut bevy_easings::EasingComponent<Transform>)>) {
-    for (timer, mut easing) in query.iter_mut() {
-        if timer.just_finished() {
+fn pause(
+    mut query: Query<(&mut Timer, &mut bevy_easings::EasingComponent<Transform>)>,
+    time: Res<Time>,
+) {
+    for (mut timer, mut easing) in query.iter_mut() {
+        if timer.tick(time.delta()).just_finished() {
             easing.state = !easing.state;
         }
     }

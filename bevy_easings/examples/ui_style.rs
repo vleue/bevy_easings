@@ -12,8 +12,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(CameraUiBundle::default());
+fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    commands.spawn_bundle(UiCameraBundle::default());
 
     for ease_function in &[
         bevy_easings::EaseFunction::QuadraticIn,
@@ -48,11 +48,11 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn(ImageBundle {
+            .spawn_bundle(ImageBundle {
                 material: materials.add(Color::RED.into()),
                 ..Default::default()
             })
-            .with(
+            .insert(
                 Style {
                     size: Size {
                         width: Val::Percent(3.),

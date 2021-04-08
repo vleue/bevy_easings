@@ -12,8 +12,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dBundle::default());
+fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     let size = 80.;
 
@@ -56,13 +56,13 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn((
+            .spawn_bundle((
                 Transform::from_translation(Vec3::new(x, y, 0.)),
                 GlobalTransform::default(),
             ))
             .with_children(|parent| {
                 parent
-                    .spawn(SpriteBundle {
+                    .spawn_bundle(SpriteBundle {
                         material: materials.add(Color::RED.into()),
                         sprite: Sprite {
                             size: Vec2::new(size, size),
@@ -70,9 +70,9 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
                         },
                         ..Default::default()
                     })
-                    .with(Transform::default().ease_to(
+                    .insert(Transform::default().ease_to(
                         Transform::from_rotation(Quat::from_axis_angle(
-                            Vec3::unit_z(),
+                            Vec3::Z,
                             std::f32::consts::PI / 2.,
                         )),
                         *ease_function,

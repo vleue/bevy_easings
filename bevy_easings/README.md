@@ -23,11 +23,11 @@ And then just ease your components to their new state!
 
 ```rust
 commands
-    .spawn(SpriteBundle {
+    .spawn_bundle(SpriteBundle {
         material: materials.add(Color::RED.into()),
         ..Default::default()
     })
-    .with(
+    .insert(
         Sprite {
             size: Vec2::new(10., 10.),
             ..Default::default()
@@ -54,11 +54,11 @@ You can chain easings, if they are not set to repeat they will happen in sequenc
 
 ```rust
 commands
-    .spawn(SpriteBundle {
+    .spawn_bundle(SpriteBundle {
         material: materials.add(Color::RED.into()),
         ..Default::default()
     })
-    .with(
+    .insert(
         Sprite {
             size: Vec2::new(10., 10.),
             ..Default::default()

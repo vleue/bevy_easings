@@ -99,13 +99,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 ```rust
     commands
-        .spawn(ImageBundle {
+        .spawn_bundle(ImageBundle {
             ..Default::default()
         })
         // as `CustomComponent` is not already part of the components of the entity, 
         // insert the component with a basic value, it will be replaced immediately
-        .with(CustomComponent(-1.))
-        .with(CustomComponent(0.).ease_to(
+        .insert(CustomComponent(-1.))
+        .insert(CustomComponent(0.).ease_to(
             CustomComponent(100.),
             bevy_easings::EaseFunction::QuadraticInOut,
             bevy_easings::EasingType::PingPong {
@@ -138,7 +138,7 @@ transform0
 
 ```rust
 fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>>) {
-    if timer.just_finished() {
+    if timer.tick(time.delta()).just_finished() {
         easing.state = !easing.state;
     }
 }

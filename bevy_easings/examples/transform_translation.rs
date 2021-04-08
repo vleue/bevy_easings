@@ -12,8 +12,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dBundle::default());
+fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     let size = 25.;
 
@@ -55,7 +55,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn(SpriteBundle {
+            .spawn_bundle(SpriteBundle {
                 material: materials.add(Color::RED.into()),
                 sprite: Sprite {
                     size: Vec2::new(size, size),
@@ -63,7 +63,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
                 },
                 ..Default::default()
             })
-            .with(
+            .insert(
                 Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
                     Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
                     *ease_function,
@@ -77,7 +77,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     }
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),
@@ -85,7 +85,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
             },
             ..Default::default()
         })
-        .with(
+        .insert(
             Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
                 Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
                 EaseMethod::Linear,
@@ -98,7 +98,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     x += size * spacing;
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),
@@ -106,7 +106,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
             },
             ..Default::default()
         })
-        .with(
+        .insert(
             Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
                 Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
                 EaseMethod::Discrete,
@@ -119,7 +119,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
     x += size * spacing;
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(size, size),
@@ -127,7 +127,7 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
             },
             ..Default::default()
         })
-        .with(
+        .insert(
             Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
                 Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
                 EaseMethod::CustomFunction(|x| x / 4.),

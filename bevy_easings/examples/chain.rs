@@ -13,11 +13,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn(Camera2dBundle::default());
+fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     commands
-        .spawn(SpriteBundle {
+        .spawn_bundle(SpriteBundle {
             material: materials.add(Color::RED.into()),
             sprite: Sprite {
                 size: Vec2::new(100., 100.),
@@ -25,12 +25,12 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
             },
             ..Default::default()
         })
-        .with(Timer::from_seconds(1., false));
+        .insert(Timer::from_seconds(1., false));
 }
 
-fn add_easing(commands: &mut Commands, query: Query<(&Timer, Entity)>) {
-    for (timer, entity) in query.iter() {
-        if timer.just_finished() {
+fn add_easing(mut commands: Commands, mut query: Query<(&mut Timer, Entity)>, time: Res<Time>) {
+    for (mut timer, entity) in query.iter_mut() {
+        if timer.tick(time.delta()).just_finished() {
             let transform0 = Transform::default();
             let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
             let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));
@@ -41,12 +41,11 @@ fn add_easing(commands: &mut Commands, query: Query<(&Timer, Entity)>) {
             let transform7 = Transform::default();
 
             let duration = std::time::Duration::from_millis(500);
-            commands.insert_one(
-                entity,
-                Timer::from_seconds(7. * duration.as_secs_f32() as f32 + 1., false),
-            );
-            commands.insert_one(
-                entity,
+            commands.entity(entity).insert(Timer::from_seconds(
+                7. * duration.as_secs_f32() as f32 + 1.,
+                false,
+            ));
+            commands.entity(entity).insert(
                 transform0
                     .ease_to(
                         transform1,
