@@ -1,5 +1,7 @@
 # bevy_diagnostic_counter
 
+> :warning: **Now integrated into Bevy**, won't be updated here
+
 Simple diagnostics that can count entities or assets.
 
 ```rust
