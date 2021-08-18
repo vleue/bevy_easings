@@ -93,7 +93,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
     }
 }
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePatchPlugin<T> {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_asset::<NinePatchBuilder<T>>()
             .add_system(create_ninepatches::<T>.system());
     }

@@ -207,7 +207,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
                         size: Extent3d::new(
                             to_width(column_item.original_size, texture_size),
                             to_height(column_item.original_size, texture_size),
-                            texture_size.depth,
+                            texture_size.depth_or_array_layers,
                         ),
                         data: patch_texture_data,
                         format: TextureFormat::Rgba8UnormSrgb,

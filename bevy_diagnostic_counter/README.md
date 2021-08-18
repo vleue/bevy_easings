@@ -5,7 +5,7 @@
 Simple diagnostics that can count entities or assets.
 
 ```rust
-App::build()
+App::default()
     .add_plugin(::bevy_diagnostic_counter::EntityCountDiagnosticsPlugin)
     .add_plugin(::bevy_diagnostic_counter::AssetCountDiagnosticsPlugin::<ColorMaterial>::default())
     .add_plugin(::bevy_diagnostic_counter::AssetCountDiagnosticsPlugin::<Texture>::default())

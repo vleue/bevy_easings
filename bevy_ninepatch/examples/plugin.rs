@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_ninepatch::{NinePatchBuilder, NinePatchBundle, NinePatchData, NinePatchPlugin};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    App::build()
+    App::default()
         .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())

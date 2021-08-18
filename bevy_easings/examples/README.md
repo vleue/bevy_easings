@@ -85,7 +85,7 @@ impl bevy_easings::Lerp for CustomComponent {
 
 ```rust
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    App::build()
+    App::default()
         .add_default_plugins()
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup.system())

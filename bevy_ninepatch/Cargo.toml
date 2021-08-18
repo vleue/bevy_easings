@@ -14,6 +14,7 @@ exclude = ["examples/*.png", "examples/*.gif", "*.png", "assets/"]
 
 [dependencies.bevy]
 version = "0.5"
+git = "https://github.com/bevyengine/bevy"
 default-features = false
 features = [ "render" ]
 

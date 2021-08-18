@@ -5,7 +5,7 @@ use bevy_ninepatch::{
 };
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    App::build()
+    App::default()
         .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<Content>::default())

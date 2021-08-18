@@ -18,7 +18,7 @@ struct HandleCache<T: 'static + TypeUuid + Sync + Send>(std::collections::HashMa
 pub struct EasingsPlugin;
 
 impl Plugin for EasingsPlugin {
-    fn build(&self, app: &mut AppBuilder) {
+    fn build(&self, app: &mut App) {
         app.add_system(ease_system::<Sprite>.system())
             .add_system(ease_system::<ColorMaterial>.system())
             .add_system(ease_system::<Color>.system())

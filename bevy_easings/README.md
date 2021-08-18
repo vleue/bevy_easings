@@ -11,7 +11,7 @@ Easings on Bevy components using [interpolation](https://crates.io/crates/interp
 
 Add the plugin to your app:
 ```rust
-    App::build()
+    App::default()
         .add_default_plugins()
         .add_plugin(EasingsPlugin)
         ...

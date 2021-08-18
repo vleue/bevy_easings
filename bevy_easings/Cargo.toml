@@ -18,6 +18,7 @@ rand = { version = "0.8", optional = true }
 
 [dependencies.bevy]
 version = "0.5"
+git = "https://github.com/bevyengine/bevy"
 default-features = false
 features = [ "render" ]
 

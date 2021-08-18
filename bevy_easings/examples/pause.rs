@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use bevy_easings::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    App::build()
+    App::default()
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup.system())
