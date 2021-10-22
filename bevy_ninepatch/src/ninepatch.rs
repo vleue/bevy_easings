@@ -236,7 +236,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
 }
 
 /// Component to mark the entity placed for the content of the 9-Patch UI element
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Component)]
 pub struct NinePatchContent<T: Send + Sync + 'static> {
     /// Name of the content patch
     pub content: T,

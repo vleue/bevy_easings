@@ -81,6 +81,7 @@ fn setup(
         .insert(PatchElement::ButtonOk);
 }
 
+#[derive(Component)]
 enum PatchElement {
     ButtonOk,
     ButtonCancel,

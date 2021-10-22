@@ -346,7 +346,7 @@ enum Content {
     Content,
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Component)]
 enum UiElement {
     Panel,
     InnerPanel,

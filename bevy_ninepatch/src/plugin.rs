@@ -3,7 +3,7 @@ use bevy::prelude::*;
 use crate::ninepatch::*;
 
 /// State of the current `NinePatch`
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Component)]
 pub struct NinePatchData<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     /// Handle of the texture
     pub texture: Handle<Texture>,
