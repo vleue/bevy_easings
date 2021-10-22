@@ -14,13 +14,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[derive(Default)]
+#[derive(Default, Component)]
 struct CustomComponent(f32);
 impl bevy_easings::Lerp for CustomComponent {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        CustomComponent(self.0.lerp(&other.0, scalar))
+        CustomComponent(interpolation::lerp(&self.0, &other.0, scalar))
     }
 }
 

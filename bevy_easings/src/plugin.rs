@@ -20,8 +20,6 @@ pub struct EasingsPlugin;
 impl Plugin for EasingsPlugin {
     fn build(&self, app: &mut App) {
         app.add_system(ease_system::<Sprite>.system())
-            .add_system(ease_system::<ColorMaterial>.system())
-            .add_system(ease_system::<Color>.system())
             .add_system(ease_system::<Transform>.system())
             .add_system(ease_system::<Style>.system());
 
@@ -210,7 +208,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
 
 #[cfg(feature = "ease_handle")]
 #[allow(clippy::too_many_arguments)]
-fn handle_ease_system<T: Ease + Component + TypeUuid>(
+fn handle_ease_system<T: Ease + TypeUuid + Sync + Send>(
     mut commands: Commands,
     time: Res<Time>,
     mut assets: ResMut<Assets<T>>,

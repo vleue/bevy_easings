@@ -17,7 +17,7 @@ use std::time::Duration;
 #[cfg(feature = "ease_handle")]
 use rand::Rng;
 
-use bevy::{reflect::TypeUuid, prelude::*};
+use bevy::{prelude::*, reflect::TypeUuid};
 
 use interpolation::Ease as IEase;
 pub use interpolation::EaseFunction;
@@ -124,6 +124,7 @@ impl MyEaser for f32 {
 }
 
 /// Component to control an easing
+#[derive(Component)]
 pub struct EasingComponent<T> {
     start: Option<EaseValue<T>>,
     end: EaseValue<T>,
@@ -181,6 +182,7 @@ impl<T: Default> EasingComponent<T> {
 }
 
 /// Component to control a chain of easing
+#[derive(Component)]
 pub struct EasingChainComponent<T>(Vec<EasingComponent<T>>);
 
 impl<T: Default> EasingChainComponent<T> {
