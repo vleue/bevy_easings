@@ -6,22 +6,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 
     Ok(())
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
-
-    let size = 100.;
-
-    let spacing = 1.25;
-    let screen_x = 570.;
-    let screen_y = 150.;
-    let mut x = -screen_x;
-    let mut y = screen_y;
+fn setup(mut commands: Commands) {
+    commands.spawn_bundle(UiCameraBundle::default());
 
     for ease_function in &[
         bevy_easings::EaseFunction::QuadraticIn,
@@ -56,28 +48,29 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn_bundle(SpriteBundle {
-                material: materials.add(Color::RED.into()),
-                transform: Transform::from_translation(Vec3::new(x, y, 0.)),
+            .spawn_bundle(ImageBundle {
+                style: Style {
+                    size: Size {
+                        width: Val::Percent(3.),
+                        height: Val::Percent(3.),
+                    },
 
-                sprite: Sprite {
-                    size: Vec2::new(size, size),
+                    margin: Rect {
+                        bottom: Val::Percent(0.),
+                        left: Val::Px(3.),
+                        ..Default::default()
+                    },
                     ..Default::default()
                 },
                 ..Default::default()
             })
-            .insert(materials.add(Color::RED.into()).ease_to(
-                materials.add(Color::BLUE.into()),
+            .insert(UiColor(Color::RED).ease_to(
+                UiColor(Color::BLUE),
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
             ));
-        y -= size * spacing;
-        if y < -screen_y {
-            x += size * spacing;
-            y = screen_y;
-        }
     }
 }

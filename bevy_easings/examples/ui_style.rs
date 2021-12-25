@@ -6,13 +6,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 
     Ok(())
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(mut commands: Commands) {
     commands.spawn_bundle(UiCameraBundle::default());
 
     for ease_function in &[
@@ -49,7 +49,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     ] {
         commands
             .spawn_bundle(ImageBundle {
-                material: materials.add(Color::RED.into()),
+                color: UiColor(Color::RED),
                 ..Default::default()
             })
             .insert(

@@ -6,13 +6,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         .run();
 
     Ok(())
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
     let size = 25.;
@@ -56,9 +56,9 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
     ] {
         commands
             .spawn_bundle(SpriteBundle {
-                material: materials.add(Color::RED.into()),
                 sprite: Sprite {
-                    size: Vec2::new(size, size),
+                    custom_size: Some(Vec2::new(size, size)),
+                    color: Color::RED,
                     ..Default::default()
                 },
                 ..Default::default()
@@ -78,9 +78,9 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
 
     commands
         .spawn_bundle(SpriteBundle {
-            material: materials.add(Color::RED.into()),
             sprite: Sprite {
-                size: Vec2::new(size, size),
+                custom_size: Some(Vec2::new(size, size)),
+                color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
@@ -99,9 +99,9 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
 
     commands
         .spawn_bundle(SpriteBundle {
-            material: materials.add(Color::RED.into()),
             sprite: Sprite {
-                size: Vec2::new(size, size),
+                custom_size: Some(Vec2::new(size, size)),
+                color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
@@ -120,9 +120,9 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
 
     commands
         .spawn_bundle(SpriteBundle {
-            material: materials.add(Color::RED.into()),
             sprite: Sprite {
-                size: Vec2::new(size, size),
+                custom_size: Some(Vec2::new(size, size)),
+                color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()

@@ -14,9 +14,6 @@
 
 use std::time::Duration;
 
-#[cfg(feature = "ease_handle")]
-use rand::Rng;
-
 use bevy::{prelude::*, reflect::TypeUuid};
 
 use interpolation::Ease as IEase;
@@ -134,8 +131,6 @@ pub struct EasingComponent<T> {
     pub state: EasingState,
     paused: bool,
     easing_type: EasingType,
-    #[cfg(feature = "ease_handle")]
-    id: i128,
     direction: i16,
 }
 
@@ -172,8 +167,6 @@ impl<T: Default> EasingComponent<T> {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            #[cfg(feature = "ease_handle")]
-            id: rng.gen(),
             direction: 1,
         };
 
@@ -208,8 +201,6 @@ impl<T: Default> EasingChainComponent<T> {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            #[cfg(feature = "ease_handle")]
-            id: rng.gen(),
             direction: 1,
         };
 
@@ -242,8 +233,6 @@ pub trait Ease: Sized {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            #[cfg(feature = "ease_handle")]
-            id: rng.gen(),
             direction: 1,
         }
     }
@@ -300,8 +289,6 @@ pub trait CustomComponentEase: Sized {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            #[cfg(feature = "ease_handle")]
-            id: rng.gen(),
             direction: 1,
         }
     }

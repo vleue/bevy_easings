@@ -2,20 +2,34 @@ use bevy::prelude::*;
 
 use interpolation::Lerp;
 
-use crate::{EaseValue, IntermediateLerp};
+use crate::EaseValue;
 
 impl Lerp for EaseValue<Sprite> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(Sprite {
-            size: self.0.size + (other.0.size - self.0.size) * *scalar,
-            resize_mode: match self.0.resize_mode {
-                SpriteResizeMode::Manual => SpriteResizeMode::Manual,
-                SpriteResizeMode::Automatic => SpriteResizeMode::Automatic,
+            custom_size: match (self.0.custom_size, other.0.custom_size) {
+                (None, None) => None,
+                (None, Some(b)) => Some(b),
+                (Some(a), None) => Some(a),
+                (Some(a), Some(b)) => Some(a.lerp(b, *scalar)),
             },
+            color: EaseValue(self.0.color)
+                .lerp(&EaseValue(other.0.color), scalar)
+                .0,
             ..Default::default()
         })
+    }
+}
+
+impl Lerp for EaseValue<UiColor> {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        EaseValue(UiColor(
+            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+        ))
     }
 }
 
@@ -28,24 +42,6 @@ impl Lerp for EaseValue<Transform> {
             scale: self.0.scale.lerp(other.0.scale, *scalar),
             rotation: self.0.rotation.lerp(other.0.rotation, *scalar),
         })
-    }
-}
-
-impl Lerp for EaseValue<ColorMaterial> {
-    type Scalar = f32;
-
-    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        if self.0.texture.is_none() {
-            EaseValue(ColorMaterial {
-                color: self.0.color + (other.0.color + (self.0.color * -1.)) * *scalar,
-                texture: None,
-            })
-        } else {
-            EaseValue(ColorMaterial {
-                color: self.0.color,
-                texture: self.0.texture.clone(),
-            })
-        }
     }
 }
 
@@ -137,23 +133,5 @@ impl Lerp for EaseValue<Color> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(self.0 + (other.0 + (self.0 * -1.)) * *scalar)
-    }
-}
-
-impl IntermediateLerp for ColorMaterial {
-    fn lerp(start: &EaseValue<&Self>, end: &EaseValue<&Self>, scalar: &f32) -> Self {
-        if start.0.texture.is_none() {
-            ColorMaterial {
-                color: EaseValue(start.0.color)
-                    .lerp(&EaseValue(end.0.color), scalar)
-                    .0,
-                texture: None,
-            }
-        } else {
-            ColorMaterial {
-                color: start.0.color,
-                texture: start.0.texture.clone(),
-            }
-        }
     }
 }

@@ -1,6 +1,6 @@
 # Examples
 
-### [colormaterial_color.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/colormaterial_color.rs)
+### [sprite_color.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/sprite_color.rs)
 
 ```rust
 materials.add(Color::RED.into()).ease_to(
@@ -13,7 +13,7 @@ materials.add(Color::RED.into()).ease_to(
 )
 ```
 
-![colormaterial_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
+![sprite_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_color.gif)
 
 ### [sprite_size.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/sprite_size.rs)
 

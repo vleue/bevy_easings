@@ -15,8 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
-    let initial_size = 10.;
-    let final_size = 100.;
+    let size = 100.;
 
     let spacing = 1.25;
     let screen_x = 570.;
@@ -63,14 +62,14 @@ fn setup(mut commands: Commands) {
             })
             .insert(
                 Sprite {
-                    custom_size: Some(Vec2::new(initial_size, initial_size)),
+                    custom_size: Some(Vec2::new(size, size)),
                     color: Color::RED,
                     ..Default::default()
                 }
                 .ease_to(
                     Sprite {
-                        custom_size: Some(Vec2::new(final_size, final_size)),
-                        color: Color::RED,
+                        custom_size: Some(Vec2::new(size, size)),
+                        color: Color::BLUE,
                         ..Default::default()
                     },
                     *ease_function,
@@ -80,9 +79,9 @@ fn setup(mut commands: Commands) {
                     },
                 ),
             );
-        y -= final_size * spacing;
+        y -= size * spacing;
         if y < -screen_y {
-            x += final_size * spacing;
+            x += size * spacing;
             y = screen_y;
         }
     }

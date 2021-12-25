@@ -1,5 +1,0 @@
-[workspace]
-members = [
-    "bevy_ninepatch",
-    "bevy_easings",
-]

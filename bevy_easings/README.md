@@ -24,17 +24,16 @@ And then just ease your components to their new state!
 ```rust
 commands
     .spawn_bundle(SpriteBundle {
-        material: materials.add(Color::RED.into()),
         ..Default::default()
     })
     .insert(
         Sprite {
-            size: Vec2::new(10., 10.),
+            custom_size: Some(Vec2::new(10., 10.)),
             ..Default::default()
         }
         .ease_to(
             Sprite {
-                size: Vec2::new(100., 100.),
+                custom_size: Some(Vec2::new(100., 100.)),
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
@@ -55,17 +54,16 @@ You can chain easings, if they are not set to repeat they will happen in sequenc
 ```rust
 commands
     .spawn_bundle(SpriteBundle {
-        material: materials.add(Color::RED.into()),
         ..Default::default()
     })
     .insert(
         Sprite {
-            size: Vec2::new(10., 10.),
+            custom_size: Some(Vec2::new(10., 10.)),
             ..Default::default()
         }
         .ease_to(
             Sprite {
-                size: Vec2::new(300., 300.),
+                custom_size: Some(Vec2::new(300., 300.)),
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
@@ -75,7 +73,7 @@ commands
         )
         .ease_to(
             Sprite {
-                size: Vec2::new(350., 350.),
+                custom_size: Some(Vec2::new(350., 350.)),
                 ..Default::default()
             },
             EaseFunction::QuadraticIn,
@@ -89,19 +87,16 @@ commands
 
 ## Bundle Supported
 
-- [`ColorMaterial`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.ColorMaterial.html)
-- [`Sprite`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Sprite.html)
-- [`Transform`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Transform.html)
-- [`Style`](https://docs.rs/bevy/0.2.1/bevy/prelude/struct.Style.html)
-
-> :warning: While doing easings on `Handle<ColorMaterial>` is possible (as shown in [this example](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/colormaterial_color.rs)), it is probably not a good idea as many `ColorMaterial`s will need to be added to the assets and it will slow down your game.
+- [`Sprite`](https://docs.rs/bevy/latest/bevy/prelude/struct.Sprite.html)
+- [`Transform`](https://docs.rs/bevy/latest/bevy/prelude/struct.Transform.html)
+- [`Style`](https://docs.rs/bevy/latest/bevy/prelude/struct.Style.html)
 
 ### Custom component support
 
 To be able to ease a component, it needs to implement the traits `Default` and [`Lerp`](https://docs.rs/interpolation/0.2.0/interpolation/trait.Lerp.html). This trait is re-exported by `beavy_easings`.
 
 ```rust
-#[Derive(Default)]
+#[Derive(Default, Component)]
 struct CustomComponent(f32);
 impl Lerp for CustomComponent {
     type Scalar = f32;
@@ -120,7 +115,7 @@ Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be ad
 
 See [examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings/examples)
 
-![colormaterial_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
+![sprite_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
 
 ![sprite_size](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_size.gif)
 
@@ -162,7 +157,3 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 - BounceIn
 - BounceOut
 - BounceInOut
-
-## Features
-
-Feature `ease_handle` is enabled by default, and control wether easing on `Handle<ColorMaterial>` is possible or not. Disabling this feature removes a system and a resource that are not used otherwise, the `rand` dependency and remove a `i128` from the `EasingComponent`.

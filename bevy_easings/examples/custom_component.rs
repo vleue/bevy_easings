@@ -6,8 +6,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup.system())
-        .add_system(check_value.system())
+        .add_startup_system(setup)
+        .add_system(check_value)
         .add_system(bevy_easings::custom_ease_system::<CustomComponent>.system())
         .run();
 
@@ -24,12 +24,11 @@ impl bevy_easings::Lerp for CustomComponent {
     }
 }
 
-fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(mut commands: Commands) {
     commands.spawn_bundle(UiCameraBundle::default());
 
     commands
         .spawn_bundle(ImageBundle {
-            material: materials.add(Color::RED.into()),
             style: Style {
                 size: Size {
                     width: Val::Percent(3.),
@@ -43,6 +42,7 @@ fn setup(mut commands: Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
                 },
                 ..Default::default()
             },
+            color: UiColor(Color::RED),
             ..Default::default()
         })
         // as `CustomComponent` is not already part of the components of the entity,
