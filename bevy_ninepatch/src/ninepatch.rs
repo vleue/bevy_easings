@@ -179,8 +179,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
             (t.texture_descriptor.size, &t.data)
         };
         let mut textures_to_add = vec![];
-        if self.patch_textures.is_none() || self.original_texture.as_ref() != Some(&texture_handle)
-        {
+        if self.patch_textures.is_none() || self.original_texture.as_ref() != Some(texture_handle) {
             let mut patch_textures = vec![];
             let mut accu_y = 0;
             for row in &self.patches {
@@ -341,7 +340,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         if let Some(content_entity) =
                             contents.as_ref().and_then(|m| m.get(content_part))
                         {
-                            child.push_children(&[content_entity.clone()]);
+                            child.push_children(&[*content_entity]);
                         }
                     }
                     n += 1;

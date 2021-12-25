@@ -85,6 +85,7 @@ pub enum EaseMethod {
     CustomFunction(fn(f32) -> f32),
 }
 
+#[allow(clippy::from_over_into)]
 impl Into<EaseMethod> for EaseFunction {
     fn into(self) -> EaseMethod {
         EaseMethod::EaseFunction(self)
