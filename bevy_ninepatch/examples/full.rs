@@ -13,9 +13,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugin(FrameTimeDiagnosticsPlugin::default())
         // Adds a system that prints diagnostics to the console
         .add_plugin(LogDiagnosticsPlugin::default())
-        .add_startup_system(setup.system())
-        .add_system(set_content.system())
-        .add_system(update_size.system())
+        .add_startup_system(setup)
+        .add_system(set_content)
+        .add_system(update_size)
         .run();
 
     Ok(())
@@ -28,8 +28,8 @@ fn setup(
 ) {
     // load the assets
     let cornered_panel_texture_handle = asset_server.load("metalPanel_yellowCorner.png");
-    let _panel_texture_handle: Handle<Texture> = asset_server.load("glassPanel_corners.png");
-    let _button_texture_handle: Handle<Texture> = asset_server.load("blue_button02.png");
+    let _panel_texture_handle: Handle<Image> = asset_server.load("glassPanel_corners.png");
+    let _button_texture_handle: Handle<Image> = asset_server.load("blue_button02.png");
 
     let panel_nine_patch_handle = nine_patches.add(NinePatchBuilder::from_patches(vec![
         vec![
@@ -151,7 +151,7 @@ fn set_content(
                 &nine_patch_content.content,
             ) {
                 (UiElement::Panel, Content::Content) => {
-                    let panel_texture_handle: Handle<Texture> =
+                    let panel_texture_handle: Handle<Image> =
                         asset_server.load("glassPanel_corners.png");
 
                     // load the 9-Patch as an assets and keep an `Handle<NinePatchBuilder<()>>`

@@ -7,9 +7,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())
-        .add_startup_system(setup.system())
+        .add_startup_system(setup)
         // this system will change the size depending on time elapsed since startup
-        .add_system(update_size.system())
+        .add_system(update_size)
         .run();
 
     Ok(())

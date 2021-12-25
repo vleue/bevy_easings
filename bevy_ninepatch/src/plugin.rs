@@ -6,7 +6,7 @@ use crate::ninepatch::*;
 #[derive(Debug, Clone, Component)]
 pub struct NinePatchData<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     /// Handle of the texture
-    pub texture: Handle<Texture>,
+    pub texture: Handle<Image>,
     /// Handle to the `NinePatchBuilder`
     pub nine_patch: Handle<NinePatchBuilder<T>>,
     /// Is the element already loaded and displayed
@@ -29,7 +29,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Default for NinePa
 impl<T: Clone + Send + Sync + Default + Eq + std::hash::Hash + 'static> NinePatchData<T> {
     /// Create a NinePathData with content when there is only one content
     pub fn with_single_content(
-        texture: Handle<Texture>,
+        texture: Handle<Image>,
         nine_patch: Handle<NinePatchBuilder<T>>,
         content: Entity,
     ) -> NinePatchData<T> {
@@ -95,7 +95,7 @@ impl<T: Clone + Send + Sync + 'static> Default for NinePatchPlugin<T> {
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePatchPlugin<T> {
     fn build(&self, app: &mut App) {
         app.add_asset::<NinePatchBuilder<T>>()
-            .add_system(create_ninepatches::<T>.system());
+            .add_system(create_ninepatches::<T>);
     }
 }
 
@@ -103,8 +103,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> Plugin for NinePat
 fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
     mut commands: Commands,
     mut nine_patches: ResMut<Assets<NinePatchBuilder<T>>>,
-    mut textures: ResMut<Assets<Texture>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut textures: ResMut<Assets<Image>>,
     mut patches_query: Query<(Entity, &mut NinePatchData<T>, &Style)>,
 ) {
     for (entity, mut data, style) in patches_query.iter_mut() {
@@ -114,7 +113,7 @@ fn create_ninepatches<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static>(
                     // texture is not available yet, will try next loop
                     continue;
                 }
-                let np = nine_patch.apply(&data.texture, &mut textures, &mut materials);
+                let np = nine_patch.apply(&data.texture, &mut textures);
                 np.add_with_parent(&mut commands, entity, style, &data.content);
                 data.loaded = true;
             }

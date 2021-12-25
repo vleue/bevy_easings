@@ -9,8 +9,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         // Add the `NinePatchPlugin` plugin
         .add_plugin(NinePatchPlugin::<()>::default())
-        .add_startup_system(setup.system())
-        .add_system(set_content.system())
+        .add_startup_system(setup)
+        .add_system(set_content)
         .run();
 
     Ok(())

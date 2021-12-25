@@ -1,13 +1,10 @@
 use bevy::prelude::*;
+use bevy::render::render_resource::{Extent3d, TextureDimension, TextureFormat};
 use bevy::{
     asset::{Assets, Handle},
     math::{Rect, Size},
     reflect::TypeUuid,
-    render::{
-        color::Color,
-        texture::{Extent3d, Texture, TextureFormat},
-    },
-    sprite::ColorMaterial,
+    render::color::Color,
     transform::hierarchy::BuildChildren,
     ui::{
         entity::{ImageBundle, NodeBundle},
@@ -31,8 +28,8 @@ pub struct Patch<T: Clone + Send + Sync + 'static> {
 pub struct NinePatchBuilder<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static = ()> {
     /// Patches for a nine patch texture. See example `full.rs` on how to use directly
     pub patches: Vec<Vec<Patch<T>>>,
-    pub(crate) patch_textures: Option<Vec<Handle<ColorMaterial>>>,
-    pub(crate) original_texture: Option<Handle<Texture>>,
+    pub(crate) patch_textures: Option<Vec<Handle<Image>>>,
+    pub(crate) original_texture: Option<Handle<Image>>,
 }
 
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> TypeUuid for NinePatchBuilder<T> {
@@ -172,15 +169,14 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
     /// the given texture according to the patches.
     pub fn apply(
         &mut self,
-        texture_handle: &Handle<Texture>,
-        textures: &mut Assets<Texture>,
-        materials: &mut Assets<ColorMaterial>,
+        texture_handle: &Handle<Image>,
+        textures: &mut Assets<Image>,
     ) -> NinePatch<T> {
         let (texture_size, texture_data) = {
             let t = textures
                 .get(texture_handle)
                 .expect("could not get texture from handle");
-            (t.size, &t.data)
+            (t.texture_descriptor.size, &t.data)
         };
         let mut textures_to_add = vec![];
         if self.patch_textures.is_none() || self.original_texture.as_ref() != Some(&texture_handle)
@@ -203,16 +199,16 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
                         patch_texture_data.extend_from_slice(&texture_data[start_line..end_line]);
                     }
 
-                    let patch_texture = Texture {
-                        size: Extent3d::new(
-                            to_width(column_item.original_size, texture_size),
-                            to_height(column_item.original_size, texture_size),
-                            texture_size.depth_or_array_layers,
-                        ),
-                        data: patch_texture_data,
-                        format: TextureFormat::Rgba8UnormSrgb,
-                        ..Default::default()
-                    };
+                    let patch_texture = Image::new(
+                        Extent3d {
+                            width: to_width(column_item.original_size, texture_size),
+                            height: to_height(column_item.original_size, texture_size),
+                            depth_or_array_layers: texture_size.depth_or_array_layers,
+                        },
+                        TextureDimension::D2,
+                        patch_texture_data,
+                        TextureFormat::Rgba8UnormSrgb,
+                    );
                     textures_to_add.push(patch_texture);
                     accu_x += to_width(column_item.original_size, texture_size);
                 }
@@ -220,8 +216,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
             }
             textures_to_add.into_iter().for_each(|patch_texture| {
                 let patch_texture_handle = textures.add(patch_texture);
-                let material = materials.add(patch_texture_handle.into());
-                patch_textures.push(material);
+                patch_textures.push(patch_texture_handle);
             });
             self.patch_textures = Some(patch_textures);
             self.original_texture = Some(texture_handle.clone());
@@ -229,7 +224,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatchBuilder<T
         NinePatch {
             patches: self.patches.clone(),
             texture_size,
-            background: materials.add(Color::NONE.into()),
+            // background: materials.add(Color::NONE.into()),
             splitted_texture: self.patch_textures.as_ref().cloned().unwrap(),
         }
     }
@@ -251,8 +246,8 @@ pub struct NinePatchContent<T: Send + Sync + 'static> {
 pub struct NinePatch<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> {
     patches: Vec<Vec<Patch<T>>>,
     texture_size: Extent3d,
-    background: Handle<ColorMaterial>,
-    splitted_texture: Vec<Handle<ColorMaterial>>,
+    // background: Handle<Image>,
+    splitted_texture: Vec<Handle<Image>>,
 }
 impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
     pub(crate) fn add_with_parent(
@@ -270,7 +265,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                     align_content: AlignContent::Stretch,
                     ..*style
                 },
-                material: self.background.clone(),
+                color: UiColor(Color::NONE),
                 ..Default::default()
             })
             .insert(FocusPolicy::Pass);
@@ -301,7 +296,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         margin: Rect::all(Val::Px(0.)),
                         ..Default::default()
                     },
-                    material: self.background.clone(),
+                    color: UiColor(Color::NONE),
                     ..Default::default()
                 })
                 .insert(FocusPolicy::Pass)
@@ -326,7 +321,7 @@ impl<T: Clone + Send + Sync + Eq + std::hash::Hash + 'static> NinePatch<T> {
                         other => other,
                     };
                     let mut child = row_parent.spawn_bundle(ImageBundle {
-                        material: self.splitted_texture[n].clone(),
+                        image: UiImage(self.splitted_texture[n].clone_weak()),
                         style: Style {
                             size: Size::new(size_width, size_height),
                             margin: Rect::all(Val::Px(0.)),
