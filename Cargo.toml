@@ -4,8 +4,8 @@ version = "0.4.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2021"
 description = "Easing plugin for Bevy"
-repository = "https://github.com/mockersf/bevy_extra"
-homepage = "https://github.com/mockersf/bevy_extra/tree/master/bevy_easings"
+repository = "https://github.com/vleue/bevy_easings"
+homepage = "https://github.com/vleue/bevy_easings"
 documentation = "https://docs.rs/bevy_easings"
 keywords = ["bevy", "animation", "easing"]
 license = "MIT"
@@ -16,44 +16,53 @@ exclude = ["examples/*.gif"]
 interpolation = "0.2"
 
 [dependencies.bevy]
-version = "0.5"
-git = "https://github.com/bevyengine/bevy"
-rev = "76ec709edee77c28a4a027ff1ab8d768be523633"
+version = "0.6"
 default-features = false
-features = [ "render" ]
+
+[dev-dependencies.bevy]
+version = "0.6"
+default-features = false
+features = ["render"]
+
+[features]
+default = ["render", "sprite", "ui"]
+"render" = ["bevy/bevy_render"]
+"sprite" = ["bevy/bevy_sprite"]
+"ui" = ["bevy/bevy_ui"]
+"examples" = ["ui", "sprite", "render", "bevy/render", "bevy/bevy_winit"]
 
 [[example]]
 name = "chain"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "sprite_color"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "custom_component"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "pause"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "sprite_size"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "transform_rotation"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "transform_translation"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "ui_style"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]
 
 [[example]]
 name = "ui_color"
-required-features = [ "bevy/bevy_winit" ]
+required-features = [ "examples" ]

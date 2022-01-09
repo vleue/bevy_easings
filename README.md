@@ -1,6 +1,10 @@
 # Bevy Easings
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Doc](https://docs.rs/bevy_easings/badge.svg)](https://docs.rs/bevy_easings) [![Crate](https://img.shields.io/crates/v/bevy_easings.svg)](https://crates.io/crates/bevy_easings)
+![MIT/Apache 2.0](https://img.shields.io/badge/license-MIT%2FApache-blue.svg)
+[![Doc](https://docs.rs/bevy_easings/badge.svg)](https://docs.rs/bevy_easings)
+[![Crate](https://img.shields.io/crates/v/bevy_easings.svg)](https://crates.io/crates/bevy_easings)
+[![Bevy Tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
+[![CI](https://github.com/vleue/bevy_easings/actions/workflows/ci.yaml/badge.svg)](https://github.com/vleue/bevy_easings/actions/workflows/ci.yaml)
 
 
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
@@ -11,10 +15,14 @@ Easings on Bevy components using [interpolation](https://crates.io/crates/interp
 
 Add the plugin to your app:
 ```rust
-    App::default()
-        .add_default_plugins()
-        .add_plugin(EasingsPlugin)
-        ...
+use bevy::prelude::*;
+use bevy_easings::EasingsPlugin;
+
+fn main() {
+    App::new()
+        .add_plugins(DefaultPlugins)
+        .add_plugin(EasingsPlugin);
+}
 ```
 
 ### Easing a component to a new value
@@ -22,27 +30,32 @@ Add the plugin to your app:
 And then just ease your components to their new state!
 
 ```rust
-commands
-    .spawn_bundle(SpriteBundle {
-        ..Default::default()
-    })
-    .insert(
-        Sprite {
-            custom_size: Some(Vec2::new(10., 10.)),
+use bevy::prelude::*;
+use bevy_easings::*;
+
+fn my_system(mut commands: Commands){
+    commands
+        .spawn_bundle(SpriteBundle {
             ..Default::default()
-        }
-        .ease_to(
+        })
+        .insert(
             Sprite {
-                custom_size: Some(Vec2::new(100., 100.)),
+                custom_size: Some(Vec2::new(10., 10.)),
                 ..Default::default()
-            },
-            EaseFunction::QuadraticIn,
-            EasingType::PingPong {
-                duration: std::time::Duration::from_secs(1),
-                pause: std::time::Duration::from_millis(500),
-            },
-        ),
-    );
+            }
+            .ease_to(
+                Sprite {
+                    custom_size: Some(Vec2::new(100., 100.)),
+                    ..Default::default()
+                },
+                EaseFunction::QuadraticIn,
+                EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            ),
+        );
+}
 ```
 
 If the component being eased is not already a component of the entity, the component should first be inserted for the target entity.
@@ -52,37 +65,42 @@ If the component being eased is not already a component of the entity, the compo
 You can chain easings, if they are not set to repeat they will happen in sequence.
 
 ```rust
-commands
-    .spawn_bundle(SpriteBundle {
-        ..Default::default()
-    })
-    .insert(
-        Sprite {
-            custom_size: Some(Vec2::new(10., 10.)),
+use bevy::prelude::*;
+use bevy_easings::*;
+
+fn my_system(mut commands: Commands){
+    commands
+        .spawn_bundle(SpriteBundle {
             ..Default::default()
-        }
-        .ease_to(
+        })
+        .insert(
             Sprite {
-                custom_size: Some(Vec2::new(300., 300.)),
+                custom_size: Some(Vec2::new(10., 10.)),
                 ..Default::default()
-            },
-            EaseFunction::QuadraticIn,
-            EasingType::Once {
-                duration: std::time::Duration::from_secs(1),
-            },
-        )
-        .ease_to(
-            Sprite {
-                custom_size: Some(Vec2::new(350., 350.)),
-                ..Default::default()
-            },
-            EaseFunction::QuadraticIn,
-            EasingType::PingPong {
-                duration: std::time::Duration::from_millis(500),
-                pause: std::time::Duration::from_millis(200),
-            },
-        ),
-    );
+            }
+            .ease_to(
+                Sprite {
+                    custom_size: Some(Vec2::new(300., 300.)),
+                    ..Default::default()
+                },
+                EaseFunction::QuadraticIn,
+                EasingType::Once {
+                    duration: std::time::Duration::from_secs(1),
+                },
+            )
+            .ease_to(
+                Sprite {
+                    custom_size: Some(Vec2::new(350., 350.)),
+                    ..Default::default()
+                },
+                EaseFunction::QuadraticIn,
+                EasingType::PingPong {
+                    duration: std::time::Duration::from_millis(500),
+                    pause: Some(std::time::Duration::from_millis(200)),
+                },
+            ),
+        );
+}
 ```
 
 ## Bundle Supported
@@ -96,13 +114,16 @@ commands
 To be able to ease a component, it needs to implement the traits `Default` and [`Lerp`](https://docs.rs/interpolation/0.2.0/interpolation/trait.Lerp.html). This trait is re-exported by `beavy_easings`.
 
 ```rust
-#[Derive(Default, Component)]
+use bevy::prelude::*;
+use bevy_easings::*;
+
+#[derive(Default, Component)]
 struct CustomComponent(f32);
 impl Lerp for CustomComponent {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        CustomComponent(self.0.lerp(&other.0, scalar))
+        CustomComponent(interpolation::lerp(&self.0, &other.0, scalar))
     }
 }
 ```
@@ -113,15 +134,15 @@ Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be ad
 
 ## Examples
 
-See [examples](https://github.com/mockersf/bevy_extra/tree/master/bevy_easings/examples)
+See [examples](https://github.com/vleue/bevy_easings/tree/main/examples)
 
-![sprite_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/colormaterial_color.gif)
+![sprite_color](./examples/colormaterial_color.gif)
 
-![sprite_size](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_size.gif)
+![sprite_size](./examples/sprite_size.gif)
 
-![transform_rotation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_rotation.gif)
+![transform_rotation](./examples/transform_rotation.gif)
 
-![transform_translation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
+![transform_translation](./examples/transform_translation.gif)
 
 ## Ease Functions
 
@@ -157,3 +178,9 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 - BounceIn
 - BounceOut
 - BounceInOut
+
+|Bevy|bevy_ninepatch|
+|---|---|
+|main|main|
+|0.6|0.5|
+|0.5|0.4|

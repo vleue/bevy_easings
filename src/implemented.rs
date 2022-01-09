@@ -4,6 +4,7 @@ use interpolation::Lerp;
 
 use crate::EaseValue;
 
+#[cfg(feature = "sprite")]
 impl Lerp for EaseValue<Sprite> {
     type Scalar = f32;
 
@@ -15,14 +16,16 @@ impl Lerp for EaseValue<Sprite> {
                 (Some(a), None) => Some(a),
                 (Some(a), Some(b)) => Some(a.lerp(b, *scalar)),
             },
+            #[cfg(feature = "render")]
             color: EaseValue(self.0.color)
                 .lerp(&EaseValue(other.0.color), scalar)
                 .0,
-            ..Default::default()
+            ..Sprite::default()
         })
     }
 }
 
+#[cfg(all(feature = "ui", feature = "render"))]
 impl Lerp for EaseValue<UiColor> {
     type Scalar = f32;
 
@@ -45,6 +48,7 @@ impl Lerp for EaseValue<Transform> {
     }
 }
 
+#[cfg(feature = "ui")]
 impl Lerp for EaseValue<Style> {
     type Scalar = f32;
 
@@ -76,6 +80,7 @@ impl Lerp for EaseValue<Style> {
     }
 }
 
+#[cfg(feature = "ui")]
 impl Lerp for EaseValue<Rect<Val>> {
     type Scalar = f32;
 
@@ -97,6 +102,7 @@ impl Lerp for EaseValue<Rect<Val>> {
     }
 }
 
+#[cfg(feature = "ui")]
 impl Lerp for EaseValue<Size<Val>> {
     type Scalar = f32;
 
@@ -112,6 +118,7 @@ impl Lerp for EaseValue<Size<Val>> {
     }
 }
 
+#[cfg(feature = "ui")]
 impl Lerp for EaseValue<Val> {
     type Scalar = f32;
 
@@ -128,6 +135,7 @@ impl Lerp for EaseValue<Val> {
     }
 }
 
+#[cfg(feature = "render")]
 impl Lerp for EaseValue<Color> {
     type Scalar = f32;
 

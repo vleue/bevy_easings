@@ -12,14 +12,17 @@ use crate::{
 struct HandleCache<T: 'static + TypeUuid + Sync + Send>(std::collections::HashMap<i128, Handle<T>>);
 
 /// Plugin to add systems related to easing
+#[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Copy)]
 pub struct EasingsPlugin;
 
 impl Plugin for EasingsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ease_system::<Sprite>.system())
-            .add_system(ease_system::<Transform>.system())
-            .add_system(ease_system::<Style>.system());
+        app.add_system(ease_system::<Transform>.system());
+        #[cfg(feature = "sprite")]
+        app.add_system(ease_system::<Sprite>.system());
+        #[cfg(feature = "ui")]
+        app.add_system(ease_system::<Style>.system());
     }
 }
 
@@ -41,13 +44,9 @@ pub fn ease_system<T: Ease + Component>(
             if easing.paused {
                 if easing.timer.just_finished() {
                     match easing.easing_type {
-                        EasingType::Once { duration } => {
-                            easing.timer.set_duration(duration);
-                        }
-                        EasingType::Loop { duration, .. } => {
-                            easing.timer.set_duration(duration);
-                        }
-                        EasingType::PingPong { duration, .. } => {
+                        EasingType::Once { duration }
+                        | EasingType::Loop { duration, .. }
+                        | EasingType::PingPong { duration, .. } => {
                             easing.timer.set_duration(duration);
                         }
                     }
@@ -130,13 +129,9 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
             if easing.paused {
                 if easing.timer.just_finished() {
                     match easing.easing_type {
-                        EasingType::Once { duration } => {
-                            easing.timer.set_duration(duration);
-                        }
-                        EasingType::Loop { duration, .. } => {
-                            easing.timer.set_duration(duration);
-                        }
-                        EasingType::PingPong { duration, .. } => {
+                        EasingType::Once { duration }
+                        | EasingType::Loop { duration, .. }
+                        | EasingType::PingPong { duration, .. } => {
                             easing.timer.set_duration(duration);
                         }
                     }

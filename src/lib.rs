@@ -1,5 +1,4 @@
-#![deny(
-    warnings,
+#![warn(
     missing_copy_implementations,
     trivial_casts,
     trivial_numeric_casts,
@@ -9,8 +8,7 @@
     unused_qualifications,
     missing_docs
 )]
-
-//! Ease plugin for Bevy
+#![doc = include_str!("../README.md")]
 
 use std::time::Duration;
 
@@ -153,17 +151,14 @@ impl<T: Default> EasingComponent<T> {
         ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingChainComponent<T> {
-        #[cfg(feature = "ease_handle")]
-        let mut rng = rand::thread_rng();
-
         let next = EasingComponent {
             start: None,
             end: EaseValue(end),
             ease_function: ease_function.into(),
             timer: match easing_type {
-                EasingType::Once { duration } => Timer::new(duration, false),
-                EasingType::Loop { duration, .. } => Timer::new(duration, false),
-                EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                EasingType::Once { duration }
+                | EasingType::Loop { duration, .. }
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
             },
             state: EasingState::Play,
             paused: false,
@@ -187,17 +182,14 @@ impl<T: Default> EasingChainComponent<T> {
         ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingChainComponent<T> {
-        #[cfg(feature = "ease_handle")]
-        let mut rng = rand::thread_rng();
-
         let next = EasingComponent {
             start: None,
             end: EaseValue(end),
             ease_function: ease_function.into(),
             timer: match easing_type {
-                EasingType::Once { duration } => Timer::new(duration, false),
-                EasingType::Loop { duration, .. } => Timer::new(duration, false),
-                EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                EasingType::Once { duration }
+                | EasingType::Loop { duration, .. }
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
             },
             state: EasingState::Play,
             paused: false,
@@ -219,17 +211,14 @@ pub trait Ease: Sized {
         ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
-        #[cfg(feature = "ease_handle")]
-        let mut rng = rand::thread_rng();
-
         EasingComponent {
             start: start.map(EaseValue),
             end: EaseValue(end),
             ease_function: ease_function.into(),
             timer: match easing_type {
-                EasingType::Once { duration } => Timer::new(duration, false),
-                EasingType::Loop { duration, .. } => Timer::new(duration, false),
-                EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                EasingType::Once { duration }
+                | EasingType::Loop { duration, .. }
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
             },
             state: EasingState::Play,
             paused: false,
@@ -263,7 +252,7 @@ where
 }
 
 trait IntermediateLerp: Sized {
-    fn lerp(start: &EaseValue<&Self>, end: &EaseValue<&Self>, scalar: &f32) -> Self;
+    fn lerp(start: &EaseValue<&Self>, end: &EaseValue<&Self>, scalar: f32) -> Self;
 }
 
 /// Trait to mark custom component that can be eased. It will be automatically implemented if the custom component implement `Lerp`
@@ -275,17 +264,14 @@ pub trait CustomComponentEase: Sized {
         ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
-        #[cfg(feature = "ease_handle")]
-        let mut rng = rand::thread_rng();
-
         EasingComponent {
             start: start.map(EaseValue),
             end: EaseValue(end),
             ease_function: ease_function.into(),
             timer: match easing_type {
-                EasingType::Once { duration } => Timer::new(duration, false),
-                EasingType::Loop { duration, .. } => Timer::new(duration, false),
-                EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                EasingType::Once { duration }
+                | EasingType::Loop { duration, .. }
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
             },
             state: EasingState::Play,
             paused: false,
