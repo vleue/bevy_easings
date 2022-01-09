@@ -13,7 +13,7 @@ materials.add(Color::RED.into()).ease_to(
 )
 ```
 
-![sprite_color](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_color.gif)
+![sprite_color](./sprite_color.gif)
 
 ### [sprite_size.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/sprite_size.rs)
 
@@ -35,7 +35,7 @@ Sprite {
 )
 ```
 
-![sprite_size](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/sprite_size.gif)
+![sprite_size](./sprite_size.gif)
 
 ### [transform_rotation.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/transform_rotation.rs)
 
@@ -50,7 +50,7 @@ Transform::default().ease_to(
 )
 ```
 
-![transform_rotation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_rotation.gif)
+![transform_rotation](./transform_rotation.gif)
 
 ### [transform_translation.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/transform_translation.rs)
 
@@ -67,7 +67,7 @@ Transform::default()
     ),
 ```
 
-![transform_translation](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/transform_translation.gif)
+![transform_translation](./transform_translation.gif)
 
 ### [custom_component.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/custom_component.rs)
 
@@ -131,7 +131,7 @@ transform0
     )
 ```
 
-![chain](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/chain.gif)
+![chain](./chain.gif)
 
 
 ### [pause.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/pause.rs)
@@ -144,5 +144,5 @@ fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>
 }
 ```
 
-![pause](https://raw.githubusercontent.com/mockersf/bevy_extra/master/bevy_easings/examples/pause.gif)
+![pause](./pause.gif)
 

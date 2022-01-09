@@ -136,7 +136,7 @@ Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be ad
 
 See [examples](https://github.com/vleue/bevy_easings/tree/main/examples)
 
-![sprite_color](./examples/colormaterial_color.gif)
+![sprite_color](./examples/sprite_color.gif)
 
 ![sprite_size](./examples/sprite_size.gif)
 
