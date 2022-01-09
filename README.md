@@ -4,7 +4,7 @@
 [![Doc](https://docs.rs/bevy_easings/badge.svg)](https://docs.rs/bevy_easings)
 [![Crate](https://img.shields.io/crates/v/bevy_easings.svg)](https://crates.io/crates/bevy_easings)
 [![Bevy Tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
-[![CI](https://github.com/vleue/bevy_easings/actions/workflows/ci.yaml/badge.svg)](https://github.com/vleue/bevy_easings/actions/workflows/ci.yaml)
+[![CI](https://github.com/vleue/bevy_easings/actions/workflows/ci.yml/badge.svg)](https://github.com/vleue/bevy_easings/actions/workflows/ci.yml)
 
 
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
