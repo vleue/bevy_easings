@@ -29,7 +29,7 @@ default = ["render", "sprite", "ui"]
 "render" = ["bevy/bevy_render"]
 "sprite" = ["bevy/bevy_sprite"]
 "ui" = ["bevy/bevy_ui"]
-"examples" = ["ui", "sprite", "render", "bevy/render", "bevy/bevy_winit"]
+"examples" = ["ui", "sprite", "render", "bevy/render", "bevy/bevy_winit", "bevy/x11"]
 
 [[example]]
 name = "chain"
