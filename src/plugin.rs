@@ -23,6 +23,8 @@ impl Plugin for EasingsPlugin {
         app.add_system(ease_system::<Sprite>.system());
         #[cfg(feature = "ui")]
         app.add_system(ease_system::<Style>.system());
+        #[cfg(feature = "ui")]
+        app.add_system(ease_system::<UiColor>.system());
     }
 }
 
