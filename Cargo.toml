@@ -8,7 +8,7 @@ repository = "https://github.com/vleue/bevy_easings"
 homepage = "https://github.com/vleue/bevy_easings"
 documentation = "https://docs.rs/bevy_easings"
 keywords = ["bevy", "animation", "easing"]
-license = "MIT"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 exclude = ["examples/*.gif"]
 
