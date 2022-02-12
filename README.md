@@ -178,7 +178,7 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 - BounceOut
 - BounceInOut
 
-|Bevy|bevy_ninepatch|
+|Bevy|bevy_easings|
 |---|---|
 |main|main|
 |0.6|0.5|
