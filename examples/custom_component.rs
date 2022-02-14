@@ -8,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
         .add_system(check_value)
-        .add_system(bevy_easings::custom_ease_system::<CustomComponent>.system())
+        .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
     Ok(())

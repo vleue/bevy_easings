@@ -129,7 +129,7 @@ impl Lerp for CustomComponent {
 
 The basic formula for lerp (linear interpolation) is `self + (other - self) * scalar`.
 
-Then, the system `custom_ease_system::<CustomComponent>.system()` needs to be added to the application. 
+Then, the system `custom_ease_system::<CustomComponent>` needs to be added to the application. 
 
 ## Examples
 

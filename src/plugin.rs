@@ -18,13 +18,13 @@ pub struct EasingsPlugin;
 
 impl Plugin for EasingsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ease_system::<Transform>.system());
+        app.add_system(ease_system::<Transform>);
         #[cfg(feature = "sprite")]
-        app.add_system(ease_system::<Sprite>.system());
+        app.add_system(ease_system::<Sprite>);
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<Style>.system());
+        app.add_system(ease_system::<Style>);
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<UiColor>.system());
+        app.add_system(ease_system::<UiColor>);
     }
 }
 
