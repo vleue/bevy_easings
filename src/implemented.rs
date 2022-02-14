@@ -140,6 +140,66 @@ impl Lerp for EaseValue<Color> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(self.0 + (other.0 + (self.0 * -1.)) * *scalar)
+        let color = match (self.0, other.0) {
+            (
+                Color::Rgba {
+                    red,
+                    green,
+                    blue,
+                    alpha,
+                },
+                Color::Rgba {
+                    red: redo,
+                    green: greeno,
+                    blue: blueo,
+                    alpha: alphao,
+                },
+            ) => Color::Rgba {
+                red: red + (redo + (red * -1.0)) * *scalar,
+                green: green + (greeno + (green * -1.0)) * *scalar,
+                blue: blue + (blueo + (blue * -1.0)) * *scalar,
+                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
+            },
+            (
+                Color::RgbaLinear {
+                    red,
+                    green,
+                    blue,
+                    alpha,
+                },
+                Color::RgbaLinear {
+                    red: redo,
+                    green: greeno,
+                    blue: blueo,
+                    alpha: alphao,
+                },
+            ) => Color::RgbaLinear {
+                red: red + (redo + (red * -1.0)) * *scalar,
+                green: green + (greeno + (green * -1.0)) * *scalar,
+                blue: blue + (blueo + (blue * -1.0)) * *scalar,
+                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
+            },
+            (
+                Color::Hsla {
+                    hue,
+                    saturation,
+                    lightness,
+                    alpha,
+                },
+                Color::Hsla {
+                    hue: hueo,
+                    saturation: saturationo,
+                    lightness: lightnesso,
+                    alpha: alphao,
+                },
+            ) => Color::Hsla {
+                hue: hue + (hueo + (hue * -1.0)) * *scalar,
+                saturation: saturation + (saturationo + (saturation * -1.0)) * *scalar,
+                lightness: lightness + (lightnesso + (lightness * -1.0)) * *scalar,
+                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
+            },
+            _ => self.0 + (other.0 + (self.0 * -1.)) * *scalar,
+        };
+        EaseValue(color)
     }
 }
