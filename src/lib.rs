@@ -238,9 +238,26 @@ pub trait Ease: Sized {
     }
 }
 
+/// Trait marking components that can be eased and cloned
+pub trait ClonableEase: Ease + Clone {
+    /// Create a new easing with the current component value as a starting point
+    fn set_and_ease_to(
+        self,
+        target: Self,
+        ease_function: impl Into<EaseMethod>,
+        easing_type: EasingType,
+    ) -> (Self, EasingComponent<Self>) {
+        (
+            self.clone(),
+            Self::ease(Some(self), target, ease_function, easing_type),
+        )
+    }
+}
+
 impl<T> Ease for EaseValue<T> where T: Lerp<Scalar = f32> {}
 impl<T: 'static + TypeUuid + Send + Sync> Ease for Handle<T> where EaseValue<T>: Lerp<Scalar = f32> {}
 impl<T> Ease for T where EaseValue<T>: Lerp<Scalar = f32> {}
+impl<T> ClonableEase for T where T: Ease + Clone {}
 
 impl<T> Default for EaseValue<T>
 where
