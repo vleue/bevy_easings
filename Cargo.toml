@@ -16,7 +16,7 @@ exclude = ["examples/*.gif"]
 interpolation = "0.2"
 
 [dependencies.bevy]
-version = "0.6"
+version = "0.7"
 default-features = false
 
 [dev-dependencies.bevy]
