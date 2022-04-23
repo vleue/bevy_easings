@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{core::FixedTimestep, prelude::*};
 
 use bevy_easings::*;
 
@@ -7,7 +7,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
-        .add_system(check_value)
+        .add_system_set(
+            SystemSet::new()
+                .with_run_criteria(FixedTimestep::step(0.2))
+                .with_system(check_value),
+        )
         .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
@@ -55,14 +59,11 @@ fn setup(mut commands: Commands) {
                 duration: std::time::Duration::from_secs(1),
                 pause: Some(std::time::Duration::from_millis(500)),
             },
-        ))
-        .insert(Timer::from_seconds(0.2, true));
+        ));
 }
 
-fn check_value(mut query: Query<(&mut Timer, &CustomComponent)>, time: Res<Time>) {
-    for (mut timer, custom) in query.iter_mut() {
-        if timer.tick(time.delta()).just_finished() {
-            println!("got {:?}", custom.0);
-        }
+fn check_value(mut query: Query<&CustomComponent>) {
+    for custom in query.iter_mut() {
+        println!("got {:?}", custom.0);
     }
 }

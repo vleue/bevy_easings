@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{core::FixedTimestep, prelude::*};
 
 use bevy_easings::*;
 
@@ -7,7 +7,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
-        .add_system(pause)
+        .add_system_set(
+            SystemSet::new()
+                .with_run_criteria(FixedTimestep::step(0.25))
+                .with_system(pause),
+        )
         .run();
 
     Ok(())
@@ -34,17 +38,11 @@ fn setup(mut commands: Commands) {
                     pause: Some(std::time::Duration::from_millis(100)),
                 },
             ),
-        )
-        .insert(Timer::from_seconds(0.25, true));
+        );
 }
 
-fn pause(
-    mut query: Query<(&mut Timer, &mut bevy_easings::EasingComponent<Transform>)>,
-    time: Res<Time>,
-) {
-    for (mut timer, mut easing) in query.iter_mut() {
-        if timer.tick(time.delta()).just_finished() {
-            easing.state = !easing.state;
-        }
+fn pause(mut query: Query<&mut bevy_easings::EasingComponent<Transform>>) {
+    for mut easing in query.iter_mut() {
+        easing.state = !easing.state;
     }
 }

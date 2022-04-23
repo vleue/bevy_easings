@@ -13,6 +13,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
+#[derive(Component)]
+struct ChainTimer(Timer);
+
 fn setup(mut commands: Commands) {
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 
@@ -25,12 +28,16 @@ fn setup(mut commands: Commands) {
             },
             ..Default::default()
         })
-        .insert(Timer::from_seconds(1., false));
+        .insert(ChainTimer(Timer::from_seconds(1., false)));
 }
 
-fn add_easing(mut commands: Commands, mut query: Query<(&mut Timer, Entity)>, time: Res<Time>) {
+fn add_easing(
+    mut commands: Commands,
+    mut query: Query<(&mut ChainTimer, Entity)>,
+    time: Res<Time>,
+) {
     for (mut timer, entity) in query.iter_mut() {
-        if timer.tick(time.delta()).just_finished() {
+        if timer.0.tick(time.delta()).just_finished() {
             let transform0 = Transform::default();
             let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
             let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));
@@ -41,10 +48,12 @@ fn add_easing(mut commands: Commands, mut query: Query<(&mut Timer, Entity)>, ti
             let transform7 = Transform::default();
 
             let duration = std::time::Duration::from_millis(500);
-            commands.entity(entity).insert(Timer::from_seconds(
-                7. * duration.as_secs_f32() as f32 + 1.,
-                false,
-            ));
+            commands
+                .entity(entity)
+                .insert(ChainTimer(Timer::from_seconds(
+                    7. * duration.as_secs_f32() as f32 + 1.,
+                    false,
+                )));
             commands.entity(entity).insert(
                 transform0
                     .ease_to(
