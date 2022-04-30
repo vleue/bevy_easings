@@ -133,6 +133,15 @@ pub struct EasingComponent<T> {
     direction: i16,
 }
 
+impl<T> EasingComponent<T> {
+    /// For [EasingType::PingPong], gets the current direction as -1 or 1.
+    ///
+    /// Positive is in the direction of the "ping" (first iteration).
+    pub fn direction(&self) -> i16 {
+        self.direction
+    }
+}
+
 impl<T: std::fmt::Debug> std::fmt::Debug for EasingComponent<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("EasingComponent")
