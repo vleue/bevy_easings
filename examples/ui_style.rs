@@ -59,7 +59,7 @@ fn setup(mut commands: Commands) {
                         height: Val::Percent(3.),
                     },
 
-                    margin: Rect {
+                    margin: UiRect {
                         bottom: Val::Percent(0.),
                         left: Val::Px(3.),
                         ..Default::default()
@@ -68,7 +68,7 @@ fn setup(mut commands: Commands) {
                 }
                 .ease_to(
                     Style {
-                        margin: Rect {
+                        margin: UiRect {
                             bottom: Val::Percent(50.),
                             ..Default::default()
                         },
