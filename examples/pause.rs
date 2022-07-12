@@ -1,4 +1,4 @@
-use bevy::{core::FixedTimestep, prelude::*};
+use bevy::{prelude::*, time::FixedTimestep};
 
 use bevy_easings::*;
 
