@@ -16,11 +16,11 @@ exclude = ["examples/*.gif"]
 interpolation = "0.2"
 
 [dependencies.bevy]
-version = "0.7"
+git = "https://github.com/bevyengine/bevy.git"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.7"
+git = "https://github.com/bevyengine/bevy.git"
 default-features = false
 features = ["render"]
 
