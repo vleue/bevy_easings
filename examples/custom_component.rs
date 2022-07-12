@@ -29,7 +29,7 @@ impl bevy_easings::Lerp for CustomComponent {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(UiCameraBundle::default());
+    commands.spawn_bundle(Camera2dBundle::default());
 
     commands
         .spawn_bundle(ImageBundle {
