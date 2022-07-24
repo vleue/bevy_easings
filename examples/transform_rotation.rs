@@ -56,10 +56,9 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn_bundle((
-                Transform::from_translation(Vec3::new(x, y, 0.)),
-                GlobalTransform::default(),
-            ))
+            .spawn_bundle(SpatialBundle::from_transform(Transform::from_translation(
+                Vec3::new(x, y, 0.),
+            )))
             .with_children(|parent| {
                 parent
                     .spawn_bundle(SpriteBundle {
