@@ -1,4 +1,3 @@
-use bevy::reflect::TypeUuid;
 use bevy::{ecs::component::Component, prelude::*};
 
 use crate::MyEaser;
@@ -7,9 +6,6 @@ use crate::{
     CustomComponentEase, Ease, EaseValue, EasingChainComponent, EasingComponent, EasingState,
     EasingType,
 };
-
-#[derive(Default)]
-struct HandleCache<T: 'static + TypeUuid + Sync + Send>(std::collections::HashMap<i128, Handle<T>>);
 
 /// Plugin to add systems related to easing
 #[allow(clippy::module_name_repetitions)]

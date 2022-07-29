@@ -12,7 +12,7 @@
 
 use std::time::Duration;
 
-use bevy::{prelude::*, reflect::TypeUuid};
+use bevy::prelude::*;
 
 use interpolation::Ease as IEase;
 pub use interpolation::EaseFunction;
@@ -239,7 +239,6 @@ pub trait Ease: Sized {
 }
 
 impl<T> Ease for EaseValue<T> where T: Lerp<Scalar = f32> {}
-impl<T: 'static + TypeUuid + Send + Sync> Ease for Handle<T> where EaseValue<T>: Lerp<Scalar = f32> {}
 impl<T> Ease for T where EaseValue<T>: Lerp<Scalar = f32> {}
 
 impl<T> Default for EaseValue<T>
