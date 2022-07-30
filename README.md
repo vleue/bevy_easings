@@ -181,6 +181,7 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 |Bevy|bevy_easings|
 |---|---|
 |main|main|
+|0.8|0.8|
 |0.7|0.7|
 |0.6|0.6|
 |0.5|0.4|
