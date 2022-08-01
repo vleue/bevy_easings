@@ -1,6 +1,6 @@
 # Examples
 
-### [sprite_color.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/sprite_color.rs)
+### [sprite_color.rs](./sprite_color.rs)
 
 ```rust
 materials.add(Color::RED.into()).ease_to(
@@ -15,7 +15,7 @@ materials.add(Color::RED.into()).ease_to(
 
 ![sprite_color](./sprite_color.gif)
 
-### [sprite_size.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/sprite_size.rs)
+### [sprite_size.rs](./sprite_size.rs)
 
 ```rust
 Sprite {
@@ -37,7 +37,7 @@ Sprite {
 
 ![sprite_size](./sprite_size.gif)
 
-### [transform_rotation.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/transform_rotation.rs)
+### [transform_rotation.rs](./transform_rotation.rs)
 
 ```rust
 Transform::default().ease_to(
@@ -52,7 +52,7 @@ Transform::default().ease_to(
 
 ![transform_rotation](./transform_rotation.gif)
 
-### [transform_translation.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/transform_translation.rs)
+### [transform_translation.rs](./transform_translation.rs)
 
 ```rust
 Transform::default()
@@ -69,7 +69,7 @@ Transform::default()
 
 ![transform_translation](./transform_translation.gif)
 
-### [custom_component.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/custom_component.rs)
+### [custom_component.rs](./custom_component.rs)
 
 ```rust
 #[derive(Default)]
@@ -115,7 +115,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         ))
 ```
 
-### [chain.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/chain.rs)
+### [chain.rs](./chain.rs)
 
 ```rust
 transform0
@@ -134,7 +134,7 @@ transform0
 ![chain](./chain.gif)
 
 
-### [pause.rs](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/pause.rs)
+### [pause.rs](./pause.rs)
 
 ```rust
 fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>>) {
@@ -146,7 +146,7 @@ fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>
 
 ![pause](./pause.gif)
 
-### [react_on_end](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/react_on_end.rs)
+### [react_on_end](./react_on_end.rs)
 
 ```rust
 fn once_easing_done(
