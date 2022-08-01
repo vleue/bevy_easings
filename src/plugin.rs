@@ -1,6 +1,6 @@
 use bevy::{ecs::component::Component, prelude::*};
 
-use crate::MyEaser;
+use crate::{EasingDirection, MyEaser};
 
 use crate::{
     CustomComponentEase, Ease, EaseValue, EasingChainComponent, EasingComponent, EasingState,
@@ -53,7 +53,7 @@ pub fn ease_system<T: Ease + Component>(
                 }
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
-                    let progress = if easing.direction.is_positive() {
+                    let progress = if easing.direction == EasingDirection::Forward {
                         easing.timer.percent()
                     } else {
                         easing.timer.percent_left()
@@ -84,7 +84,7 @@ pub fn ease_system<T: Ease + Component>(
                                 easing.paused = true;
                             }
                             easing.timer.reset();
-                            easing.direction *= -1;
+                            easing.direction.reverse();
                         }
                     }
                 }
@@ -138,7 +138,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 }
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
-                    let progress = if easing.direction.is_positive() {
+                    let progress = if easing.direction == EasingDirection::Forward {
                         easing.timer.percent()
                     } else {
                         easing.timer.percent_left()
@@ -168,7 +168,7 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                                 easing.paused = true;
                             }
                             easing.timer.reset();
-                            easing.direction *= -1;
+                            easing.direction.reverse();
                         }
                     }
                 }

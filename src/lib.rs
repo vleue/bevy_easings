@@ -130,14 +130,32 @@ pub struct EasingComponent<T> {
     pub state: EasingState,
     paused: bool,
     easing_type: EasingType,
-    direction: i16,
+    direction: EasingDirection,
+}
+
+/// Direction of an easing. It can be backward with an [`EasingType::PingPong`]
+#[derive(PartialEq, Eq, Clone, Copy)]
+pub enum EasingDirection {
+    /// Easing is moving forward
+    Forward = 1,
+    /// Easing is moving backward
+    Backward = -1,
+}
+
+impl EasingDirection {
+    fn reverse(&mut self) {
+        *self = match self {
+            EasingDirection::Backward => EasingDirection::Forward,
+            EasingDirection::Forward => EasingDirection::Backward,
+        };
+    }
 }
 
 impl<T> EasingComponent<T> {
     /// For [EasingType::PingPong], gets the current direction as -1 or 1.
     ///
     /// Positive is in the direction of the "ping" (first iteration).
-    pub fn direction(&self) -> i16 {
+    pub fn direction(&self) -> EasingDirection {
         self.direction
     }
 }
@@ -172,7 +190,7 @@ impl<T: Default> EasingComponent<T> {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            direction: 1,
+            direction: EasingDirection::Forward,
         };
 
         EasingChainComponent(vec![next, self])
@@ -203,7 +221,7 @@ impl<T: Default> EasingChainComponent<T> {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            direction: 1,
+            direction: EasingDirection::Forward,
         };
 
         self.0.insert(0, next);
@@ -232,7 +250,7 @@ pub trait Ease: Sized {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            direction: 1,
+            direction: EasingDirection::Forward,
         }
     }
 
@@ -284,7 +302,7 @@ pub trait CustomComponentEase: Sized {
             state: EasingState::Play,
             paused: false,
             easing_type,
-            direction: 1,
+            direction: EasingDirection::Forward,
         }
     }
 
