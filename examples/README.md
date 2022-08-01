@@ -146,3 +146,16 @@ fn pause(timer: &Timer, mut easing: Mut<bevy_easings::EasingComponent<Transform>
 
 ![pause](./pause.gif)
 
+### [react_on_end](https://github.com/mockersf/bevy_extra/blob/master/bevy_easings/examples/react_on_end.rs)
+
+```rust
+fn once_easing_done(
+    removed: RemovedComponents<EasingComponent<Transform>>,
+) {
+    for entity in removed.iter() {
+        /// you can do what you want with the entity that finished its easing
+    }
+}
+```
+
+![react_on_end](./react_on_end.gif)

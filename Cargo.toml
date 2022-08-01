@@ -26,6 +26,9 @@ version = "0.8.0"
 default-features = false
 features = ["render"]
 
+[dev-dependencies]
+rand = "0.8"
+
 [features]
 default = ["render", "sprite", "ui"]
 "render" = ["bevy/bevy_render"]
@@ -35,6 +38,10 @@ default = ["render", "sprite", "ui"]
 
 [[example]]
 name = "chain"
+required-features = [ "examples" ]
+
+[[example]]
+name = "react_on_end"
 required-features = [ "examples" ]
 
 [[example]]
