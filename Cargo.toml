@@ -11,6 +11,7 @@ keywords = ["bevy", "animation", "easing"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 exclude = ["examples/*.gif"]
+categories = ["game-development"]
 
 [dependencies]
 interpolation = "0.2"
