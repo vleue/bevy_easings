@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let initial_size = 10.;
     let final_size = 100.;
@@ -56,30 +56,29 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceOut,
         bevy_easings::EaseFunction::BounceInOut,
     ] {
-        commands
-            .spawn_bundle(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 transform: Transform::from_translation(Vec3::new(x, y, 0.)),
                 ..Default::default()
-            })
-            .insert(
+            },
+            Sprite {
+                custom_size: Some(Vec2::new(initial_size, initial_size)),
+                color: Color::RED,
+                ..Default::default()
+            }
+            .ease_to(
                 Sprite {
-                    custom_size: Some(Vec2::new(initial_size, initial_size)),
+                    custom_size: Some(Vec2::new(final_size, final_size)),
                     color: Color::RED,
                     ..Default::default()
-                }
-                .ease_to(
-                    Sprite {
-                        custom_size: Some(Vec2::new(final_size, final_size)),
-                        color: Color::RED,
-                        ..Default::default()
-                    },
-                    *ease_function,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_secs(1),
-                        pause: Some(std::time::Duration::from_millis(500)),
-                    },
-                ),
-            );
+                },
+                *ease_function,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            ),
+        ));
         y -= final_size * spacing;
         if y < -screen_y {
             x += final_size * spacing;

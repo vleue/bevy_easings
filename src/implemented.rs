@@ -26,11 +26,11 @@ impl Lerp for EaseValue<Sprite> {
 }
 
 #[cfg(all(feature = "ui", feature = "render"))]
-impl Lerp for EaseValue<UiColor> {
+impl Lerp for EaseValue<BackgroundColor> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(UiColor(
+        EaseValue(BackgroundColor(
             EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
         ))
     }
@@ -81,7 +81,7 @@ impl Lerp for EaseValue<Style> {
 }
 
 #[cfg(feature = "ui")]
-impl Lerp for EaseValue<UiRect<Val>> {
+impl Lerp for EaseValue<UiRect> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
@@ -103,7 +103,7 @@ impl Lerp for EaseValue<UiRect<Val>> {
 }
 
 #[cfg(feature = "ui")]
-impl Lerp for EaseValue<Size<Val>> {
+impl Lerp for EaseValue<Size> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {

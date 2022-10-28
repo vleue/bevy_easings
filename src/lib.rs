@@ -185,7 +185,7 @@ impl<T: Default> EasingComponent<T> {
             timer: match easing_type {
                 EasingType::Once { duration }
                 | EasingType::Loop { duration, .. }
-                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, TimerMode::Once),
             },
             state: EasingState::Play,
             paused: false,
@@ -216,7 +216,7 @@ impl<T: Default> EasingChainComponent<T> {
             timer: match easing_type {
                 EasingType::Once { duration }
                 | EasingType::Loop { duration, .. }
-                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, TimerMode::Once),
             },
             state: EasingState::Play,
             paused: false,
@@ -245,7 +245,7 @@ pub trait Ease: Sized {
             timer: match easing_type {
                 EasingType::Once { duration }
                 | EasingType::Loop { duration, .. }
-                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, TimerMode::Once),
             },
             state: EasingState::Play,
             paused: false,
@@ -297,7 +297,7 @@ pub trait CustomComponentEase: Sized {
             timer: match easing_type {
                 EasingType::Once { duration }
                 | EasingType::Loop { duration, .. }
-                | EasingType::PingPong { duration, .. } => Timer::new(duration, false),
+                | EasingType::PingPong { duration, .. } => Timer::new(duration, TimerMode::Once),
             },
             state: EasingState::Play,
             paused: false,

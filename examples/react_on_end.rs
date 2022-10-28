@@ -15,29 +15,30 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands, windows: Res<Windows>) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let width = windows.primary().width() / 2.0;
     let height = windows.primary().height() / 2.0;
     let x = rand::thread_rng().gen_range(-width..width);
     let y = rand::thread_rng().gen_range(-height..height);
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(100., 100.)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(Transform::identity().ease_to(
+        },
+        Transform::IDENTITY.ease_to(
             Transform::from_xyz(x, y, 0.0),
             bevy_easings::EaseFunction::QuadraticInOut,
             bevy_easings::EasingType::Once {
                 duration: std::time::Duration::from_millis(2500),
             },
-        ));
+        ),
+    ));
 }
 
 fn add_new_easing(

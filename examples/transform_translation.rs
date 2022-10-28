@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let size = 25.;
 
@@ -54,87 +54,83 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceOut,
         bevy_easings::EaseFunction::BounceInOut,
     ] {
-        commands
-            .spawn_bundle(SpriteBundle {
+        commands.spawn((
+            SpriteBundle {
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(size, size)),
                     color: Color::RED,
                     ..Default::default()
                 },
                 ..Default::default()
-            })
-            .insert(
-                Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
-                    Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
-                    *ease_function,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_secs(1),
-                        pause: Some(std::time::Duration::from_millis(500)),
-                    },
-                ),
-            );
+            },
+            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+                *ease_function,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            ),
+        ));
         x += size * spacing;
     }
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
-                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
-                EaseMethod::Linear,
-                bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(1),
-                    pause: Some(std::time::Duration::from_millis(500)),
-                },
-            ),
-        );
+        },
+        Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+            Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+            EaseMethod::Linear,
+            bevy_easings::EasingType::PingPong {
+                duration: std::time::Duration::from_secs(1),
+                pause: Some(std::time::Duration::from_millis(500)),
+            },
+        ),
+    ));
     x += size * spacing;
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
-                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
-                EaseMethod::Discrete,
-                bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(1),
-                    pause: Some(std::time::Duration::from_millis(500)),
-                },
-            ),
-        );
+        },
+        Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+            Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+            EaseMethod::Discrete,
+            bevy_easings::EasingType::PingPong {
+                duration: std::time::Duration::from_secs(1),
+                pause: Some(std::time::Duration::from_millis(500)),
+            },
+        ),
+    ));
     x += size * spacing;
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
-                Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
-                EaseMethod::CustomFunction(|x| x / 4.),
-                bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(1),
-                    pause: Some(std::time::Duration::from_millis(500)),
-                },
-            ),
-        );
+        },
+        Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
+            Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
+            EaseMethod::CustomFunction(|x| x / 4.),
+            bevy_easings::EasingType::PingPong {
+                duration: std::time::Duration::from_secs(1),
+                pause: Some(std::time::Duration::from_millis(500)),
+            },
+        ),
+    ));
 }

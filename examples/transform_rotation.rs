@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     let size = 80.;
 
@@ -56,20 +56,20 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn_bundle(SpatialBundle::from_transform(Transform::from_translation(
+            .spawn(SpatialBundle::from_transform(Transform::from_translation(
                 Vec3::new(x, y, 0.),
             )))
             .with_children(|parent| {
-                parent
-                    .spawn_bundle(SpriteBundle {
+                parent.spawn((
+                    SpriteBundle {
                         sprite: Sprite {
                             custom_size: Some(Vec2::new(size, size)),
                             color: Color::RED,
                             ..Default::default()
                         },
                         ..Default::default()
-                    })
-                    .insert(Transform::default().ease_to(
+                    },
+                    Transform::default().ease_to(
                         Transform::from_rotation(Quat::from_axis_angle(
                             Vec3::Z,
                             std::f32::consts::PI / 2.,
@@ -79,7 +79,8 @@ fn setup(mut commands: Commands) {
                             duration: std::time::Duration::from_secs(1),
                             pause: Some(std::time::Duration::from_millis(500)),
                         },
-                    ));
+                    ),
+                ));
             });
         y -= size * spacing;
         if y < -screen_y {
