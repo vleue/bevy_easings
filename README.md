@@ -6,7 +6,6 @@
 [![Bevy Tracking](https://img.shields.io/badge/Bevy%20tracking-main-lightblue)](https://github.com/bevyengine/bevy/blob/main/docs/plugins_guidelines.md#main-branch-tracking)
 [![CI](https://github.com/vleue/bevy_easings/actions/workflows/ci.yml/badge.svg)](https://github.com/vleue/bevy_easings/actions/workflows/ci.yml)
 
-
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
 
 ## Usage
@@ -14,6 +13,7 @@ Easings on Bevy components using [interpolation](https://crates.io/crates/interp
 ### System setup
 
 Add the plugin to your app:
+
 ```rust
 use bevy::prelude::*;
 use bevy_easings::EasingsPlugin;
@@ -34,10 +34,10 @@ use bevy_easings::*;
 
 fn my_system(mut commands: Commands){
     commands
-        .spawn_bundle(SpriteBundle {
-            ..Default::default()
-        })
-        .insert(
+        .spawn_bundle((
+            SpriteBundle {
+                ..Default::default()
+            },
             Sprite {
                 custom_size: Some(Vec2::new(10., 10.)),
                 ..Default::default()
@@ -53,7 +53,7 @@ fn my_system(mut commands: Commands){
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
-        );
+        ));
 }
 ```
 
@@ -69,10 +69,10 @@ use bevy_easings::*;
 
 fn my_system(mut commands: Commands){
     commands
-        .spawn_bundle(SpriteBundle {
-            ..Default::default()
-        })
-        .insert(
+        .spawn((
+            SpriteBundle {
+                ..Default::default()
+            },
             Sprite {
                 custom_size: Some(Vec2::new(10., 10.)),
                 ..Default::default()
@@ -98,7 +98,7 @@ fn my_system(mut commands: Commands){
                     pause: Some(std::time::Duration::from_millis(200)),
                 },
             ),
-        );
+        ));
 }
 ```
 
@@ -129,7 +129,7 @@ impl Lerp for CustomComponent {
 
 The basic formula for lerp (linear interpolation) is `self + (other - self) * scalar`.
 
-Then, the system `custom_ease_system::<CustomComponent>` needs to be added to the application. 
+Then, the system `custom_ease_system::<CustomComponent>` needs to be added to the application.
 
 ## Examples
 
@@ -181,6 +181,7 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 |Bevy|bevy_easings|
 |---|---|
 |main|main|
+|0.9|0.9|
 |0.8|0.8|
 |0.7|0.7|
 |0.6|0.6|

@@ -18,27 +18,26 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(100., 100.)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform::from_translation(Vec3::new(-500., 0., 0.)).ease_to(
-                Transform::from_translation(Vec3::new(500., 0., 0.)),
-                bevy_easings::EaseFunction::QuadraticInOut,
-                bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_millis(500),
-                    pause: Some(std::time::Duration::from_millis(100)),
-                },
-            ),
-        );
+        },
+        Transform::from_translation(Vec3::new(-500., 0., 0.)).ease_to(
+            Transform::from_translation(Vec3::new(500., 0., 0.)),
+            bevy_easings::EaseFunction::QuadraticInOut,
+            bevy_easings::EasingType::PingPong {
+                duration: std::time::Duration::from_millis(500),
+                pause: Some(std::time::Duration::from_millis(100)),
+            },
+        ),
+    ));
 }
 
 fn pause(mut query: Query<&mut bevy_easings::EasingComponent<Transform>>) {

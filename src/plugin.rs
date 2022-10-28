@@ -20,7 +20,7 @@ impl Plugin for EasingsPlugin {
         #[cfg(feature = "ui")]
         app.add_system(ease_system::<Style>);
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<UiColor>);
+        app.add_system(ease_system::<BackgroundColor>);
     }
 }
 

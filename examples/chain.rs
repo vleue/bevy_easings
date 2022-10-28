@@ -14,34 +14,33 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
-    commands
-        .spawn_bundle(SpriteBundle {
+    commands.spawn((
+        SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(100., 100.)),
                 color: Color::RED,
                 ..Default::default()
             },
             ..Default::default()
-        })
-        .insert(
-            Transform::from_scale(Vec3::ZERO)
-                .ease_to(
-                    Transform::from_scale(Vec3::splat(2.0)),
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once {
-                        duration: std::time::Duration::from_millis(500),
-                    },
-                )
-                .ease_to(
-                    Transform::from_scale(Vec3::ONE),
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once {
-                        duration: std::time::Duration::from_millis(500),
-                    },
-                ),
-        );
+        },
+        Transform::from_scale(Vec3::ZERO)
+            .ease_to(
+                Transform::from_scale(Vec3::splat(2.0)),
+                bevy_easings::EaseFunction::QuadraticInOut,
+                bevy_easings::EasingType::Once {
+                    duration: std::time::Duration::from_millis(500),
+                },
+            )
+            .ease_to(
+                Transform::from_scale(Vec3::ONE),
+                bevy_easings::EaseFunction::QuadraticInOut,
+                bevy_easings::EasingType::Once {
+                    duration: std::time::Duration::from_millis(500),
+                },
+            ),
+    ));
 }
 
 fn add_easing(mut commands: Commands, removed: RemovedComponents<EasingChainComponent<Transform>>) {
