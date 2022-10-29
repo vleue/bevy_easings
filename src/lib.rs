@@ -51,7 +51,7 @@ pub enum EasingType {
 }
 
 /// Control if an easing is played
-#[derive(PartialEq, Debug, Clone, Copy)]
+#[derive(PartialEq, Eq, Debug, Clone, Copy)]
 pub enum EasingState {
     /// Play the easing
     Play,
