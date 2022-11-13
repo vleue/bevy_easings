@@ -29,10 +29,10 @@ impl bevy_easings::Lerp for CustomComponent {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
-    commands
-        .spawn_bundle(ImageBundle {
+    commands.spawn((
+        ImageBundle {
             style: Style {
                 size: Size {
                     width: Val::Percent(3.),
@@ -46,20 +46,21 @@ fn setup(mut commands: Commands) {
                 },
                 ..Default::default()
             },
-            color: UiColor(Color::RED),
+            background_color: BackgroundColor(Color::RED),
             ..Default::default()
-        })
+        },
         // as `CustomComponent` is not already part of the components of the entity,
         // insert the component with a basic value, it will be replaced immediately
-        .insert(CustomComponent(-1.))
-        .insert(CustomComponent(0.).ease_to(
+        CustomComponent(-1.),
+        CustomComponent(0.).ease_to(
             CustomComponent(100.),
             bevy_easings::EaseFunction::QuadraticInOut,
             bevy_easings::EasingType::PingPong {
                 duration: std::time::Duration::from_secs(1),
                 pause: Some(std::time::Duration::from_millis(500)),
             },
-        ));
+        ),
+    ));
 }
 
 fn check_value(mut query: Query<&CustomComponent>) {

@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     for ease_function in &[
         bevy_easings::EaseFunction::QuadraticIn,
@@ -47,39 +47,38 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceOut,
         bevy_easings::EaseFunction::BounceInOut,
     ] {
-        commands
-            .spawn_bundle(ImageBundle {
-                color: UiColor(Color::RED),
+        commands.spawn((
+            ImageBundle {
+                background_color: BackgroundColor(Color::RED),
                 ..Default::default()
-            })
-            .insert(
-                Style {
-                    size: Size {
-                        width: Val::Percent(3.),
-                        height: Val::Percent(3.),
-                    },
+            },
+            Style {
+                size: Size {
+                    width: Val::Percent(3.),
+                    height: Val::Percent(3.),
+                },
 
+                margin: UiRect {
+                    top: Val::Percent(0.),
+                    left: Val::Px(3.),
+                    ..Default::default()
+                },
+                ..Default::default()
+            }
+            .ease_to(
+                Style {
                     margin: UiRect {
-                        bottom: Val::Percent(0.),
-                        left: Val::Px(3.),
+                        top: Val::Percent(50.),
                         ..Default::default()
                     },
                     ..Default::default()
-                }
-                .ease_to(
-                    Style {
-                        margin: UiRect {
-                            bottom: Val::Percent(50.),
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    },
-                    *ease_function,
-                    bevy_easings::EasingType::PingPong {
-                        duration: std::time::Duration::from_secs(1),
-                        pause: Some(std::time::Duration::from_millis(500)),
-                    },
-                ),
-            );
+                },
+                *ease_function,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            ),
+        ));
     }
 }

@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn_bundle(Camera2dBundle::default());
+    commands.spawn(Camera2dBundle::default());
 
     for ease_function in &[
         bevy_easings::EaseFunction::QuadraticIn,
@@ -47,8 +47,8 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceOut,
         bevy_easings::EaseFunction::BounceInOut,
     ] {
-        commands
-            .spawn_bundle(ImageBundle {
+        commands.spawn((
+            ImageBundle {
                 style: Style {
                     size: Size {
                         width: Val::Percent(3.),
@@ -63,14 +63,15 @@ fn setup(mut commands: Commands) {
                     ..Default::default()
                 },
                 ..Default::default()
-            })
-            .insert(UiColor(Color::RED).ease_to(
-                UiColor(Color::BLUE),
+            },
+            BackgroundColor(Color::RED).ease_to(
+                BackgroundColor(Color::BLUE),
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
-            ));
+            ),
+        ));
     }
 }
