@@ -17,13 +17,13 @@ categories = ["game-development"]
 interpolation = "0.2"
 
 [dependencies.bevy]
-version = "0.9.0"
-# git = "https://github.com/bevyengine/bevy.git"
+version = "0.9"
+git = "https://github.com/bevyengine/bevy.git"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.9.0"
-# git = "https://github.com/bevyengine/bevy.git"
+version = "0.9"
+git = "https://github.com/bevyengine/bevy.git"
 default-features = false
 features = ["render"]
 
