@@ -33,7 +33,6 @@ exceptions = [
 multiple-versions = "deny"
 # Certain crates/versions that will be skipped when doing duplicate detection.
 skip = [
-    { name = "concurrent-queue", version = "1.2.4" },
 ]
 
 [sources]
