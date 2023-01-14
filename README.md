@@ -34,7 +34,7 @@ use bevy_easings::*;
 
 fn my_system(mut commands: Commands){
     commands
-        .spawn_bundle((
+        .spawn((
             SpriteBundle {
                 ..Default::default()
             },
