@@ -23,7 +23,7 @@ pub use plugin::{custom_ease_system, EasingsPlugin};
 mod implemented;
 
 /// Wrapper around a type that can be eased.
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy)]
 pub struct EaseValue<T>(pub T);
 
 /// How should this easing loop repeat
@@ -120,7 +120,7 @@ impl MyEaser for f32 {
 }
 
 /// Component to control an easing
-#[derive(Component)]
+#[derive(Component, Clone)]
 pub struct EasingComponent<T> {
     start: Option<EaseValue<T>>,
     end: EaseValue<T>,
@@ -225,6 +225,19 @@ impl<T: Default> EasingChainComponent<T> {
         };
 
         self.0.insert(0, next);
+        self
+    }
+
+    /// Repeat the chain `n` times.
+    pub fn repeat(mut self, n: usize) -> EasingChainComponent<T>
+    where
+        EasingComponent<T>: Clone,
+    {
+        let mut tmp = self.0.clone();
+        for _ in 1..n {
+            tmp.extend(self.0.clone());
+        }
+        self.0 = tmp;
         self
     }
 }
