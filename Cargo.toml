@@ -25,7 +25,7 @@ default-features = false
 version = "0.9"
 git = "https://github.com/bevyengine/bevy.git"
 default-features = false
-features = ["render"]
+features = ["bevy_render", "bevy_sprite", "bevy_ui"]
 
 [dev-dependencies]
 rand = "0.8"
@@ -35,7 +35,7 @@ default = ["render", "sprite", "ui"]
 "render" = ["bevy/bevy_render"]
 "sprite" = ["bevy/bevy_sprite"]
 "ui" = ["bevy/bevy_ui"]
-"examples" = ["ui", "sprite", "render", "bevy/render", "bevy/bevy_winit", "bevy/x11", "bevy/bevy_asset"]
+"examples" = ["ui", "sprite", "bevy/render", "bevy/bevy_winit", "bevy/x11", "bevy/bevy_asset"]
 
 [[example]]
 name = "chain"
