@@ -7,7 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
-        .add_system_to_stage(CoreStage::PostUpdate, add_easing)
+        .add_system(add_easing.in_base_set(CoreSet::PostUpdate))
         .run();
 
     Ok(())
@@ -43,7 +43,10 @@ fn setup(mut commands: Commands) {
     ));
 }
 
-fn add_easing(mut commands: Commands, removed: RemovedComponents<EasingChainComponent<Transform>>) {
+fn add_easing(
+    mut commands: Commands,
+    mut removed: RemovedComponents<EasingChainComponent<Transform>>,
+) {
     for entity in removed.iter() {
         let transform0 = Transform::default();
         let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));

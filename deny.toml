@@ -5,7 +5,7 @@ vulnerability = "deny"
 unmaintained = "deny"
 yanked = "deny"
 notice = "deny"
-ignore = []
+ignore = ["RUSTSEC-2022-0048"]
 
 [licenses]
 unlicensed = "deny"
@@ -33,6 +33,7 @@ exceptions = [
 multiple-versions = "deny"
 # Certain crates/versions that will be skipped when doing duplicate detection.
 skip = [
+    { name = "redox_syscall", version = "0.2.16" }
 ]
 
 [sources]

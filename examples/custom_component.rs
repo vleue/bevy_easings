@@ -1,4 +1,4 @@
-use bevy::{prelude::*, time::FixedTimestep};
+use bevy::prelude::*;
 
 use bevy_easings::*;
 
@@ -7,11 +7,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
-        .add_system_set(
-            SystemSet::new()
-                .with_run_criteria(FixedTimestep::step(0.2))
-                .with_system(check_value),
-        )
+        .add_system_to_schedule(CoreSchedule::FixedUpdate, check_value)
+        .insert_resource(FixedTime::new_from_secs(0.2))
         .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
