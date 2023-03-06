@@ -7,7 +7,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugin(bevy_easings::EasingsPlugin)
         .add_startup_system(setup)
-        .add_system_to_schedule(CoreSchedule::FixedUpdate, pause)
+        .add_system(pause.in_schedule(CoreSchedule::FixedUpdate))
         .insert_resource(FixedTime::new_from_secs(0.25))
         .run();
 
