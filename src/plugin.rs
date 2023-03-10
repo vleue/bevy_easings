@@ -12,15 +12,20 @@ use crate::{
 #[derive(Debug, Clone, Copy)]
 pub struct EasingsPlugin;
 
+/// Label to coordinate new easing spawns
+#[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
+pub struct EasingsLabel;
+
+
 impl Plugin for EasingsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ease_system::<Transform>);
+        app.add_system(ease_system::<Transform>.in_set(EasingsLabel));
         #[cfg(feature = "sprite")]
-        app.add_system(ease_system::<Sprite>);
+        app.add_system(ease_system::<Sprite>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<Style>);
+        app.add_system(ease_system::<Style>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<BackgroundColor>);
+        app.add_system(ease_system::<BackgroundColor>.in_set(EasingsLabel));
     }
 }
 
