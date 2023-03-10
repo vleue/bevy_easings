@@ -19,7 +19,7 @@ pub use interpolation::EaseFunction;
 pub use interpolation::Lerp;
 
 mod plugin;
-pub use plugin::{custom_ease_system, EasingsPlugin};
+pub use plugin::{custom_ease_system, EasingsPlugin, EasingsLabel};
 mod implemented;
 
 /// Wrapper around a type that can be eased.
