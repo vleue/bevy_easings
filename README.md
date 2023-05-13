@@ -59,6 +59,51 @@ fn my_system(mut commands: Commands){
 
 If the component being eased is not already a component of the entity, the component should first be inserted for the target entity.
 
+### Easing using EaseMethod
+The EaseMethod enum can be used to provide easing methods that are not avaliable in EaseFunction.
+```rust
+pub enum EaseMethod {
+    /// Follow `EaseFunction`
+    EaseFunction(EaseFunction),
+    /// Linear interpolation, with no function
+    Linear,
+    /// Discrete interpolation, eased value will jump from start to end
+    Discrete,
+    /// Use a custom function to interpolate the value
+    CustomFunction(fn(f32) -> f32),
+}
+```
+This is shown below
+```rust
+use bevy::prelude::*;
+use bevy_easings::*;
+
+fn my_system(mut commands: Commands){
+    commands
+        .spawn((
+            SpriteBundle {
+                ..Default::default()
+            },
+            Sprite {
+                custom_size: Some(Vec2::new(10., 10.)),
+                ..Default::default()
+            }
+            .ease_to(
+                Sprite {
+                    custom_size: Some(Vec2::new(100., 100.)),
+                    ..Default::default()
+                },
+                EaseMethod::Linear,
+                EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            ),
+        ));
+}
+```
+
+
 ### Chaining easing
 
 You can chain easings, if they are not set to repeat they will happen in sequence.
