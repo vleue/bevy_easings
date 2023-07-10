@@ -5,11 +5,11 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system(check_value.in_schedule(CoreSchedule::FixedUpdate))
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(FixedUpdate, check_value)
         .insert_resource(FixedTime::new_from_secs(0.2))
-        .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
+        .add_systems(Update, bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
     Ok(())
@@ -31,10 +31,8 @@ fn setup(mut commands: Commands) {
     commands.spawn((
         ImageBundle {
             style: Style {
-                size: Size {
-                    width: Val::Percent(3.),
-                    height: Val::Percent(3.),
-                },
+                width: Val::Percent(3.),
+                height: Val::Percent(3.),
 
                 margin: UiRect {
                     bottom: Val::Percent(0.),

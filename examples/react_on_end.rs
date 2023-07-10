@@ -6,9 +6,9 @@ use rand::Rng;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system_to_stage(CoreStage::PostUpdate, add_new_easing)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(PostUpdate, add_new_easing)
         .run();
 
     Ok(())

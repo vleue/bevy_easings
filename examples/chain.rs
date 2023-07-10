@@ -5,9 +5,9 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system(add_easing.in_base_set(CoreSet::PostUpdate))
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(PostUpdate, add_easing)
         .run();
 
     Ok(())

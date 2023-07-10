@@ -5,8 +5,8 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
         .run();
 
     Ok(())
@@ -53,10 +53,8 @@ fn setup(mut commands: Commands) {
                 ..Default::default()
             },
             Style {
-                size: Size {
-                    width: Val::Percent(3.),
-                    height: Val::Percent(3.),
-                },
+                width: Val::Percent(3.),
+                height: Val::Percent(3.),
 
                 margin: UiRect {
                     top: Val::Percent(0.),

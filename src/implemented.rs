@@ -54,8 +54,17 @@ impl Lerp for EaseValue<Style> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(Style {
-            position: EaseValue(self.0.position)
-                .lerp(&EaseValue(other.0.position), scalar)
+            left: EaseValue(self.0.left)
+                .lerp(&EaseValue(other.0.left), scalar)
+                .0,
+            right: EaseValue(self.0.right)
+                .lerp(&EaseValue(other.0.right), scalar)
+                .0,
+            top: EaseValue(self.0.top)
+                .lerp(&EaseValue(other.0.top), scalar)
+                .0,
+            bottom: EaseValue(self.0.bottom)
+                .lerp(&EaseValue(other.0.bottom), scalar)
                 .0,
             margin: EaseValue(self.0.margin)
                 .lerp(&EaseValue(other.0.margin), scalar)
@@ -66,16 +75,26 @@ impl Lerp for EaseValue<Style> {
             border: EaseValue(self.0.border)
                 .lerp(&EaseValue(other.0.border), scalar)
                 .0,
-            size: EaseValue(self.0.size)
-                .lerp(&EaseValue(other.0.size), scalar)
+            width: EaseValue(self.0.width)
+                .lerp(&EaseValue(other.0.width), scalar)
                 .0,
-            min_size: EaseValue(self.0.min_size)
-                .lerp(&EaseValue(other.0.min_size), scalar)
+            height: EaseValue(self.0.height)
+                .lerp(&EaseValue(other.0.height), scalar)
                 .0,
-            max_size: EaseValue(self.0.max_size)
-                .lerp(&EaseValue(other.0.max_size), scalar)
+            min_width: EaseValue(self.0.min_width)
+                .lerp(&EaseValue(other.0.min_width), scalar)
                 .0,
-            ..self.0
+            min_height: EaseValue(self.0.min_height)
+                .lerp(&EaseValue(other.0.min_height), scalar)
+                .0,
+            max_width: EaseValue(self.0.max_width)
+                .lerp(&EaseValue(other.0.max_width), scalar)
+                .0,
+            max_height: EaseValue(self.0.max_height)
+                .lerp(&EaseValue(other.0.max_height), scalar)
+                .0,
+            grid_template_rows: self.0.grid_template_rows.clone(),
+            ..default()
         })
     }
 }
@@ -97,22 +116,6 @@ impl Lerp for EaseValue<UiRect> {
                 .0,
             bottom: EaseValue(self.0.bottom)
                 .lerp(&EaseValue(other.0.bottom), scalar)
-                .0,
-        })
-    }
-}
-
-#[cfg(feature = "ui")]
-impl Lerp for EaseValue<Size> {
-    type Scalar = f32;
-
-    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Size {
-            width: EaseValue(self.0.width)
-                .lerp(&EaseValue(other.0.width), scalar)
-                .0,
-            height: EaseValue(self.0.height)
-                .lerp(&EaseValue(other.0.height), scalar)
                 .0,
         })
     }
