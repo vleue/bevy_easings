@@ -60,7 +60,9 @@ fn my_system(mut commands: Commands){
 If the component being eased is not already a component of the entity, the component should first be inserted for the target entity.
 
 ### Easing using EaseMethod
+
 The EaseMethod enum can be used to provide easing methods that are not avaliable in EaseFunction.
+
 ```rust
 pub enum EaseMethod {
     /// Follow `EaseFunction`
@@ -73,7 +75,9 @@ pub enum EaseMethod {
     CustomFunction(fn(f32) -> f32),
 }
 ```
+
 This is shown below
+
 ```rust
 use bevy::prelude::*;
 use bevy_easings::*;
@@ -102,7 +106,6 @@ fn my_system(mut commands: Commands){
         ));
 }
 ```
-
 
 ### Chaining easing
 
