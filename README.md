@@ -63,7 +63,7 @@ If the component being eased is not already a component of the entity, the compo
 
 The EaseMethod enum can be used to provide easing methods that are not avaliable in EaseFunction.
 
-```rust
+```rust,ignore
 pub enum EaseMethod {
     /// Follow `EaseFunction`
     EaseFunction(EaseFunction),
