@@ -93,7 +93,11 @@ impl Lerp for EaseValue<Style> {
             max_height: EaseValue(self.0.max_height)
                 .lerp(&EaseValue(other.0.max_height), scalar)
                 .0,
-            ..default()
+            grid_auto_columns: self.0.grid_auto_columns.clone(),
+            grid_auto_rows: self.0.grid_auto_rows.clone(),
+            grid_template_columns: self.0.grid_template_columns.clone(),
+            grid_template_rows: self.0.grid_template_rows.clone(),
+            ..self.0
         })
     }
 }
