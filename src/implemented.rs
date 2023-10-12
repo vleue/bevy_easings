@@ -36,6 +36,17 @@ impl Lerp for EaseValue<BackgroundColor> {
     }
 }
 
+#[cfg(all(feature = "ui", feature = "render"))]
+impl Lerp for EaseValue<BorderColor> {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        EaseValue(BorderColor(
+            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+        ))
+    }
+}
+
 impl Lerp for EaseValue<Transform> {
     type Scalar = f32;
 

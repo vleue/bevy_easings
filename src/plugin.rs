@@ -21,6 +21,8 @@ impl Plugin for EasingsPlugin {
         app.add_systems(Update, ease_system::<Style>);
         #[cfg(feature = "ui")]
         app.add_systems(Update, ease_system::<BackgroundColor>);
+        #[cfg(feature = "ui")]
+        app.add_systems(Update, ease_system::<BorderColor>);
     }
 }
 
