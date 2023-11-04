@@ -14,7 +14,7 @@ exclude = ["examples/*.gif"]
 categories = ["game-development"]
 
 [dependencies]
-interpolation = "0.2"
+interpolation = "0.3"
 
 [dependencies.bevy]
 version = "0.12"
