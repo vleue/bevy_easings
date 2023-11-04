@@ -8,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(bevy_easings::EasingsPlugin)
         .add_systems(Startup, setup)
         .add_systems(FixedUpdate, check_value)
-        .insert_resource(FixedTime::new_from_secs(0.2))
+        .insert_resource(Time::<Fixed>::from_seconds(0.2))
         .add_systems(Update, bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
