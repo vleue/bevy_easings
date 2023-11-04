@@ -20,7 +20,7 @@ use bevy_easings::EasingsPlugin;
 
 fn main() {
     App::new()
-        .add_plugin(EasingsPlugin);
+        .add_plugins(EasingsPlugin);
 }
 ```
 
