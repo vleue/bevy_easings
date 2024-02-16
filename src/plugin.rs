@@ -56,9 +56,9 @@ pub fn ease_system<T: Ease + Component>(
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
                     let progress = if easing.direction == EasingDirection::Forward {
-                        easing.timer.percent()
+                        easing.timer.fraction()
                     } else {
-                        easing.timer.percent_left()
+                        easing.timer.fraction_remaining()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {
@@ -141,9 +141,9 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
                     let progress = if easing.direction == EasingDirection::Forward {
-                        easing.timer.percent()
+                        easing.timer.fraction()
                     } else {
-                        easing.timer.percent_left()
+                        easing.timer.fraction_remaining()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {

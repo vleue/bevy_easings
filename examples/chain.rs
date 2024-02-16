@@ -47,7 +47,7 @@ fn add_easing(
     mut commands: Commands,
     mut removed: RemovedComponents<EasingChainComponent<Transform>>,
 ) {
-    for entity in removed.iter() {
+    for entity in removed.read() {
         let transform0 = Transform::default();
         let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
         let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));
