@@ -58,8 +58,8 @@ fn setup(mut commands: Commands) {
     ));
 }
 
-fn check_value(mut query: Query<&CustomComponent>) {
+fn check_value(mut query: Query<&CustomComponent, Changed<CustomComponent>>) {
     for custom in query.iter_mut() {
-        println!("got {:?}", custom.0);
+        println!("Change detected: {:?}", custom.0);
     }
 }

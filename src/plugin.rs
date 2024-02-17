@@ -115,13 +115,14 @@ pub fn ease_system<T: Ease + Component>(
 pub fn custom_ease_system<T: CustomComponentEase + Component>(
     mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<(Entity, &mut T)>,
+    entity_query: Query<Entity, With<T>>,
+    mut object_query: Query<&mut T>,
     mut easing_query: Query<&mut EasingComponent<T>>,
     mut chain_query: Query<&mut EasingChainComponent<T>>,
 ) where
     T: interpolation::Lerp<Scalar = f32> + Default,
 {
-    for (entity, mut object) in query.iter_mut() {
+    for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
                 easing.timer.tick(time.delta());
@@ -140,6 +141,8 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 }
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
+                    let mut object = object_query.get_mut(entity).unwrap();
+
                     let progress = if easing.direction == EasingDirection::Forward {
                         easing.timer.fraction()
                     } else {
@@ -178,6 +181,8 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
         } else if let Ok(ref mut easing_chain) = chain_query.get_mut(entity) {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
+                let mut object = object_query.get_mut(entity).unwrap();
+
                 if next.start.is_none() {
                     next.start = Some(EaseValue(std::mem::take(&mut object)));
                 }
