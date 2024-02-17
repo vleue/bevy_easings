@@ -82,3 +82,7 @@ required-features = ["examples"]
 [[example]]
 name = "ui_color"
 required-features = ["examples"]
+
+[[example]]
+name = "controlled"
+required-features = ["examples"]
