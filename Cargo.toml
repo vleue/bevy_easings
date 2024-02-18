@@ -41,6 +41,7 @@ default = ["render", "sprite", "ui"]
     "bevy/x11",
     "bevy/bevy_asset",
     "bevy/bevy_core_pipeline",
+    "bevy/default_font",
 ]
 
 [[example]]

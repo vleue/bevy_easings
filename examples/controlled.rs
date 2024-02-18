@@ -76,8 +76,7 @@ impl Default for AnimatedCube {
     }
 }
 
-fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
-    let font = asset_server.load("fonts/FiraSans-Bold.ttf");
+fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 
     let default_cube = AnimatedCube::default();
@@ -106,9 +105,9 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
         text: Text::from_section(
             format_info_text(&Vec3::ZERO, 0, None, EaseMethod::Linear),
             TextStyle {
-                font,
                 color: Color::WHITE,
                 font_size: 18.0,
+                ..default()
             },
         )
         .with_justify(JustifyText::Right),
