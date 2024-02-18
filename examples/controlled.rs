@@ -111,7 +111,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 font_size: 18.0,
             },
         )
-        .with_alignment(TextAlignment::Right),
+        .with_justify(JustifyText::Right),
         transform: Transform::from_translation(Vec3::new(SCREEN_X, 15., 0.)),
         text_anchor: bevy::sprite::Anchor::CenterRight,
         ..Default::default()
@@ -120,7 +120,7 @@ fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
 fn handle_input(
     mut commands: Commands,
-    keyboard_input: Res<Input<KeyCode>>,
+    keyboard_input: Res<ButtonInput<KeyCode>>,
     ease_functions: Res<EasingList>,
     mut anim_query: Query<(Entity, &mut EasingComponent<Transform>, &mut AnimatedCube)>,
 ) {
@@ -130,11 +130,11 @@ fn handle_input(
         }
     }
 
-    let right_pressed = keyboard_input.just_pressed(KeyCode::Right);
-    let left_pressed = keyboard_input.just_pressed(KeyCode::Left);
-    let up_pressed = keyboard_input.just_pressed(KeyCode::Up);
-    let down_pressed = keyboard_input.just_pressed(KeyCode::Down);
-    let r_pressed = keyboard_input.just_pressed(KeyCode::R);
+    let right_pressed = keyboard_input.just_pressed(KeyCode::ArrowRight);
+    let left_pressed = keyboard_input.just_pressed(KeyCode::ArrowLeft);
+    let up_pressed = keyboard_input.just_pressed(KeyCode::ArrowUp);
+    let down_pressed = keyboard_input.just_pressed(KeyCode::ArrowDown);
+    let r_pressed = keyboard_input.just_pressed(KeyCode::KeyR);
 
     if right_pressed || left_pressed || up_pressed || down_pressed || r_pressed {
         if let Ok((entity, easing, mut cube)) = anim_query.get_single_mut() {
