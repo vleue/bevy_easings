@@ -229,6 +229,7 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 |Bevy|bevy_easings|
 |---|---|
 |main|main|
+|0.13|0.13|
 |0.12|0.12|
 |0.11|0.11|
 |0.10|0.10|
