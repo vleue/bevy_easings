@@ -42,7 +42,7 @@ pub fn ease_system<T: Ease + Component>(
             if easing.state == EasingState::Play {
                 easing.timer.tick(time.delta());
             } else {
-                return;
+                continue;
             }
             if easing.paused {
                 if easing.timer.just_finished() {
