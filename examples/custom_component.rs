@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-#[derive(Default, Component)]
+#[derive(Default, Component, Clone)]
 struct CustomComponent(f32);
 impl bevy_easings::Lerp for CustomComponent {
     type Scalar = f32;
@@ -44,17 +44,19 @@ fn setup(mut commands: Commands) {
             background_color: BackgroundColor(Color::RED),
             ..Default::default()
         },
-        // as `CustomComponent` is not already part of the components of the entity,
-        // insert the component with a basic value, it will be replaced immediately
-        CustomComponent(-1.),
-        CustomComponent(0.).ease_to(
-            CustomComponent(100.),
-            bevy_easings::EaseFunction::QuadraticInOut,
-            bevy_easings::EasingType::PingPong {
-                duration: std::time::Duration::from_secs(1),
-                pause: Some(std::time::Duration::from_millis(500)),
-            },
-        ),
+        CustomComponent(0.)
+            .ease_to(
+                CustomComponent(100.),
+                bevy_easings::EaseFunction::QuadraticInOut,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            )
+            // as `CustomComponent` is not already part of the components of the entity,
+            // we can either insert the component with a basic value, it will be replaced immediately,
+            // or call `with_original_value` if the `CustomComponent` implements `Clone`
+            .with_original_value(),
     ));
 }
 
