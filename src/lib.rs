@@ -158,6 +158,13 @@ impl<T> EasingComponent<T> {
     pub fn direction(&self) -> EasingDirection {
         self.direction
     }
+
+    /// Adds a delay before triggering the easing.
+    pub fn delay(mut self, duration: Duration) -> Self {
+        self.paused = true;
+        self.timer = Timer::new(duration, TimerMode::Once);
+        self
+    }
 }
 
 impl<T> EasingComponent<T>
