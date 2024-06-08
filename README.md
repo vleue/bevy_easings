@@ -152,13 +152,7 @@ fn my_system(mut commands: Commands){
 }
 ```
 
-## Bundle Supported
-
-- [`Sprite`](https://docs.rs/bevy/latest/bevy/prelude/struct.Sprite.html)
-- [`Transform`](https://docs.rs/bevy/latest/bevy/prelude/struct.Transform.html)
-- [`Style`](https://docs.rs/bevy/latest/bevy/prelude/struct.Style.html)
-
-### Custom component support
+## Custom component support
 
 To be able to ease a component, it needs to implement the traits `Default` and [`Lerp`](https://docs.rs/interpolation/0.2.0/interpolation/trait.Lerp.html). This trait is re-exported by `beavy_easings`.
 
@@ -185,13 +179,15 @@ Then, the system `custom_ease_system::<CustomComponent>` needs to be added to th
 
 See [examples](https://github.com/vleue/bevy_easings/tree/main/examples)
 
-![sprite_color](./examples/sprite_color.gif)
+### Choosing the ease function
 
-![sprite_size](./examples/sprite_size.gif)
+![easing on size](https://raw.githubusercontent.com/vleue/bevy_easings/main/examples/lerping-sizes.webp)
 
-![transform_rotation](./examples/transform_rotation.gif)
+![easing on color](https://raw.githubusercontent.com/vleue/bevy_easings/main/examples/lerping-color.webp)
 
-![transform_translation](./examples/transform_translation.gif)
+When easing colors, pay attention on the color space you are using
+
+![color spaces](https://raw.githubusercontent.com/vleue/bevy_easings/main/examples/lerping-color-spaces.webp)
 
 ## Ease Functions
 
@@ -227,6 +223,8 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 - BounceIn
 - BounceOut
 - BounceInOut
+
+## Bevy supported version
 
 |Bevy|bevy_easings|
 |---|---|
