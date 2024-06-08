@@ -11,20 +11,15 @@ jobs:
   test:
     strategy:
       matrix:
-        toolchain: [stable, nightly]
         os: [windows-latest, ubuntu-latest, macos-latest]
-        exclude:
-          - os: macos-latest
-            toolchain: nightly
-          - os: windows-latest
-            toolchain: nightly
     runs-on: ${{ matrix.os }}
     name: Test Suite
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -33,28 +28,27 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.toml') }}
+
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
+        uses: dtolnay/rust-toolchain@stable
+  
       - name: Install Dependencies
         if: runner.os == 'linux'
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+
+      - name: Run tests
+        run: |
+          cargo test
 
   clippy_check:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Cache
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: |
             ~/.cargo/bin/
@@ -63,56 +57,43 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.toml') }}
+
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          components: clippy
-          override: true
+        uses: dtolnay/rust-toolchain@stable
+  
       - name: Install Dependencies
         run: sudo apt-get update; sudo apt-get install pkg-config libx11-dev libasound2-dev libudev-dev
+
       - name: Run clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: -- -D warnings
+        run: |
+          cargo clippy -- -D warnings
 
   format:
     name: Format
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-          profile: minimal
-          components: rustfmt
-          override: true
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+        uses: dtolnay/rust-toolchain@stable
+  
+      - name: Check format
+        run: |
+          cargo fmt --all -- --check
 
   doc:
     name: Doc
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
+
       - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          profile: minimal
-          override: true
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
-        with:
-          command: doc
-          args: --no-deps
+        uses: dtolnay/rust-toolchain@stable
+  
+      - name: Check doc
+        run: |
+          cargo doc --no-deps
         env:
           RUSTDOCFLAGS: -D warnings
