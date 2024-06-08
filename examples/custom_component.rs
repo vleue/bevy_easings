@@ -41,7 +41,6 @@ fn setup(mut commands: Commands) {
                 },
                 ..Default::default()
             },
-            background_color: BackgroundColor(Color::RED),
             ..Default::default()
         },
         CustomComponent(0.)

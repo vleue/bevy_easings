@@ -8,6 +8,8 @@
 
 Easings on Bevy components using [interpolation](https://crates.io/crates/interpolation).
 
+![menu example](https://raw.githubusercontent.com/vleue/bevy_easings/main/examples/menu.webp)
+
 ## Usage
 
 ### System setup
@@ -229,7 +231,8 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 |Bevy|bevy_easings|
 |---|---|
 |main|main|
-|0.13|0.13|
+|0.14|0.14|
+|0.13|0.14|
 |0.12|0.12|
 |0.11|0.11|
 |0.10|0.10|

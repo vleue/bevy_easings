@@ -158,64 +158,86 @@ impl Lerp for EaseValue<Color> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         let color = match (self.0, other.0) {
-            (
-                Color::Rgba {
-                    red,
-                    green,
-                    blue,
-                    alpha,
-                },
-                Color::Rgba {
-                    red: redo,
-                    green: greeno,
-                    blue: blueo,
-                    alpha: alphao,
-                },
-            ) => Color::Rgba {
-                red: red + (redo + (red * -1.0)) * *scalar,
-                green: green + (greeno + (green * -1.0)) * *scalar,
-                blue: blue + (blueo + (blue * -1.0)) * *scalar,
-                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
-            },
-            (
-                Color::RgbaLinear {
-                    red,
-                    green,
-                    blue,
-                    alpha,
-                },
-                Color::RgbaLinear {
-                    red: redo,
-                    green: greeno,
-                    blue: blueo,
-                    alpha: alphao,
-                },
-            ) => Color::RgbaLinear {
-                red: red + (redo + (red * -1.0)) * *scalar,
-                green: green + (greeno + (green * -1.0)) * *scalar,
-                blue: blue + (blueo + (blue * -1.0)) * *scalar,
-                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
-            },
-            (
-                Color::Hsla {
-                    hue,
-                    saturation,
-                    lightness,
-                    alpha,
-                },
-                Color::Hsla {
-                    hue: hueo,
-                    saturation: saturationo,
-                    lightness: lightnesso,
-                    alpha: alphao,
-                },
-            ) => Color::Hsla {
-                hue: hue + (hueo + (hue * -1.0)) * *scalar,
-                saturation: saturation + (saturationo + (saturation * -1.0)) * *scalar,
-                lightness: lightness + (lightnesso + (lightness * -1.0)) * *scalar,
-                alpha: alpha + (alphao + (alpha * -1.0)) * *scalar,
-            },
-            _ => self.0 + (other.0 + (self.0 * -1.)) * *scalar,
+            (Color::Srgba(color), other) => {
+                let lerped = Srgba::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Srgba>::into(other).to_vec4(), *scalar),
+                );
+                Color::Srgba(lerped)
+            }
+            (Color::LinearRgba(color), other) => {
+                let lerped = LinearRgba::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<LinearRgba>::into(other).to_vec4(), *scalar),
+                );
+                Color::LinearRgba(lerped)
+            }
+            (Color::Hsla(color), other) => {
+                let lerped = Hsla::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Hsla>::into(other).to_vec4(), *scalar),
+                );
+                Color::Hsla(lerped)
+            }
+            (Color::Hsva(color), other) => {
+                let lerped = Hsva::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Hsva>::into(other).to_vec4(), *scalar),
+                );
+                Color::Hsva(lerped)
+            }
+            (Color::Hwba(color), other) => {
+                let lerped = Hwba::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Hwba>::into(other).to_vec4(), *scalar),
+                );
+                Color::Hwba(lerped)
+            }
+            (Color::Laba(color), other) => {
+                let lerped = Laba::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Laba>::into(other).to_vec4(), *scalar),
+                );
+                Color::Laba(lerped)
+            }
+            (Color::Lcha(color), other) => {
+                let lerped = Lcha::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Lcha>::into(other).to_vec4(), *scalar),
+                );
+                Color::Lcha(lerped)
+            }
+            (Color::Oklaba(color), other) => {
+                let lerped = Oklaba::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Oklaba>::into(other).to_vec4(), *scalar),
+                );
+                Color::Oklaba(lerped)
+            }
+            (Color::Oklcha(color), other) => {
+                let lerped = Oklcha::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Oklcha>::into(other).to_vec4(), *scalar),
+                );
+                Color::Oklcha(lerped)
+            }
+            (Color::Xyza(color), other) => {
+                let lerped = Xyza::from_vec4(
+                    color
+                        .to_vec4()
+                        .lerp(Into::<Xyza>::into(other).to_vec4(), *scalar),
+                );
+                Color::Xyza(lerped)
+            }
         };
         EaseValue(color)
     }

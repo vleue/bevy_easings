@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::*;
 
@@ -12,14 +12,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, window: Query<&Window>) {
     commands.spawn(Camera2dBundle::default());
 
-    let size = 100.;
+    let size = 140.;
 
-    let spacing = 1.25;
-    let screen_x = 570.;
-    let screen_y = 150.;
+    let spacing = 1.15;
+    let screen_x = window.single().width();
+    let screen_y = window.single().height();
     let mut x = -screen_x;
     let mut y = screen_y;
 
@@ -57,31 +57,47 @@ fn setup(mut commands: Commands) {
     ] {
         commands.spawn((
             SpriteBundle {
-                transform: Transform::from_translation(Vec3::new(x, y, 0.)),
+                transform: Transform::from_translation(Vec3::new(
+                    x + size / 2.0,
+                    y - size / 2.0,
+                    0.,
+                )),
                 ..Default::default()
             },
             Sprite {
                 custom_size: Some(Vec2::new(size, size)),
-                color: Color::RED,
+                color: palettes::basic::RED.into(),
                 ..Default::default()
             }
             .ease_to(
                 Sprite {
                     custom_size: Some(Vec2::new(size, size)),
-                    color: Color::BLUE,
+                    color: palettes::basic::BLUE.into(),
                     ..Default::default()
                 },
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(1),
+                    duration: std::time::Duration::from_secs(2),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
         ));
-        y -= size * spacing;
-        if y < -screen_y {
-            x += size * spacing;
-            y = screen_y;
+        commands.spawn(Text2dBundle {
+            text: Text::from_section(
+                format!("{:?}", ease_function),
+                TextStyle {
+                    font_size: 20.0,
+                    ..default()
+                },
+            ),
+            transform: Transform::from_translation(Vec3::new(x + size / 2.0, y - size / 2.0, 0.)),
+
+            ..default()
+        });
+        x += size * spacing;
+        if x + size > screen_x {
+            x = -screen_x;
+            y -= size * spacing;
         }
     }
 }
