@@ -26,7 +26,7 @@ impl Plugin for EasingsPlugin {
     }
 }
 
-pub fn ease_system<T: Ease + Component>(
+pub fn ease_system<T: Ease + Component + Default>(
     mut commands: Commands,
     time: Res<Time>,
     entity_query: Query<Entity, With<T>>,
@@ -35,7 +35,6 @@ pub fn ease_system<T: Ease + Component>(
     mut chain_query: Query<&mut EasingChainComponent<T>>,
 ) where
     EaseValue<T>: interpolation::Lerp<Scalar = f32>,
-    T: Default,
 {
     for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
@@ -117,16 +116,16 @@ pub fn ease_system<T: Ease + Component>(
 }
 
 /// Ease system for custom component. Add this system to your application with your component as a type parameter.
-pub fn custom_ease_system<T: CustomComponentEase + Component>(
+pub fn custom_ease_system<
+    T: CustomComponentEase + Component + interpolation::Lerp<Scalar = f32> + Default,
+>(
     mut commands: Commands,
     time: Res<Time>,
     entity_query: Query<Entity, With<T>>,
     mut object_query: Query<&mut T>,
     mut easing_query: Query<&mut EasingComponent<T>>,
     mut chain_query: Query<&mut EasingChainComponent<T>>,
-) where
-    T: interpolation::Lerp<Scalar = f32> + Default,
-{
+) {
     for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
