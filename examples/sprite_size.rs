@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::*;
 
@@ -12,15 +12,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     Ok(())
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, window: Query<&Window>) {
     commands.spawn(Camera2dBundle::default());
 
     let initial_size = 10.;
-    let final_size = 100.;
+    let final_size = 140.;
 
-    let spacing = 1.25;
-    let screen_x = 570.;
-    let screen_y = 150.;
+    let spacing = 1.15;
+    let screen_x = window.single().width();
+    let screen_y = window.single().height();
     let mut x = -screen_x;
     let mut y = screen_y;
 
@@ -58,31 +58,51 @@ fn setup(mut commands: Commands) {
     ] {
         commands.spawn((
             SpriteBundle {
-                transform: Transform::from_translation(Vec3::new(x, y, 0.)),
+                transform: Transform::from_translation(Vec3::new(
+                    x + final_size / 2.0,
+                    y - final_size / 2.0,
+                    0.,
+                )),
                 ..Default::default()
             },
             Sprite {
                 custom_size: Some(Vec2::new(initial_size, initial_size)),
-                color: Color::RED,
+                color: palettes::basic::RED.into(),
                 ..Default::default()
             }
             .ease_to(
                 Sprite {
                     custom_size: Some(Vec2::new(final_size, final_size)),
-                    color: Color::RED,
+                    color: palettes::basic::RED.into(),
                     ..Default::default()
                 },
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(1),
+                    duration: std::time::Duration::from_secs(2),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
             ),
         ));
-        y -= final_size * spacing;
-        if y < -screen_y {
-            x += final_size * spacing;
-            y = screen_y;
+        commands.spawn(Text2dBundle {
+            text: Text::from_section(
+                format!("{:?}", ease_function),
+                TextStyle {
+                    font_size: 20.0,
+                    ..default()
+                },
+            ),
+            transform: Transform::from_translation(Vec3::new(
+                x + final_size / 2.0,
+                y - final_size / 2.0,
+                0.,
+            )),
+
+            ..default()
+        });
+        x += final_size * spacing;
+        if x + final_size > screen_x {
+            x = -screen_x;
+            y -= final_size * spacing;
         }
     }
 }

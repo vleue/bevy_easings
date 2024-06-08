@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::*;
 
@@ -51,7 +51,7 @@ fn setup(mut commands: Commands) {
     .enumerate()
     {
         commands.spawn((
-            ImageBundle {
+            NodeBundle {
                 style: Style {
                     width: Val::Percent(5.),
                     height: Val::Percent(8.),
@@ -61,8 +61,8 @@ fn setup(mut commands: Commands) {
                 },
                 ..Default::default()
             },
-            BackgroundColor(Color::RED).ease_to(
-                BackgroundColor(Color::BLUE),
+            BackgroundColor(palettes::basic::RED.into()).ease_to(
+                BackgroundColor(palettes::basic::BLUE.into()),
                 *ease_function,
                 bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),

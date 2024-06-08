@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::*;
 
@@ -51,8 +51,8 @@ fn setup(mut commands: Commands) {
     .enumerate()
     {
         commands.spawn((
-            ImageBundle {
-                background_color: BackgroundColor(Color::RED),
+            NodeBundle {
+                background_color: BackgroundColor(palettes::basic::RED.into()),
                 ..Default::default()
             },
             Style {

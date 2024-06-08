@@ -302,10 +302,6 @@ where
     }
 }
 
-trait IntermediateLerp: Sized {
-    fn lerp(start: &EaseValue<&Self>, end: &EaseValue<&Self>, scalar: f32) -> Self;
-}
-
 /// Trait to mark custom component that can be eased. It will be automatically implemented if the custom component implement `Lerp`
 pub trait CustomComponentEase: Sized {
     /// Create a new easing. If no start is provided, it will try to use the current value of the component for the target entity
