@@ -160,6 +160,18 @@ impl<T> EasingComponent<T> {
     }
 }
 
+impl<T> EasingComponent<T>
+where
+    T: Clone,
+{
+    /// Returns a bundle containing the starting value additionally to this [EasingComponent].
+    pub fn with_original_value(self) -> (T, Self) {
+        let starting_value = self.start.clone().unwrap().0;
+
+        (starting_value, self)
+    }
+}
+
 impl<T: std::fmt::Debug> std::fmt::Debug for EasingComponent<T> {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("EasingComponent")

@@ -5,10 +5,10 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system(pause.in_schedule(CoreSchedule::FixedUpdate))
-        .insert_resource(FixedTime::new_from_secs(0.25))
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(FixedUpdate, pause)
+        .insert_resource(Time::<Fixed>::from_seconds(0.25))
         .run();
 
     Ok(())

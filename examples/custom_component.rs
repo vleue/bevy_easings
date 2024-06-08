@@ -5,17 +5,17 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system(check_value.in_schedule(CoreSchedule::FixedUpdate))
-        .insert_resource(FixedTime::new_from_secs(0.2))
-        .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(FixedUpdate, check_value)
+        .insert_resource(Time::<Fixed>::from_seconds(0.2))
+        .add_systems(Update, bevy_easings::custom_ease_system::<CustomComponent>)
         .run();
 
     Ok(())
 }
 
-#[derive(Default, Component)]
+#[derive(Default, Component, Clone)]
 struct CustomComponent(f32);
 impl bevy_easings::Lerp for CustomComponent {
     type Scalar = f32;
@@ -31,10 +31,8 @@ fn setup(mut commands: Commands) {
     commands.spawn((
         ImageBundle {
             style: Style {
-                size: Size {
-                    width: Val::Percent(3.),
-                    height: Val::Percent(3.),
-                },
+                width: Val::Percent(3.),
+                height: Val::Percent(3.),
 
                 margin: UiRect {
                     bottom: Val::Percent(0.),
@@ -46,22 +44,24 @@ fn setup(mut commands: Commands) {
             background_color: BackgroundColor(Color::RED),
             ..Default::default()
         },
-        // as `CustomComponent` is not already part of the components of the entity,
-        // insert the component with a basic value, it will be replaced immediately
-        CustomComponent(-1.),
-        CustomComponent(0.).ease_to(
-            CustomComponent(100.),
-            bevy_easings::EaseFunction::QuadraticInOut,
-            bevy_easings::EasingType::PingPong {
-                duration: std::time::Duration::from_secs(1),
-                pause: Some(std::time::Duration::from_millis(500)),
-            },
-        ),
+        CustomComponent(0.)
+            .ease_to(
+                CustomComponent(100.),
+                bevy_easings::EaseFunction::QuadraticInOut,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            )
+            // as `CustomComponent` is not already part of the components of the entity,
+            // we can either insert the component with a basic value, it will be replaced immediately,
+            // or call `with_original_value` if the `CustomComponent` implements `Clone`
+            .with_original_value(),
     ));
 }
 
-fn check_value(mut query: Query<&CustomComponent>) {
+fn check_value(mut query: Query<&CustomComponent, Changed<CustomComponent>>) {
     for custom in query.iter_mut() {
-        println!("got {:?}", custom.0);
+        println!("Change detected: {:?}", custom.0);
     }
 }

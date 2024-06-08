@@ -87,8 +87,8 @@ impl bevy_easings::Lerp for CustomComponent {
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_default_plugins()
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
         .add_system(check_value)
         .add_system(bevy_easings::custom_ease_system::<CustomComponent>)
         .run();

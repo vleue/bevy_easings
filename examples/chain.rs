@@ -5,9 +5,9 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system(add_easing.in_base_set(CoreSet::PostUpdate))
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(PostUpdate, add_easing)
         .run();
 
     Ok(())
@@ -47,7 +47,7 @@ fn add_easing(
     mut commands: Commands,
     mut removed: RemovedComponents<EasingChainComponent<Transform>>,
 ) {
-    for entity in removed.iter() {
+    for entity in removed.read() {
         let transform0 = Transform::default();
         let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
         let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));

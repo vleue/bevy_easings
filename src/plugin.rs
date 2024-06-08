@@ -19,30 +19,35 @@ pub struct EasingsLabel;
 
 impl Plugin for EasingsPlugin {
     fn build(&self, app: &mut App) {
-        app.add_system(ease_system::<Transform>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Transform>.in_set(EasingsLabel));
         #[cfg(feature = "sprite")]
-        app.add_system(ease_system::<Sprite>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Sprite>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<Style>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Style>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_system(ease_system::<BackgroundColor>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<BackgroundColor>.in_set(EasingsLabel));
+        #[cfg(feature = "ui")]
+        app.add_systems(Update, ease_system::<BorderColor>.in_set(EasingsLabel));
     }
 }
 
 pub fn ease_system<T: Ease + Component>(
     mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<(Entity, &mut T)>,
+    entity_query: Query<Entity, With<T>>,
+    mut object_query: Query<&mut T>,
     mut easing_query: Query<&mut EasingComponent<T>>,
     mut chain_query: Query<&mut EasingChainComponent<T>>,
 ) where
     EaseValue<T>: interpolation::Lerp<Scalar = f32>,
     T: Default,
 {
-    for (entity, mut object) in query.iter_mut() {
+    for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
                 easing.timer.tick(time.delta());
+            } else {
+                continue;
             }
             if easing.paused {
                 if easing.timer.just_finished() {
@@ -58,10 +63,11 @@ pub fn ease_system<T: Ease + Component>(
                 }
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
+                    let mut object = object_query.get_mut(entity).unwrap();
                     let progress = if easing.direction == EasingDirection::Forward {
-                        easing.timer.percent()
+                        easing.timer.fraction()
                     } else {
-                        easing.timer.percent_left()
+                        easing.timer.fraction_remaining()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {
@@ -97,6 +103,7 @@ pub fn ease_system<T: Ease + Component>(
         } else if let Ok(ref mut easing_chain) = chain_query.get_mut(entity) {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
+                let mut object = object_query.get_mut(entity).unwrap();
                 if next.start.is_none() {
                     next.start = Some(EaseValue(std::mem::take(&mut object)));
                 }
@@ -118,13 +125,14 @@ pub fn ease_system<T: Ease + Component>(
 pub fn custom_ease_system<T: CustomComponentEase + Component>(
     mut commands: Commands,
     time: Res<Time>,
-    mut query: Query<(Entity, &mut T)>,
+    entity_query: Query<Entity, With<T>>,
+    mut object_query: Query<&mut T>,
     mut easing_query: Query<&mut EasingComponent<T>>,
     mut chain_query: Query<&mut EasingChainComponent<T>>,
 ) where
     T: interpolation::Lerp<Scalar = f32> + Default,
 {
-    for (entity, mut object) in query.iter_mut() {
+    for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
             if easing.state == EasingState::Play {
                 easing.timer.tick(time.delta());
@@ -143,10 +151,12 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
                 }
             } else {
                 if easing.timer.duration().as_secs_f32() != 0. {
+                    let mut object = object_query.get_mut(entity).unwrap();
+
                     let progress = if easing.direction == EasingDirection::Forward {
-                        easing.timer.percent()
+                        easing.timer.fraction()
                     } else {
-                        easing.timer.percent_left()
+                        easing.timer.fraction_remaining()
                     };
                     let factor = progress.compute(easing.ease_function);
                     if let Some(ref start) = easing.start {
@@ -181,6 +191,8 @@ pub fn custom_ease_system<T: CustomComponentEase + Component>(
         } else if let Ok(ref mut easing_chain) = chain_query.get_mut(entity) {
             let next = easing_chain.0.pop();
             if let Some(mut next) = next {
+                let mut object = object_query.get_mut(entity).unwrap();
+
                 if next.start.is_none() {
                     next.start = Some(EaseValue(std::mem::take(&mut object)));
                 }

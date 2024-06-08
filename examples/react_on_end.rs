@@ -6,19 +6,21 @@ use rand::Rng;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
-        .add_system_to_stage(CoreStage::PostUpdate, add_new_easing)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
+        .add_systems(PostUpdate, add_new_easing)
         .run();
 
     Ok(())
 }
 
-fn setup(mut commands: Commands, windows: Res<Windows>) {
+fn setup(mut commands: Commands, windows: Query<&Window>) {
     commands.spawn(Camera2dBundle::default());
 
-    let width = windows.primary().width() / 2.0;
-    let height = windows.primary().height() / 2.0;
+    let window = windows.single();
+
+    let width = window.width() / 2.0;
+    let height = window.height() / 2.0;
     let x = rand::thread_rng().gen_range(-width..width);
     let y = rand::thread_rng().gen_range(-height..height);
 
@@ -43,13 +45,15 @@ fn setup(mut commands: Commands, windows: Res<Windows>) {
 
 fn add_new_easing(
     mut commands: Commands,
-    removed: RemovedComponents<EasingComponent<Transform>>,
+    mut removed: RemovedComponents<EasingComponent<Transform>>,
     transform: Query<&Transform>,
-    windows: Res<Windows>,
+    windows: Query<&Window>,
 ) {
-    for entity in removed.iter() {
-        let width = windows.primary().width() / 2.0;
-        let height = windows.primary().height() / 2.0;
+    let window = windows.single();
+
+    for entity in removed.read() {
+        let width = window.width() / 2.0;
+        let height = window.height() / 2.0;
         let x = rand::thread_rng().gen_range(-width..width);
         let y = rand::thread_rng().gen_range(-height..height);
 

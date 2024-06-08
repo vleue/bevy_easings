@@ -1,6 +1,6 @@
 [package]
 name = "bevy_easings"
-version = "0.10.0"
+version = "0.13.1"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2021"
 description = "Easing plugin for Bevy"
@@ -14,14 +14,14 @@ exclude = ["examples/*.gif"]
 categories = ["game-development"]
 
 [dependencies]
-interpolation = "0.2"
+interpolation = "0.3"
 
 [dependencies.bevy]
-version = "0.10"
+version = "0.13"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.10"
+version = "0.13"
 default-features = false
 features = ["bevy_render", "bevy_sprite", "bevy_ui"]
 
@@ -33,44 +33,57 @@ default = ["render", "sprite", "ui"]
 "render" = ["bevy/bevy_render"]
 "sprite" = ["bevy/bevy_sprite"]
 "ui" = ["bevy/bevy_ui"]
-"examples" = ["ui", "sprite", "render", "bevy/bevy_winit", "bevy/x11", "bevy/bevy_asset", "bevy/bevy_core_pipeline"]
+"examples" = [
+    "ui",
+    "sprite",
+    "render",
+    "bevy/bevy_winit",
+    "bevy/x11",
+    "bevy/bevy_asset",
+    "bevy/bevy_core_pipeline",
+    "bevy/default_font",
+]
 
 [[example]]
 name = "chain"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "react_on_end"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "sprite_color"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "custom_component"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "pause"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "sprite_size"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "transform_rotation"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "transform_translation"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "ui_style"
-required-features = [ "examples" ]
+required-features = ["examples"]
 
 [[example]]
 name = "ui_color"
-required-features = [ "examples" ]
+required-features = ["examples"]
+
+[[example]]
+name = "controlled"
+required-features = ["examples"]

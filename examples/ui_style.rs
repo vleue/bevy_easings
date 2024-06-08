@@ -5,8 +5,8 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
         .run();
 
     Ok(())
@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(mut commands: Commands) {
     commands.spawn(Camera2dBundle::default());
 
-    for ease_function in &[
+    for (i, ease_function) in [
         bevy_easings::EaseFunction::QuadraticIn,
         bevy_easings::EaseFunction::QuadraticOut,
         bevy_easings::EaseFunction::QuadraticInOut,
@@ -46,31 +46,26 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceIn,
         bevy_easings::EaseFunction::BounceOut,
         bevy_easings::EaseFunction::BounceInOut,
-    ] {
+    ]
+    .iter()
+    .enumerate()
+    {
         commands.spawn((
             ImageBundle {
                 background_color: BackgroundColor(Color::RED),
                 ..Default::default()
             },
             Style {
-                size: Size {
-                    width: Val::Percent(3.),
-                    height: Val::Percent(3.),
-                },
+                width: Val::Percent(3.),
+                height: Val::Percent(3.),
+                left: Val::Percent(i as f32 * 4.0),
+                top: Val::Percent(25.0),
 
-                margin: UiRect {
-                    top: Val::Percent(0.),
-                    left: Val::Px(3.),
-                    ..Default::default()
-                },
                 ..Default::default()
             }
             .ease_to(
                 Style {
-                    margin: UiRect {
-                        top: Val::Percent(50.),
-                        ..Default::default()
-                    },
+                    top: Val::Percent(75.0),
                     ..Default::default()
                 },
                 *ease_function,

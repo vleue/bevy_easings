@@ -5,8 +5,8 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugin(bevy_easings::EasingsPlugin)
-        .add_startup_system(setup)
+        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_systems(Startup, setup)
         .run();
 
     Ok(())
