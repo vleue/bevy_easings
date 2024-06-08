@@ -1,6 +1,6 @@
 [package]
 name = "bevy_easings"
-version = "0.13.1"
+version = "0.14.0"
 authors = ["François Mockers <mockersf@gmail.com>"]
 edition = "2021"
 description = "Easing plugin for Bevy"
@@ -17,11 +17,11 @@ categories = ["game-development"]
 interpolation = "0.3"
 
 [dependencies.bevy]
-version = "0.13"
+version = "0.14.0-rc.2"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.13"
+version = "0.14.0-rc.2"
 default-features = false
 features = ["bevy_render", "bevy_sprite", "bevy_ui"]
 
@@ -42,6 +42,11 @@ default = ["render", "sprite", "ui"]
     "bevy/bevy_asset",
     "bevy/bevy_core_pipeline",
     "bevy/default_font",
+    "bevy/png",
+    # Should be removed once this is fixed in Bevy 0.14
+    "bevy/ktx2",
+    "bevy/zstd",
+    "bevy/bevy_pbr",
 ]
 
 [[example]]

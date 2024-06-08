@@ -1,4 +1,4 @@
-use bevy::prelude::*;
+use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::*;
 
@@ -58,7 +58,7 @@ fn setup(mut commands: Commands) {
             SpriteBundle {
                 sprite: Sprite {
                     custom_size: Some(Vec2::new(size, size)),
-                    color: Color::RED,
+                    color: palettes::basic::RED.into(),
                     ..Default::default()
                 },
                 ..Default::default()
@@ -79,7 +79,7 @@ fn setup(mut commands: Commands) {
         SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
-                color: Color::RED,
+                color: palettes::basic::RED.into(),
                 ..Default::default()
             },
             ..Default::default()
@@ -99,7 +99,7 @@ fn setup(mut commands: Commands) {
         SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
-                color: Color::RED,
+                color: palettes::basic::RED.into(),
                 ..Default::default()
             },
             ..Default::default()
@@ -119,7 +119,7 @@ fn setup(mut commands: Commands) {
         SpriteBundle {
             sprite: Sprite {
                 custom_size: Some(Vec2::new(size, size)),
-                color: Color::RED,
+                color: palettes::basic::RED.into(),
                 ..Default::default()
             },
             ..Default::default()
