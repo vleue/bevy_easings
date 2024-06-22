@@ -8,6 +8,7 @@
     unused_qualifications,
     missing_docs
 )]
+#![allow(clippy::needless_doctest_main)]
 #![doc = include_str!("../README.md")]
 
 use std::time::Duration;
