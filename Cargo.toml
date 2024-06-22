@@ -17,11 +17,11 @@ categories = ["game-development"]
 interpolation = "0.3"
 
 [dependencies.bevy]
-version = "0.14.0-rc.2"
+version = "0.14.0-rc.3"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.14.0-rc.2"
+version = "0.14.0-rc.3"
 default-features = false
 features = ["bevy_render", "bevy_sprite", "bevy_ui"]
 
