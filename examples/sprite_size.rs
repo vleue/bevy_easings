@@ -19,8 +19,8 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
     let final_size = 140.;
 
     let spacing = 1.15;
-    let screen_x = window.single().width();
-    let screen_y = window.single().height();
+    let screen_x = window.single().width() / 2.0;
+    let screen_y = window.single().height() / 2.0;
     let mut x = -screen_x;
     let mut y = screen_y;
 

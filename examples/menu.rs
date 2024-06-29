@@ -199,8 +199,7 @@ fn spawn_menu(commands: &mut Commands) {
                         parent
                             .spawn((
                                 ButtonBundle {
-                                    image: UiImage::default()
-                                        .with_color(palettes::tailwind::INDIGO_800.into()),
+                                    background_color: palettes::tailwind::INDIGO_800.into(),
                                     border_radius: BorderRadius::all(Val::Percent(10.0)),
                                     border_color: BorderColor(
                                         palettes::tailwind::INDIGO_400.into(),
@@ -281,7 +280,7 @@ fn spawn_logo_points(
     };
 
     let resolution = 6;
-    let window_size = window.single().physical_size().as_vec2();
+    let window_size = window.single().size();
 
     for i in (0..image.width()).step_by(resolution) {
         for j in (0..image.height()).step_by(resolution) {
