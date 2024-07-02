@@ -260,6 +260,13 @@ impl<T: Default> EasingChainComponent<T> {
         self.0 = tmp;
         self
     }
+
+    /// Adds a delay before triggering the easing.
+    pub fn delay(mut self, duration: Duration) -> Self {
+        self.0[0].paused = true;
+        self.0[0].timer = Timer::new(duration, TimerMode::Once);
+        self
+    }
 }
 
 /// Trait marking components that can be eased
