@@ -16,11 +16,17 @@ impl Lerp for EaseValue<Sprite> {
                 (Some(a), None) => Some(a),
                 (Some(a), Some(b)) => Some(a.lerp(b, *scalar)),
             },
+            rect: match (self.0.rect, other.0.rect) {
+                (None, None) => None,
+                (None, Some(b)) => Some(b),
+                (Some(a), None) => Some(a),
+                (Some(a), Some(b)) => Some(EaseValue(a).lerp(&EaseValue(b), scalar).0),
+            },
             #[cfg(feature = "render")]
             color: EaseValue(self.0.color)
                 .lerp(&EaseValue(other.0.color), scalar)
                 .0,
-            ..Sprite::default()
+            ..other.0
         })
     }
 }
@@ -240,5 +246,16 @@ impl Lerp for EaseValue<Color> {
             }
         };
         EaseValue(color)
+    }
+}
+
+impl Lerp for EaseValue<Rect> {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        EaseValue(Rect {
+            min: self.0.min.lerp(other.0.min, *scalar),
+            max: self.0.max.lerp(other.0.max, *scalar),
+        })
     }
 }
