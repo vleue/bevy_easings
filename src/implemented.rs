@@ -147,6 +147,12 @@ impl Lerp for EaseValue<Val> {
             (Val::Px(self_val), Val::Px(other_val)) => {
                 EaseValue(Val::Px(Lerp::lerp(&self_val, &other_val, scalar)))
             }
+            (Val::Vw(self_val), Val::Vw(other_val)) => {
+                EaseValue(Val::Vw(Lerp::lerp(&self_val, &other_val, scalar)))
+            }
+            (Val::Vh(self_val), Val::Vh(other_val)) => {
+                EaseValue(Val::Vh(Lerp::lerp(&self_val, &other_val, scalar)))
+            }
             _ => EaseValue(self.0),
         }
     }
