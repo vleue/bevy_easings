@@ -66,11 +66,11 @@ impl Lerp for EaseValue<Transform> {
 }
 
 #[cfg(feature = "ui")]
-impl Lerp for EaseValue<Style> {
+impl Lerp for EaseValue<Node> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Style {
+        EaseValue(Node {
             left: EaseValue(self.0.left)
                 .lerp(&EaseValue(other.0.left), scalar)
                 .0,

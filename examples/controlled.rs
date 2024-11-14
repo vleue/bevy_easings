@@ -1,6 +1,6 @@
-use bevy::{color::palettes, prelude::*};
+use bevy::{color::palettes, prelude::*, sprite::Anchor};
 
-use bevy_easings::*;
+use bevy_easings::{Ease, *};
 
 const CUBE_SIZE: f32 = 25.;
 
@@ -28,36 +28,36 @@ impl Default for EasingList {
     fn default() -> Self {
         Self(vec![
             EaseMethod::Linear,
-            EaseMethod::EaseFunction(EaseFunction::QuadraticIn),
-            EaseMethod::EaseFunction(EaseFunction::QuadraticOut),
-            EaseMethod::EaseFunction(EaseFunction::QuadraticInOut),
-            EaseMethod::EaseFunction(EaseFunction::CubicIn),
-            EaseMethod::EaseFunction(EaseFunction::CubicOut),
-            EaseMethod::EaseFunction(EaseFunction::CubicInOut),
-            EaseMethod::EaseFunction(EaseFunction::QuarticIn),
-            EaseMethod::EaseFunction(EaseFunction::QuarticOut),
-            EaseMethod::EaseFunction(EaseFunction::QuarticInOut),
-            EaseMethod::EaseFunction(EaseFunction::QuinticIn),
-            EaseMethod::EaseFunction(EaseFunction::QuinticOut),
-            EaseMethod::EaseFunction(EaseFunction::QuinticInOut),
-            EaseMethod::EaseFunction(EaseFunction::SineIn),
-            EaseMethod::EaseFunction(EaseFunction::SineOut),
-            EaseMethod::EaseFunction(EaseFunction::SineInOut),
-            EaseMethod::EaseFunction(EaseFunction::CircularIn),
-            EaseMethod::EaseFunction(EaseFunction::CircularOut),
-            EaseMethod::EaseFunction(EaseFunction::CircularInOut),
-            EaseMethod::EaseFunction(EaseFunction::ExponentialIn),
-            EaseMethod::EaseFunction(EaseFunction::ExponentialOut),
-            EaseMethod::EaseFunction(EaseFunction::ExponentialInOut),
-            EaseMethod::EaseFunction(EaseFunction::ElasticIn),
-            EaseMethod::EaseFunction(EaseFunction::ElasticOut),
-            EaseMethod::EaseFunction(EaseFunction::ElasticInOut),
-            EaseMethod::EaseFunction(EaseFunction::BackIn),
-            EaseMethod::EaseFunction(EaseFunction::BackOut),
-            EaseMethod::EaseFunction(EaseFunction::BackInOut),
-            EaseMethod::EaseFunction(EaseFunction::BounceIn),
-            EaseMethod::EaseFunction(EaseFunction::BounceOut),
-            EaseMethod::EaseFunction(EaseFunction::BounceInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuadraticIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuadraticOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuadraticInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CubicIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CubicOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CubicInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuarticIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuarticOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuarticInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuinticIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuinticOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::QuinticInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::SineIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::SineOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::SineInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CircularIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CircularOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::CircularInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ExponentialIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ExponentialOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ExponentialInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ElasticIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ElasticOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::ElasticInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BackIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BackOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BackInOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BounceIn),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BounceOut),
+            EaseMethod::EaseFunction(bevy_easings::EaseFunction::BounceInOut),
         ])
     }
 }
@@ -77,19 +77,12 @@ impl Default for AnimatedCube {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let default_cube = AnimatedCube::default();
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(CUBE_SIZE, CUBE_SIZE)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(CUBE_SIZE, CUBE_SIZE)),
         create_animated_transform(
             -SCREEN_X,
             SCREEN_Y,
@@ -101,20 +94,15 @@ fn setup(mut commands: Commands) {
         default_cube,
     ));
 
-    commands.spawn((Text2dBundle {
-        text: Text::from_section(
-            format_info_text(&Vec3::ZERO, 0, None, EaseMethod::Linear),
-            TextStyle {
-                color: Color::WHITE,
-                font_size: 18.0,
-                ..default()
-            },
-        )
-        .with_justify(JustifyText::Right),
-        transform: Transform::from_translation(Vec3::new(SCREEN_X, 15., 0.)),
-        text_anchor: bevy::sprite::Anchor::CenterRight,
-        ..Default::default()
-    },));
+    commands.spawn((
+        Text2d::new("".to_string()),
+        TextFont {
+            font_size: 18.0,
+            ..default()
+        },
+        Transform::from_translation(Vec3::new(SCREEN_X, 15., 0.)),
+        Anchor::CenterRight,
+    ));
 }
 
 fn handle_input(
@@ -182,15 +170,16 @@ fn check_value(cube_query: Query<&Transform, Changed<Transform>>) {
 }
 
 fn update_text(
-    mut text_query: Query<&mut Text>,
+    text_query: Query<Entity, With<Text2d>>,
     ease_functions: Res<EasingList>,
     cube_query: Query<(Entity, &Transform, &AnimatedCube)>,
     anim_query: Query<&EasingComponent<Transform>, With<AnimatedCube>>,
+    mut text_writer: Text2dWriter,
 ) {
     for (entity, transform, animated_cube) in cube_query.iter() {
-        for mut text in text_query.iter_mut() {
+        for text in &text_query {
             let easing_state = anim_query.get(entity).map(|anim| anim.state).ok();
-            text.sections[0].value = format_info_text(
+            *text_writer.text(text, 0) = format_info_text(
                 &transform.translation,
                 animated_cube.duration,
                 easing_state,

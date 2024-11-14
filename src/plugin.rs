@@ -22,7 +22,7 @@ impl Plugin for EasingsPlugin {
         #[cfg(feature = "sprite")]
         app.add_systems(Update, ease_system::<Sprite>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<Style>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Node>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
         app.add_systems(Update, ease_system::<BackgroundColor>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]

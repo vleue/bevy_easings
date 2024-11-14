@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::{Ease, EasingComponent};
 use rand::Rng;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -15,7 +15,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands, windows: Query<&Window>) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let window = windows.single();
 
@@ -25,14 +25,7 @@ fn setup(mut commands: Commands, windows: Query<&Window>) {
     let y = rand::thread_rng().gen_range(-height..height);
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(100., 100.)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(100.0, 100.0)),
         Transform::IDENTITY.ease_to(
             Transform::from_xyz(x, y, 0.0),
             bevy_easings::EaseFunction::QuadraticInOut,

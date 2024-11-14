@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::{Ease, *};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let size = 25.;
 
@@ -55,14 +55,7 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands.spawn((
-            SpriteBundle {
-                sprite: Sprite {
-                    custom_size: Some(Vec2::new(size, size)),
-                    color: palettes::basic::RED.into(),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
+            Sprite::from_color(palettes::basic::RED, Vec2::new(size, size)),
             Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
                 Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
                 *ease_function,
@@ -76,14 +69,7 @@ fn setup(mut commands: Commands) {
     }
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(size, size)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(size, size)),
         Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
             Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
             EaseMethod::Linear,
@@ -96,14 +82,7 @@ fn setup(mut commands: Commands) {
     x += size * spacing;
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(size, size)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(size, size)),
         Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
             Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
             EaseMethod::Discrete,
@@ -116,14 +95,7 @@ fn setup(mut commands: Commands) {
     x += size * spacing;
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(size, size)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(size, size)),
         Transform::from_translation(Vec3::new(x, screen_y, 0.)).ease_to(
             Transform::from_translation(Vec3::new(x, -screen_y, 0.)),
             EaseMethod::CustomFunction(|x| x / 4.),
