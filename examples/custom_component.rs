@@ -26,23 +26,7 @@ impl bevy_easings::Lerp for CustomComponent {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
-
-    commands.spawn((
-        ImageBundle {
-            style: Style {
-                width: Val::Percent(3.),
-                height: Val::Percent(3.),
-
-                margin: UiRect {
-                    bottom: Val::Percent(0.),
-                    left: Val::Px(3.),
-                    ..Default::default()
-                },
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+    commands.spawn(
         CustomComponent(0.)
             .ease_to(
                 CustomComponent(100.),
@@ -56,7 +40,7 @@ fn setup(mut commands: Commands) {
             // we can either insert the component with a basic value, it will be replaced immediately,
             // or call `with_original_value` if the `CustomComponent` implements `Clone`
             .with_original_value(),
-    ));
+    );
 }
 
 fn check_value(mut query: Query<&CustomComponent, Changed<CustomComponent>>) {

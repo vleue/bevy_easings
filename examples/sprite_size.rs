@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands, window: Query<&Window>) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let initial_size = 10.;
     let final_size = 140.;
@@ -57,14 +57,7 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_translation(Vec3::new(
-                    x + final_size / 2.0,
-                    y - final_size / 2.0,
-                    0.,
-                )),
-                ..Default::default()
-            },
+            Transform::from_translation(Vec3::new(x + final_size / 2.0, y - final_size / 2.0, 0.)),
             Sprite {
                 custom_size: Some(Vec2::new(initial_size, initial_size)),
                 color: palettes::basic::RED.into(),
@@ -81,24 +74,19 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
                     duration: std::time::Duration::from_secs(2),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
-            ),
+            )
+            .with_original_value(),
         ));
-        commands.spawn(Text2dBundle {
-            text: Text::from_section(
-                format!("{:?}", ease_function),
-                TextStyle {
-                    font_size: 20.0,
-                    ..default()
-                },
-            ),
-            transform: Transform::from_translation(Vec3::new(
-                x + final_size / 2.0,
-                y - final_size / 2.0,
-                0.,
-            )),
 
-            ..default()
-        });
+        commands.spawn((
+            Text2d::new(format!("{:?}", ease_function)),
+            Transform::from_translation(Vec3::new(x + final_size / 2.0, y - final_size / 2.0, 1.)),
+            TextFont {
+                font_size: 16.0,
+                ..Default::default()
+            },
+        ));
+
         x += final_size * spacing;
         if x + final_size > screen_x {
             x = -screen_x;

@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands, window: Query<&Window>) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let size = 140.;
 
@@ -56,44 +56,27 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_translation(Vec3::new(
-                    x + size / 2.0,
-                    y - size / 2.0,
-                    0.,
-                )),
-                ..Default::default()
-            },
-            Sprite {
-                custom_size: Some(Vec2::new(size, size)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            }
-            .ease_to(
-                Sprite {
-                    custom_size: Some(Vec2::new(size, size)),
-                    color: palettes::basic::BLUE.into(),
-                    ..Default::default()
-                },
-                *ease_function,
-                bevy_easings::EasingType::PingPong {
-                    duration: std::time::Duration::from_secs(2),
-                    pause: Some(std::time::Duration::from_millis(500)),
-                },
-            ),
+            Sprite::from_color(palettes::basic::RED, Vec2::new(size, size))
+                .ease_to(
+                    Sprite::from_color(palettes::basic::BLUE, Vec2::new(size, size)),
+                    *ease_function,
+                    bevy_easings::EasingType::PingPong {
+                        duration: std::time::Duration::from_secs(2),
+                        pause: Some(std::time::Duration::from_millis(500)),
+                    },
+                )
+                .with_original_value(),
+            Transform::from_translation(Vec3::new(x + size / 2.0, y - size / 2.0, 0.)),
         ));
-        commands.spawn(Text2dBundle {
-            text: Text::from_section(
-                format!("{:?}", ease_function),
-                TextStyle {
-                    font_size: 20.0,
-                    ..default()
-                },
-            ),
-            transform: Transform::from_translation(Vec3::new(x + size / 2.0, y - size / 2.0, 0.)),
+        commands.spawn((
+            Text2d::new(format!("{:?}", ease_function)),
+            TextFont {
+                font_size: 15.0,
+                ..default()
+            },
+            Transform::from_translation(Vec3::new(x + size / 2.0, y - size / 2.0, 1.)),
+        ));
 
-            ..default()
-        });
         x += size * spacing;
         if x + size > screen_x {
             x = -screen_x;

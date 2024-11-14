@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let size = 80.;
 
@@ -56,19 +56,10 @@ fn setup(mut commands: Commands) {
         bevy_easings::EaseFunction::BounceInOut,
     ] {
         commands
-            .spawn(SpatialBundle::from_transform(Transform::from_translation(
-                Vec3::new(x, y, 0.),
-            )))
+            .spawn(Transform::from_translation(Vec3::new(x, y, 0.)))
             .with_children(|parent| {
                 parent.spawn((
-                    SpriteBundle {
-                        sprite: Sprite {
-                            custom_size: Some(Vec2::new(size, size)),
-                            color: palettes::basic::RED.into(),
-                            ..Default::default()
-                        },
-                        ..Default::default()
-                    },
+                    Sprite::from_color(palettes::basic::RED, Vec2::new(size, size)),
                     Transform::default().ease_to(
                         Transform::from_rotation(Quat::from_axis_angle(
                             Vec3::Z,
