@@ -1,6 +1,6 @@
 use bevy::prelude::*;
 
-use bevy_easings::*;
+use bevy_easings::{Ease, *};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands, window: Query<&Window>) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     let color_pairs = [
         (Color::Srgba(Srgba::RED), Color::Srgba(Srgba::BLUE)),
@@ -60,10 +60,7 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
     for (i, colors) in color_pairs.iter().enumerate() {
         let y = (color_pairs.len() as i32 / 2 - i as i32) as f32 * size - size / 2.0;
         commands.spawn((
-            SpriteBundle {
-                transform: Transform::from_translation(Vec3::new(0.0, y, 0.)),
-                ..Default::default()
-            },
+            Transform::from_translation(Vec3::new(0.0, y, 0.)),
             Sprite {
                 custom_size: Some(Vec2::new(size * 30.0, size)),
                 color: colors.0,
@@ -80,16 +77,13 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
                     duration: std::time::Duration::from_secs(2),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
-            ),
+            )
+            .with_original_value(),
         ));
-        commands.spawn(Text2dBundle {
-            text: Text::from_section(
-                format!("{}", color_space_name(colors.0)),
-                TextStyle::default(),
-            ),
-            transform: Transform::from_translation(Vec3::new(0.0, y, 0.)),
-            ..Default::default()
-        });
+        commands.spawn((
+            Text2d::new(format!("{}", color_space_name(colors.0))),
+            Transform::from_translation(Vec3::new(0.0, y, 1.)),
+        ));
     }
 }
 

@@ -2,7 +2,7 @@ use std::time::Duration;
 
 use bevy::{color::palettes, prelude::*, render::texture::TextureFormatPixelInfo};
 
-use bevy_easings::*;
+use bevy_easings::{Ease, *};
 use rand::Rng;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -38,7 +38,7 @@ fn switch_menu(
             match item {
                 MenuItem::Root => {
                     commands.entity(entity).insert((
-                        Style {
+                        Node {
                             width: Val::Percent(100.0),
                             height: Val::Percent(100.0),
                             top: Val::Percent(0.0),
@@ -47,7 +47,7 @@ fn switch_menu(
                             ..default()
                         }
                         .ease_to(
-                            Style {
+                            Node {
                                 width: Val::Percent(100.0),
                                 height: Val::Percent(100.0),
                                 top: Val::Percent(100.0),
@@ -55,7 +55,7 @@ fn switch_menu(
                                 justify_content: JustifyContent::Center,
                                 ..default()
                             },
-                            EaseFunction::QuadraticIn,
+                            bevy_easings::EaseFunction::QuadraticIn,
                             EasingType::Once {
                                 duration: Duration::from_secs(1),
                             },
@@ -66,7 +66,7 @@ fn switch_menu(
                 }
                 MenuItem::Button(i) => {
                     commands.entity(entity).insert(
-                        Style {
+                        Node {
                             width: Val::Px(250.0),
                             height: Val::Px(65.0),
                             top: Val::Px(30.0 + *i as f32 * 70.0),
@@ -77,13 +77,13 @@ fn switch_menu(
                             ..default()
                         }
                         .ease_to(
-                            Style {
+                            Node {
                                 width: Val::Px(0.0),
                                 height: Val::Px(0.0),
                                 border: UiRect::all(Val::Px(5.0)),
                                 ..default()
                             },
-                            EaseFunction::QuadraticOut,
+                            bevy_easings::EaseFunction::QuadraticOut,
                             EasingType::Once {
                                 duration: Duration::from_secs_f32(1.2),
                             },
@@ -104,7 +104,7 @@ struct ToDespawn;
 fn despawn_menu(
     mut commands: Commands,
     menu: Query<&MenuItem, With<ToDespawn>>,
-    mut finished_easing: RemovedComponents<EasingComponent<Style>>,
+    mut finished_easing: RemovedComponents<EasingComponent<Node>>,
 ) {
     for finished in finished_easing.read() {
         if menu.contains(finished) {
@@ -126,7 +126,7 @@ struct Logo(Handle<Image>);
 fn setup(mut commands: Commands, asset_server: Res<AssetServer>) {
     commands.insert_resource(Logo(asset_server.load("vleue.png")));
 
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 }
 
 fn spawn_menu(commands: &mut Commands) {
@@ -134,8 +134,7 @@ fn spawn_menu(commands: &mut Commands) {
 
     commands
         .spawn((
-            NodeBundle { ..default() },
-            Style {
+            Node {
                 width: Val::Percent(100.0),
                 height: Val::Percent(100.0),
                 top: Val::Percent(-100.0),
@@ -144,7 +143,7 @@ fn spawn_menu(commands: &mut Commands) {
                 ..default()
             }
             .ease_to(
-                Style {
+                Node {
                     width: Val::Percent(100.0),
                     height: Val::Percent(100.0),
                     top: Val::Percent(0.0),
@@ -152,24 +151,21 @@ fn spawn_menu(commands: &mut Commands) {
                     justify_content: JustifyContent::Center,
                     ..default()
                 },
-                EaseFunction::QuadraticOut,
+                bevy_easings::EaseFunction::QuadraticOut,
                 EasingType::Once {
                     duration: Duration::from_secs(1),
                 },
-            ),
+            )
+            .with_original_value(),
             MenuItem::Root,
         ))
         .with_children(|parent| {
             parent
                 .spawn((
-                    NodeBundle {
-                        background_color: palettes::tailwind::EMERALD_400.into(),
-                        border_radius: BorderRadius::all(Val::Percent(5.0)),
-                        border_color: BorderColor(palettes::tailwind::EMERALD_100.into()),
-                        z_index: ZIndex::Global(1),
-                        ..default()
-                    },
-                    Style {
+                    BackgroundColor(palettes::tailwind::EMERALD_400.into()),
+                    BorderRadius::all(Val::Percent(5.0)),
+                    BorderColor(palettes::tailwind::EMERALD_100.into()),
+                    Node {
                         flex_direction: FlexDirection::Column,
                         align_items: AlignItems::Center,
                         border: UiRect::all(Val::Px(5.0)),
@@ -178,7 +174,7 @@ fn spawn_menu(commands: &mut Commands) {
                         ..default()
                     }
                     .ease_to(
-                        Style {
+                        Node {
                             flex_direction: FlexDirection::Column,
                             align_items: AlignItems::Center,
                             border: UiRect::all(Val::Px(5.0 + border_diff)),
@@ -186,37 +182,34 @@ fn spawn_menu(commands: &mut Commands) {
                             height: Val::Px(400.0 + border_diff * 2.0),
                             ..default()
                         },
-                        EaseFunction::QuadraticInOut,
+                        bevy_easings::EaseFunction::QuadraticInOut,
                         EasingType::PingPong {
                             duration: Duration::from_secs_f32(0.2),
                             pause: None,
                         },
-                    ),
+                    )
+                    .with_original_value(),
                     MenuItem::Panel,
                 ))
                 .with_children(|parent| {
                     for i in 0..5 {
                         parent
                             .spawn((
-                                ButtonBundle {
-                                    background_color: palettes::tailwind::INDIGO_800.into(),
-                                    border_radius: BorderRadius::all(Val::Percent(10.0)),
-                                    border_color: BorderColor(
-                                        palettes::tailwind::INDIGO_400.into(),
-                                    ),
-                                    style: Style {
-                                        width: Val::Px(0.0),
-                                        height: Val::Px(0.0),
-                                        top: Val::Px(30.0 + i as f32 * 70.0),
-                                        border: UiRect::all(Val::Px(0.0)),
-                                        position_type: PositionType::Absolute,
-                                        align_items: AlignItems::Center,
-                                        justify_content: JustifyContent::Center,
-                                        ..default()
-                                    },
+                                Button,
+                                BackgroundColor(palettes::tailwind::INDIGO_800.into()),
+                                BorderRadius::all(Val::Percent(10.0)),
+                                BorderColor(palettes::tailwind::INDIGO_400.into()),
+                                Node {
+                                    width: Val::Px(0.0),
+                                    height: Val::Px(0.0),
+                                    top: Val::Px(30.0 + i as f32 * 70.0),
+                                    border: UiRect::all(Val::Px(0.0)),
+                                    position_type: PositionType::Absolute,
+                                    align_items: AlignItems::Center,
+                                    justify_content: JustifyContent::Center,
                                     ..default()
                                 },
-                                Style {
+                                Node {
                                     width: Val::Px(0.0),
                                     height: Val::Px(0.0),
                                     top: Val::Px(30.0 + i as f32 * 70.0),
@@ -227,13 +220,13 @@ fn spawn_menu(commands: &mut Commands) {
                                     ..default()
                                 }
                                 .ease_to(
-                                    Style {
+                                    Node {
                                         width: Val::Px(250.0),
                                         height: Val::Px(65.0),
                                         border: UiRect::all(Val::Px(5.0)),
                                         ..default()
                                     },
-                                    EaseFunction::BounceOut,
+                                    bevy_easings::EaseFunction::BounceOut,
                                     EasingType::Once {
                                         duration: Duration::from_secs_f32(1.2),
                                     },
@@ -242,23 +235,20 @@ fn spawn_menu(commands: &mut Commands) {
                                 MenuItem::Button(i),
                             ))
                             .with_children(|p| {
-                                p.spawn(TextBundle {
-                                    text: Text::from_section(
-                                        match i {
-                                            0 => "New Game",
-                                            1 => "Load Game",
-                                            2 => "Options",
-                                            3 => "Credits",
-                                            4 => "Quit",
-                                            _ => unreachable!(),
-                                        },
-                                        TextStyle {
-                                            font_size: 0.0,
-                                            ..default()
-                                        },
-                                    ),
-                                    ..default()
-                                });
+                                p.spawn((
+                                    Text::new(match i {
+                                        0 => "New Game",
+                                        1 => "Load Game",
+                                        2 => "Options",
+                                        3 => "Credits",
+                                        4 => "Quit",
+                                        _ => unreachable!(),
+                                    }),
+                                    TextFont {
+                                        font_size: 0.0,
+                                        ..default()
+                                    },
+                                ));
                             });
                     }
                 });
@@ -295,12 +285,8 @@ fn spawn_logo_points(
                 continue;
             }
             commands.spawn((
-                NodeBundle {
-                    z_index: ZIndex::Global(0),
-                    border_radius: BorderRadius::MAX,
-                    ..Default::default()
-                },
-                Style {
+                BorderRadius::MAX,
+                Node {
                     width: Val::Px(resolution as f32),
                     height: Val::Px(resolution as f32),
                     left: Val::Px(rand::thread_rng().gen_range(0.0..window_size.x)),
@@ -309,7 +295,7 @@ fn spawn_logo_points(
                     ..Default::default()
                 }
                 .ease_to(
-                    Style {
+                    Node {
                         width: Val::Px(resolution as f32),
                         height: Val::Px(resolution as f32),
                         left: Val::Px(i as f32 + 10.0),
@@ -317,12 +303,13 @@ fn spawn_logo_points(
                         position_type: PositionType::Absolute,
                         ..Default::default()
                     },
-                    EaseFunction::QuadraticInOut,
+                    bevy_easings::EaseFunction::QuadraticInOut,
                     EasingType::PingPong {
                         duration: std::time::Duration::from_secs_f32(2.5),
                         pause: Some(std::time::Duration::from_secs(1)),
                     },
-                ),
+                )
+                .with_original_value(),
                 BackgroundColor(Color::Oklaba(Oklaba::new(
                     0.5,
                     rand::thread_rng().gen_range(-1.5..1.5),
@@ -336,7 +323,7 @@ fn spawn_logo_points(
                         value[2] as f32 / u8::MAX as f32,
                         1.0,
                     ))),
-                    EaseFunction::QuadraticOut,
+                    bevy_easings::EaseFunction::QuadraticOut,
                     EasingType::PingPong {
                         duration: std::time::Duration::from_secs_f32(2.5),
                         pause: Some(std::time::Duration::from_secs(1)),
@@ -350,9 +337,9 @@ fn spawn_logo_points(
 }
 
 // Trick for now as Bevy doesn't support dynamic font size
-fn update_text(mut text: Query<(&mut Text, &Parent)>, nodes: Query<&Node>) {
+fn update_text(mut text: Query<(&mut TextFont, &Parent)>, nodes: Query<&ComputedNode>) {
     for (mut text, parent) in text.iter_mut() {
         let node = nodes.get(parent.get()).unwrap();
-        text.sections[0].style.font_size = (node.size().y / 4.0).floor() * 2.0;
+        text.font_size = (node.size().y / 4.0).floor() * 2.0;
     }
 }

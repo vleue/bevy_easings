@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::{Ease, *};
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -14,17 +14,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     commands.spawn((
-        SpriteBundle {
-            sprite: Sprite {
-                custom_size: Some(Vec2::new(100., 100.)),
-                color: palettes::basic::RED.into(),
-                ..Default::default()
-            },
-            ..Default::default()
-        },
+        Sprite::from_color(palettes::basic::RED, Vec2::new(100., 100.)),
         Transform::from_scale(Vec3::ZERO)
             .ease_to(
                 Transform::from_scale(Vec3::splat(2.0)),

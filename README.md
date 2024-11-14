@@ -32,12 +32,12 @@ And then just ease your components to their new state!
 
 ```rust
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn my_system(mut commands: Commands){
     commands
         .spawn((
-            SpriteBundle {
+            Sprite {
                 ..Default::default()
             },
             Sprite {
@@ -49,8 +49,8 @@ fn my_system(mut commands: Commands){
                     custom_size: Some(Vec2::new(100., 100.)),
                     ..Default::default()
                 },
-                EaseFunction::QuadraticIn,
-                EasingType::PingPong {
+                bevy_easings::EaseFunction::QuadraticIn,
+                bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
@@ -82,12 +82,12 @@ This is shown below
 
 ```rust
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn my_system(mut commands: Commands){
     commands
         .spawn((
-            SpriteBundle {
+            Sprite {
                 ..Default::default()
             },
             Sprite {
@@ -99,8 +99,8 @@ fn my_system(mut commands: Commands){
                     custom_size: Some(Vec2::new(100., 100.)),
                     ..Default::default()
                 },
-                EaseMethod::Linear,
-                EasingType::PingPong {
+                bevy_easings::EaseMethod::Linear,
+                bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_secs(1),
                     pause: Some(std::time::Duration::from_millis(500)),
                 },
@@ -115,12 +115,12 @@ You can chain easings, if they are not set to repeat they will happen in sequenc
 
 ```rust
 use bevy::prelude::*;
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn my_system(mut commands: Commands){
     commands
         .spawn((
-            SpriteBundle {
+            Sprite {
                 ..Default::default()
             },
             Sprite {
@@ -132,8 +132,8 @@ fn my_system(mut commands: Commands){
                     custom_size: Some(Vec2::new(300., 300.)),
                     ..Default::default()
                 },
-                EaseFunction::QuadraticIn,
-                EasingType::Once {
+                bevy_easings::EaseFunction::QuadraticIn,
+                bevy_easings::EasingType::Once {
                     duration: std::time::Duration::from_secs(1),
                 },
             )
@@ -142,8 +142,8 @@ fn my_system(mut commands: Commands){
                     custom_size: Some(Vec2::new(350., 350.)),
                     ..Default::default()
                 },
-                EaseFunction::QuadraticIn,
-                EasingType::PingPong {
+                bevy_easings::EaseFunction::QuadraticIn,
+                bevy_easings::EasingType::PingPong {
                     duration: std::time::Duration::from_millis(500),
                     pause: Some(std::time::Duration::from_millis(200)),
                 },
@@ -229,6 +229,7 @@ Many [ease functions](https://docs.rs/interpolation/0.2.0/interpolation/enum.Eas
 |Bevy|bevy_easings|
 |---|---|
 |main|main|
+|0.15|0.15|
 |0.14|0.14|
 |0.13|0.14|
 |0.12|0.12|

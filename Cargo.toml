@@ -1,6 +1,6 @@
 [package]
 name = "bevy_easings"
-version = "0.14.0"
+version = "0.15.0-rc.1"
 authors = ["François Mockers <francois.mockers@vleue.com>"]
 edition = "2021"
 description = "Easing plugin for Bevy"
@@ -17,13 +17,26 @@ categories = ["game-development"]
 interpolation = "0.3"
 
 [dependencies.bevy]
-version = "0.14.0"
+version = "0.15.0-rc.3"
 default-features = false
 
 [dev-dependencies.bevy]
-version = "0.14.0"
+version = "0.15.0-rc.3"
 default-features = false
-features = ["bevy_render", "bevy_sprite", "bevy_ui"]
+features = [
+    "bevy_render",
+    "bevy_sprite",
+    "bevy_ui",
+    "bevy_text",
+    "bevy_sprite",
+    "bevy_render",
+    "bevy_winit",
+    "x11",
+    "bevy_asset",
+    "bevy_core_pipeline",
+    "default_font",
+    "png",
+]
 
 [dev-dependencies]
 rand = "0.8"
@@ -33,58 +46,3 @@ default = ["render", "sprite", "ui"]
 "render" = ["bevy/bevy_render"]
 "sprite" = ["bevy/bevy_sprite"]
 "ui" = ["bevy/bevy_ui"]
-"examples" = [
-    "ui",
-    "sprite",
-    "render",
-    "bevy/bevy_winit",
-    "bevy/x11",
-    "bevy/bevy_asset",
-    "bevy/bevy_core_pipeline",
-    "bevy/default_font",
-    "bevy/png",
-]
-
-[[example]]
-name = "chain"
-required-features = ["examples"]
-
-[[example]]
-name = "react_on_end"
-required-features = ["examples"]
-
-[[example]]
-name = "sprite_color"
-required-features = ["examples"]
-
-[[example]]
-name = "custom_component"
-required-features = ["examples"]
-
-[[example]]
-name = "pause"
-required-features = ["examples"]
-
-[[example]]
-name = "sprite_size"
-required-features = ["examples"]
-
-[[example]]
-name = "transform_rotation"
-required-features = ["examples"]
-
-[[example]]
-name = "transform_translation"
-required-features = ["examples"]
-
-[[example]]
-name = "ui_style"
-required-features = ["examples"]
-
-[[example]]
-name = "ui_color"
-required-features = ["examples"]
-
-[[example]]
-name = "controlled"
-required-features = ["examples"]

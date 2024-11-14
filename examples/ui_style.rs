@@ -1,6 +1,6 @@
 use bevy::{color::palettes, prelude::*};
 
-use bevy_easings::*;
+use bevy_easings::Ease;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
@@ -13,7 +13,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn setup(mut commands: Commands) {
-    commands.spawn(Camera2dBundle::default());
+    commands.spawn(Camera2d);
 
     for (i, ease_function) in [
         bevy_easings::EaseFunction::QuadraticIn,
@@ -51,11 +51,11 @@ fn setup(mut commands: Commands) {
     .enumerate()
     {
         commands.spawn((
-            NodeBundle {
-                background_color: BackgroundColor(palettes::basic::RED.into()),
+            Node {
                 ..Default::default()
             },
-            Style {
+            BackgroundColor(palettes::basic::RED.into()),
+            Node {
                 width: Val::Percent(3.),
                 height: Val::Percent(3.),
                 left: Val::Percent(i as f32 * 4.0),
@@ -64,7 +64,7 @@ fn setup(mut commands: Commands) {
                 ..Default::default()
             }
             .ease_to(
-                Style {
+                Node {
                     top: Val::Percent(75.0),
                     ..Default::default()
                 },
