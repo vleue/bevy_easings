@@ -8,7 +8,7 @@ use rand::Rng;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugins(bevy_easings::EasingsPlugin)
+        .add_plugins(bevy_easings::EasingsPlugin::default())
         .add_systems(Startup, setup)
         .add_systems(Update, (spawn_logo_points, switch_menu, update_text))
         .add_systems(PostUpdate, despawn_menu)
