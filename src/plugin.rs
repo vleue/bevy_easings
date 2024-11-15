@@ -14,9 +14,8 @@ pub struct EasingsPlugin<Time: Default = ()> {
     _marker: std::marker::PhantomData<Time>,
 }
 
-impl EasingsPlugin<()> {
-    /// Create a new instance of the plugin
-    pub fn new() -> Self {
+impl Default for EasingsPlugin<()> {
+    fn default() -> Self {
         Self {
             _marker: std::marker::PhantomData,
         }

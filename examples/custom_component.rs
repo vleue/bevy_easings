@@ -5,7 +5,7 @@ use bevy_easings::*;
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .add_plugins(DefaultPlugins)
-        .add_plugins(bevy_easings::EasingsPlugin::new())
+        .add_plugins(bevy_easings::EasingsPlugin::default())
         .add_systems(Startup, setup)
         .add_systems(FixedUpdate, check_value)
         .insert_resource(Time::<Fixed>::from_seconds(0.2))

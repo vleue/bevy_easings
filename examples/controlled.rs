@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
         .init_resource::<EasingList>()
         .add_plugins(DefaultPlugins)
-        .add_plugins(bevy_easings::EasingsPlugin::new())
+        .add_plugins(bevy_easings::EasingsPlugin::default())
         .add_systems(Startup, setup)
         .add_systems(Update, (update_text, handle_input))
         .add_systems(FixedUpdate, check_value)
