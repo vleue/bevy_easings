@@ -10,35 +10,61 @@ use crate::{
 /// Plugin to add systems related to easing
 #[allow(clippy::module_name_repetitions)]
 #[derive(Debug, Clone, Copy)]
-pub struct EasingsPlugin;
+pub struct EasingsPlugin<Time: Default = ()> {
+    _marker: std::marker::PhantomData<Time>,
+}
+
+impl EasingsPlugin<()> {
+    /// Create a new instance of the plugin
+    pub fn new() -> Self {
+        Self {
+            _marker: std::marker::PhantomData,
+        }
+    }
+}
+
+impl<T: Default> EasingsPlugin<T> {
+    /// Create a new instance of the plugin
+    pub fn with_time() -> Self {
+        Self {
+            _marker: std::marker::PhantomData,
+        }
+    }
+}
 
 /// Label to coordinate new easing spawns
 #[derive(SystemSet, Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub struct EasingsLabel;
 
-impl Plugin for EasingsPlugin {
+impl<T: Default + Send + Sync + 'static> Plugin for EasingsPlugin<T> {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, ease_system::<Transform>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Time, Transform>.in_set(EasingsLabel));
         #[cfg(feature = "sprite")]
-        app.add_systems(Update, ease_system::<Sprite>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Time, Sprite>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<Node>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<Time, Node>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<BackgroundColor>.in_set(EasingsLabel));
+        app.add_systems(
+            Update,
+            ease_system::<Time, BackgroundColor>.in_set(EasingsLabel),
+        );
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<BorderColor>.in_set(EasingsLabel));
+        app.add_systems(
+            Update,
+            ease_system::<Time, BorderColor>.in_set(EasingsLabel),
+        );
     }
 }
 
-pub fn ease_system<T: Ease + Component + Default>(
+pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Default>(
     mut commands: Commands,
-    time: Res<Time>,
-    entity_query: Query<Entity, With<T>>,
-    mut object_query: Query<&mut T>,
-    mut easing_query: Query<&mut EasingComponent<T>>,
-    mut chain_query: Query<&mut EasingChainComponent<T>>,
+    time: Res<Time<T>>,
+    entity_query: Query<Entity, With<C>>,
+    mut object_query: Query<&mut C>,
+    mut easing_query: Query<&mut EasingComponent<C>>,
+    mut chain_query: Query<&mut EasingChainComponent<C>>,
 ) where
-    EaseValue<T>: interpolation::Lerp<Scalar = f32>,
+    EaseValue<C>: interpolation::Lerp<Scalar = f32>,
 {
     for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
@@ -72,7 +98,7 @@ pub fn ease_system<T: Ease + Component + Default>(
                         *object = interpolation::lerp(start, &easing.end, &factor).0;
                     } else {
                         *object =
-                            interpolation::lerp(&EaseValue(T::default()), &easing.end, &factor).0;
+                            interpolation::lerp(&EaseValue(C::default()), &easing.end, &factor).0;
                     }
                 }
                 if easing.timer.finished() {
@@ -108,7 +134,7 @@ pub fn ease_system<T: Ease + Component + Default>(
                 if let Some(ref start) = next.start {
                     *object = interpolation::lerp(start, &next.end, &0.).0;
                 } else {
-                    *object = interpolation::lerp(&EaseValue(T::default()), &next.end, &0.).0;
+                    *object = interpolation::lerp(&EaseValue(C::default()), &next.end, &0.).0;
                 }
 
                 commands.entity(entity).insert(next);
