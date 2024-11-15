@@ -26,7 +26,7 @@ impl Lerp for EaseValue<Sprite> {
             color: EaseValue(self.0.color)
                 .lerp(&EaseValue(other.0.color), scalar)
                 .0,
-            ..other.0
+            ..Sprite::default()
         })
     }
 }
