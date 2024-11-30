@@ -9,7 +9,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_systems(Startup, setup)
         .add_systems(FixedUpdate, check_value)
         .insert_resource(Time::<Fixed>::from_seconds(0.2))
-        .add_systems(Update, bevy_easings::custom_ease_system::<CustomComponent>)
+        .add_systems(
+            Update,
+            bevy_easings::custom_ease_system::<(), CustomComponent>,
+        )
         .run();
 
     Ok(())

@@ -37,21 +37,18 @@ pub struct EasingsLabel;
 
 impl<T: Default + Send + Sync + 'static> Plugin for EasingsPlugin<T> {
     fn build(&self, app: &mut App) {
-        app.add_systems(Update, ease_system::<Time, Transform>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<T, Transform>.in_set(EasingsLabel));
         #[cfg(feature = "sprite")]
-        app.add_systems(Update, ease_system::<Time, Sprite>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<T, Sprite>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<Time, Node>.in_set(EasingsLabel));
-        #[cfg(feature = "ui")]
-        app.add_systems(
-            Update,
-            ease_system::<Time, BackgroundColor>.in_set(EasingsLabel),
-        );
+        app.add_systems(Update, ease_system::<T, Node>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
         app.add_systems(
             Update,
-            ease_system::<Time, BorderColor>.in_set(EasingsLabel),
+            ease_system::<T, BackgroundColor>.in_set(EasingsLabel),
         );
+        #[cfg(feature = "ui")]
+        app.add_systems(Update, ease_system::<T, BorderColor>.in_set(EasingsLabel));
     }
 }
 
@@ -103,7 +100,7 @@ pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Def
                 if easing.timer.finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
-                            commands.entity(entity).remove::<EasingComponent<T>>();
+                            commands.entity(entity).remove::<EasingComponent<C>>();
                         }
                         EasingType::Loop { pause, .. } => {
                             if let Some(pause) = pause {
@@ -138,7 +135,7 @@ pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Def
 
                 commands.entity(entity).insert(next);
             } else {
-                commands.entity(entity).remove::<EasingChainComponent<T>>();
+                commands.entity(entity).remove::<EasingChainComponent<C>>();
             }
         }
     }
@@ -146,14 +143,15 @@ pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Def
 
 /// Ease system for custom component. Add this system to your application with your component as a type parameter.
 pub fn custom_ease_system<
-    T: CustomComponentEase + Component + interpolation::Lerp<Scalar = f32> + Default,
+    T: Default + Send + Sync + 'static,
+    C: CustomComponentEase + Component + interpolation::Lerp<Scalar = f32> + Default,
 >(
     mut commands: Commands,
-    time: Res<Time>,
-    entity_query: Query<Entity, With<T>>,
-    mut object_query: Query<&mut T>,
-    mut easing_query: Query<&mut EasingComponent<T>>,
-    mut chain_query: Query<&mut EasingChainComponent<T>>,
+    time: Res<Time<T>>,
+    entity_query: Query<Entity, With<C>>,
+    mut object_query: Query<&mut C>,
+    mut easing_query: Query<&mut EasingComponent<C>>,
+    mut chain_query: Query<&mut EasingChainComponent<C>>,
 ) {
     for entity in entity_query.iter() {
         if let Ok(ref mut easing) = easing_query.get_mut(entity) {
@@ -185,7 +183,7 @@ pub fn custom_ease_system<
                     if let Some(ref start) = easing.start {
                         *object = interpolation::lerp(&start.0, &easing.end.0, &factor);
                     } else {
-                        *object = interpolation::lerp(&T::default(), &easing.end.0, &factor);
+                        *object = interpolation::lerp(&C::default(), &easing.end.0, &factor);
                     }
                 }
                 if easing.timer.finished() {
@@ -222,12 +220,12 @@ pub fn custom_ease_system<
                 if let Some(ref start) = next.start {
                     *object = interpolation::lerp(&start.0, &next.end.0, &0.);
                 } else {
-                    *object = interpolation::lerp(&T::default(), &next.end.0, &0.);
+                    *object = interpolation::lerp(&C::default(), &next.end.0, &0.);
                 }
 
                 commands.entity(entity).insert(next);
             } else {
-                commands.entity(entity).remove::<EasingChainComponent<T>>();
+                commands.entity(entity).remove::<EasingChainComponent<C>>();
             }
         }
     }
