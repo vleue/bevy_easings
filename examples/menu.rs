@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::{color::palettes, prelude::*, render::texture::TextureFormatPixelInfo};
+use bevy::{color::palettes, image::TextureFormatPixelInfo, prelude::*};
 
 use bevy_easings::{Ease, *};
 use rand::Rng;
@@ -340,6 +340,6 @@ fn spawn_logo_points(
 fn update_text(mut text: Query<(&mut TextFont, &Parent)>, nodes: Query<&ComputedNode>) {
     for (mut text, parent) in text.iter_mut() {
         let node = nodes.get(parent.get()).unwrap();
-        text.font_size = (node.size().y / 4.0).floor() * 2.0;
+        text.font_size = (node.size().y / 8.0).floor() * 2.0;
     }
 }
