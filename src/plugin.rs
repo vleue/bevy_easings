@@ -49,6 +49,8 @@ impl<T: Default + Send + Sync + 'static> Plugin for EasingsPlugin<T> {
         );
         #[cfg(feature = "ui")]
         app.add_systems(Update, ease_system::<T, BorderColor>.in_set(EasingsLabel));
+        #[cfg(feature = "ui")]
+        app.add_systems(Update, ease_system::<T, TextColor>.in_set(EasingsLabel));
     }
 }
 

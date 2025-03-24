@@ -255,6 +255,16 @@ impl Lerp for EaseValue<Color> {
     }
 }
 
+impl Lerp for EaseValue<TextColor> {
+    type Scalar = f32;
+
+    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+        EaseValue(TextColor(
+            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+        ))
+    }
+}
+
 impl Lerp for EaseValue<Rect> {
     type Scalar = f32;
 
