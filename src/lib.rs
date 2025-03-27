@@ -215,6 +215,40 @@ impl<T: Default> EasingComponent<T> {
 
         EasingChainComponent(vec![next, self])
     }
+
+    /// Start a chain of easing with a function that generates the target value
+    ///
+    /// This is particularly useful when you want to ease to a target that depends on the current value,
+    /// such as doubling a size or moving relative to the current position.
+    ///
+    /// # Example
+    /// ```rust,no_run
+    /// use bevy::prelude::*;
+    /// use crate::bevy_easings::{Ease, EasingType, EaseFunction};
+    ///
+    /// fn system(mut commands: Commands) {
+    ///     let transform = Transform::from_translation(Vec3::new(0.0, 0.0, 0.0));
+    ///     commands.spawn((
+    ///         transform.ease_to_fn(
+    ///             |start| Transform::from_translation(start.translation + Vec3::new(0.0, 100.0, 0.0)),
+    ///             EaseFunction::QuadraticInOut,
+    ///             EasingType::Once { duration: std::time::Duration::from_secs(1) },
+    ///         ),
+    ///     ));
+    /// }
+    /// ```
+    pub fn ease_to_fn(
+        self,
+        target_fn: impl FnOnce(&T) -> T,
+        ease_function: impl Into<EaseMethod>,
+        easing_type: EasingType,
+    ) -> EasingChainComponent<T>
+    where
+        T: Clone,
+    {
+        let target = target_fn(&self.end.0);
+        self.ease_to(target, ease_function, easing_type)
+    }
 }
 
 /// Component to control a chain of easing
@@ -246,6 +280,68 @@ impl<T: Default> EasingChainComponent<T> {
 
         self.0.insert(0, next);
         self
+    }
+
+    /// Returns a bundle containing the starting value additionally to this [EasingChainComponent].
+    pub fn with_original_value(self) -> (T, Self)
+    where
+        T: Clone,
+    {
+        let last_component = self.0.last().expect("Chain should not be empty");
+        let starting_value = match &last_component.start {
+            Some(start) => start.0.clone(),
+            None => T::default(),
+        };
+
+        (starting_value, self)
+    }
+
+    /// Add a new easing at the end of the current chain with a function that generates the target value
+    ///
+    /// This is particularly useful when you want to ease to a target that depends on the previous value
+    /// in a chain of easings, such as moving relative to the final position of the previous easing.
+    ///
+    /// # Example
+    /// ```rust,no_run
+    /// use bevy::prelude::*;
+    /// use bevy_easings::{Ease, EasingType, EaseFunction};
+    ///
+    /// fn system(mut commands: Commands) {
+    ///     commands.spawn((
+    ///         Transform::default()
+    ///             .ease_to(
+    ///                 Transform::from_translation(Vec3::new(0.0, 100.0, 0.0)),
+    ///                 EaseFunction::QuadraticInOut,
+    ///                 EasingType::Once { duration: std::time::Duration::from_secs(1) },
+    ///             )
+    ///             .ease_to_fn(
+    ///                 |prev| Transform::from_translation(prev.translation + Vec3::new(100.0, 0.0, 0.0)),
+    ///                 EaseFunction::CubicInOut,
+    ///                 EasingType::Once { duration: std::time::Duration::from_secs(1) },
+    ///             ),
+    ///     ));
+    /// }
+    /// ```
+    pub fn ease_to_fn(
+        self,
+        target_fn: impl FnOnce(&T) -> T,
+        ease_function: impl Into<EaseMethod>,
+        easing_type: EasingType,
+    ) -> EasingChainComponent<T>
+    where
+        T: Clone,
+    {
+        if let Some(last_component) = self.0.last() {
+            let start_value = match &last_component.start {
+                Some(start) => start.0.clone(),
+                None => T::default(),
+            };
+            let target = target_fn(&start_value);
+            self.ease_to(target, ease_function, easing_type)
+        } else {
+            let target = target_fn(&T::default());
+            self.ease_to(target, ease_function, easing_type)
+        }
     }
 
     /// Repeat the chain `n` times.
@@ -303,6 +399,37 @@ pub trait Ease: Sized {
     ) -> EasingComponent<Self> {
         Self::ease(Some(self), target, ease_function, easing_type)
     }
+
+    /// Create a new easing with a function that generates the target value from the start value
+    ///
+    /// This is particularly useful when you want to ease to a target that depends on the current value,
+    /// such as doubling a size or moving relative to the current position.
+    ///
+    /// # Example
+    /// ```rust,no_run
+    /// use bevy::prelude::*;
+    /// use bevy_easings::{Ease, EasingType, EaseFunction};
+    ///
+    /// fn system(mut commands: Commands) {
+    ///     let transform = Transform::from_translation(Vec3::new(0.0, 0.0, 0.0));
+    ///     commands.spawn((
+    ///         transform.ease_to_fn(
+    ///             |start| start.with_translation(start.translation + Vec3::new(0.0, 100.0, 0.0)),
+    ///             EaseFunction::QuadraticInOut,
+    ///             EasingType::Once { duration: std::time::Duration::from_secs(1) },
+    ///         ),
+    ///     ));
+    /// }
+    /// ```
+    fn ease_to_fn(
+        self,
+        target_fn: impl FnOnce(&Self) -> Self,
+        ease_function: impl Into<EaseMethod>,
+        easing_type: EasingType,
+    ) -> EasingComponent<Self> {
+        let target = target_fn(&self);
+        Self::ease(Some(self), target, ease_function, easing_type)
+    }
 }
 
 impl<T> Ease for EaseValue<T> where T: Lerp<Scalar = f32> {}
@@ -349,6 +476,47 @@ pub trait CustomComponentEase: Sized {
         ease_function: impl Into<EaseMethod>,
         easing_type: EasingType,
     ) -> EasingComponent<Self> {
+        Self::ease(Some(self), target, ease_function, easing_type)
+    }
+
+    /// Create a new easing with a function that generates the target value from the start value
+    ///
+    /// This is particularly useful when you want to ease to a target that depends on the current value,
+    /// such as doubling a size or moving relative to the current position.
+    ///
+    /// # Example
+    /// ```rust,no_run
+    /// use bevy::prelude::*;
+    /// use bevy_easings::{CustomComponentEase, EasingType, EaseFunction, Lerp};
+    ///
+    /// #[derive(Default, Component)]
+    /// struct CustomComponent(f32);
+    ///
+    /// impl Lerp for CustomComponent {
+    ///     type Scalar = f32;
+    ///     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
+    ///         CustomComponent(interpolation::lerp(&self.0, &other.0, scalar))
+    ///     }
+    /// }
+    ///
+    /// fn system(mut commands: Commands) {
+    ///     let component = CustomComponent(5.0);
+    ///     commands.spawn((
+    ///         component.ease_to_fn(
+    ///             |start| CustomComponent(start.0 * 2.0),
+    ///             EaseFunction::QuadraticInOut,
+    ///             EasingType::Once { duration: std::time::Duration::from_secs(1) },
+    ///         ),
+    ///     ));
+    /// }
+    /// ```
+    fn ease_to_fn(
+        self,
+        target_fn: impl FnOnce(&Self) -> Self,
+        ease_function: impl Into<EaseMethod>,
+        easing_type: EasingType,
+    ) -> EasingComponent<Self> {
+        let target = target_fn(&self);
         Self::ease(Some(self), target, ease_function, easing_type)
     }
 }

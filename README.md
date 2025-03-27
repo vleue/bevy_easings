@@ -61,6 +61,45 @@ fn my_system(mut commands: Commands){
 
 If the component being eased is not already a component of the entity, the component should first be inserted for the target entity.
 
+### Easing to a function-generated target
+
+You can also ease to a target that is generated dynamically from the previous value using a function:
+
+```rust
+use bevy::prelude::*;
+use bevy_easings::Ease;
+
+fn my_system(mut commands: Commands){
+    commands
+        .spawn((
+            Transform::from_scale(Vec3::new(0.1, 0.1, 1.0))
+            .ease_to_fn(
+                |start| Transform {
+                    scale: start.scale * 10.0,
+                    ..*start
+                },
+                bevy_easings::EaseFunction::QuadraticIn,
+                bevy_easings::EasingType::PingPong {
+                    duration: std::time::Duration::from_secs(1),
+                    pause: Some(std::time::Duration::from_millis(500)),
+                },
+            )
+            .ease_to_fn(
+                |prev| Transform {
+                    scale: prev.scale * 0.5,
+                    ..*prev
+                },
+                bevy_easings::EaseFunction::CubicInOut,
+                bevy_easings::EasingType::Once {
+                    duration: std::time::Duration::from_secs(2),
+                },
+            ).with_original_value(),
+        ));
+}
+```
+
+This is particularly useful to rescue you from repeatly writing initialize code for start status, or chaining animation without worrying about maintaining interior status.
+
 ### Easing using EaseMethod
 
 The EaseMethod enum can be used to provide easing methods that are not avaliable in EaseFunction.
