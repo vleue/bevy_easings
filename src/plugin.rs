@@ -1,4 +1,13 @@
-use bevy::{ecs::component::Component, prelude::*};
+use bevy_app::{App, Plugin, Update};
+use bevy_ecs::{
+    component::{Component, Mutable},
+    entity::Entity,
+    query::With,
+    schedule::{IntoScheduleConfigs, SystemSet},
+    system::{Commands, Query, Res},
+};
+use bevy_time::Time;
+use bevy_transform::components::Transform;
 
 use crate::{EasingDirection, MyEaser};
 
@@ -39,22 +48,34 @@ impl<T: Default + Send + Sync + 'static> Plugin for EasingsPlugin<T> {
     fn build(&self, app: &mut App) {
         app.add_systems(Update, ease_system::<T, Transform>.in_set(EasingsLabel));
         #[cfg(feature = "sprite")]
-        app.add_systems(Update, ease_system::<T, Sprite>.in_set(EasingsLabel));
+        app.add_systems(
+            Update,
+            ease_system::<T, bevy_sprite::Sprite>.in_set(EasingsLabel),
+        );
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<T, Node>.in_set(EasingsLabel));
+        app.add_systems(Update, ease_system::<T, bevy_ui::Node>.in_set(EasingsLabel));
         #[cfg(feature = "ui")]
         app.add_systems(
             Update,
-            ease_system::<T, BackgroundColor>.in_set(EasingsLabel),
+            ease_system::<T, bevy_ui::BackgroundColor>.in_set(EasingsLabel),
         );
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<T, BorderColor>.in_set(EasingsLabel));
+        app.add_systems(
+            Update,
+            ease_system::<T, bevy_ui::BorderColor>.in_set(EasingsLabel),
+        );
         #[cfg(feature = "ui")]
-        app.add_systems(Update, ease_system::<T, TextColor>.in_set(EasingsLabel));
+        app.add_systems(
+            Update,
+            ease_system::<T, bevy_text::TextColor>.in_set(EasingsLabel),
+        );
     }
 }
 
-pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Default>(
+pub fn ease_system<
+    T: Default + Send + Sync + 'static,
+    C: Ease + Component<Mutability = Mutable> + Default,
+>(
     mut commands: Commands,
     time: Res<Time<T>>,
     entity_query: Query<Entity, With<C>>,
@@ -146,7 +167,10 @@ pub fn ease_system<T: Default + Send + Sync + 'static, C: Ease + Component + Def
 /// Ease system for custom component. Add this system to your application with your component as a type parameter.
 pub fn custom_ease_system<
     T: Default + Send + Sync + 'static,
-    C: CustomComponentEase + Component + interpolation::Lerp<Scalar = f32> + Default,
+    C: CustomComponentEase
+        + Component<Mutability = Mutable>
+        + interpolation::Lerp<Scalar = f32>
+        + Default,
 >(
     mut commands: Commands,
     time: Res<Time<T>>,

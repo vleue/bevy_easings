@@ -112,7 +112,7 @@ fn handle_input(
     mut anim_query: Query<(Entity, &mut EasingComponent<Transform>, &mut AnimatedCube)>,
 ) {
     if keyboard_input.just_pressed(KeyCode::Space) {
-        if let Ok((_, mut easing, _)) = anim_query.get_single_mut() {
+        if let Ok((_, mut easing, _)) = anim_query.single_mut() {
             easing.state = !easing.state;
         }
     }
@@ -124,7 +124,7 @@ fn handle_input(
     let r_pressed = keyboard_input.just_pressed(KeyCode::KeyR);
 
     if right_pressed || left_pressed || up_pressed || down_pressed || r_pressed {
-        if let Ok((entity, easing, mut cube)) = anim_query.get_single_mut() {
+        if let Ok((entity, easing, mut cube)) = anim_query.single_mut() {
             // Change easing
             if right_pressed || left_pressed {
                 cube.easing_id = if right_pressed {
