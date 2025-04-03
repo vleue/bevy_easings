@@ -55,7 +55,7 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
         ),
     ];
 
-    let size = window.single().height() / color_pairs.len() as f32;
+    let size = window.single().unwrap().height() / color_pairs.len() as f32;
 
     for (i, colors) in color_pairs.iter().enumerate() {
         let y = (color_pairs.len() as i32 / 2 - i as i32) as f32 * size - size / 2.0;

@@ -1,15 +1,21 @@
-use bevy::prelude::*;
-
+#[cfg(feature = "color")]
+use bevy_color::{
+    Color, ColorToComponents, Hsla, Hsva, Hwba, Laba, Lcha, LinearRgba, Oklaba, Oklcha, Srgba, Xyza,
+};
+use bevy_math::Rect;
+use bevy_transform::components::Transform;
+#[cfg(feature = "ui")]
+use bevy_ui::Val;
 use interpolation::Lerp;
 
 use crate::EaseValue;
 
 #[cfg(feature = "sprite")]
-impl Lerp for EaseValue<Sprite> {
+impl Lerp for EaseValue<bevy_sprite::Sprite> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Sprite {
+        EaseValue(bevy_sprite::Sprite {
             custom_size: match (self.0.custom_size, other.0.custom_size) {
                 (None, None) => None,
                 (None, Some(b)) => Some(b),
@@ -32,22 +38,22 @@ impl Lerp for EaseValue<Sprite> {
 }
 
 #[cfg(all(feature = "ui", feature = "render"))]
-impl Lerp for EaseValue<BackgroundColor> {
+impl Lerp for EaseValue<bevy_ui::BackgroundColor> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(BackgroundColor(
+        EaseValue(bevy_ui::BackgroundColor(
             EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
         ))
     }
 }
 
 #[cfg(all(feature = "ui", feature = "render"))]
-impl Lerp for EaseValue<BorderColor> {
+impl Lerp for EaseValue<bevy_ui::BorderColor> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(BorderColor(
+        EaseValue(bevy_ui::BorderColor(
             EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
         ))
     }
@@ -66,11 +72,11 @@ impl Lerp for EaseValue<Transform> {
 }
 
 #[cfg(feature = "ui")]
-impl Lerp for EaseValue<Node> {
+impl Lerp for EaseValue<bevy_ui::Node> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(Node {
+        EaseValue(bevy_ui::Node {
             left: EaseValue(self.0.left)
                 .lerp(&EaseValue(other.0.left), scalar)
                 .0,
@@ -120,11 +126,11 @@ impl Lerp for EaseValue<Node> {
 }
 
 #[cfg(feature = "ui")]
-impl Lerp for EaseValue<UiRect> {
+impl Lerp for EaseValue<bevy_ui::UiRect> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(UiRect {
+        EaseValue(bevy_ui::UiRect {
             left: EaseValue(self.0.left)
                 .lerp(&EaseValue(other.0.left), scalar)
                 .0,
@@ -164,7 +170,7 @@ impl Lerp for EaseValue<Val> {
     }
 }
 
-#[cfg(feature = "render")]
+#[cfg(feature = "color")]
 impl Lerp for EaseValue<Color> {
     type Scalar = f32;
 
@@ -255,11 +261,12 @@ impl Lerp for EaseValue<Color> {
     }
 }
 
-impl Lerp for EaseValue<TextColor> {
+#[cfg(feature = "ui")]
+impl Lerp for EaseValue<bevy_text::TextColor> {
     type Scalar = f32;
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(TextColor(
+        EaseValue(bevy_text::TextColor(
             EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
         ))
     }

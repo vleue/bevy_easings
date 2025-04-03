@@ -13,8 +13,9 @@
 
 use std::time::Duration;
 
-use bevy::prelude::*;
-
+use bevy_ecs::component::Component;
+use bevy_time::Timer;
+use bevy_time::TimerMode;
 use interpolation::Ease as IEase;
 pub use interpolation::EaseFunction;
 pub use interpolation::Lerp;

@@ -108,7 +108,7 @@ fn despawn_menu(
 ) {
     for finished in finished_easing.read() {
         if menu.contains(finished) {
-            commands.entity(finished).despawn_recursive();
+            commands.entity(finished).despawn();
         }
     }
 }
@@ -270,13 +270,18 @@ fn spawn_logo_points(
     };
 
     let resolution = 6;
-    let window_size = window.single().size();
+    let Ok(window) = window.single() else {
+        return;
+    };
+    let window_size = window.size();
 
     for i in (0..image.width()).step_by(resolution) {
         for j in (0..image.height()).step_by(resolution) {
             let pixel_size = image.texture_descriptor.format.pixel_size();
             let value = image
                 .data
+                .as_ref()
+                .unwrap()
                 .chunks(pixel_size)
                 .nth((j * image.width() + i) as usize)
                 .unwrap();
@@ -337,9 +342,9 @@ fn spawn_logo_points(
 }
 
 // Trick for now as Bevy doesn't support dynamic font size
-fn update_text(mut text: Query<(&mut TextFont, &Parent)>, nodes: Query<&ComputedNode>) {
+fn update_text(mut text: Query<(&mut TextFont, &ChildOf)>, nodes: Query<&ComputedNode>) {
     for (mut text, parent) in text.iter_mut() {
-        let node = nodes.get(parent.get()).unwrap();
+        let node = nodes.get(parent.parent).unwrap();
         text.font_size = (node.size().y / 8.0).floor() * 2.0;
     }
 }

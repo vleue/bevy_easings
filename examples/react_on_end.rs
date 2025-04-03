@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 fn setup(mut commands: Commands, windows: Query<&Window>) {
     commands.spawn(Camera2d);
 
-    let window = windows.single();
+    let window = windows.single().unwrap();
 
     let width = window.width() / 2.0;
     let height = window.height() / 2.0;
@@ -42,7 +42,9 @@ fn add_new_easing(
     transform: Query<&Transform>,
     windows: Query<&Window>,
 ) {
-    let window = windows.single();
+    let Ok(window) = windows.single() else {
+        return;
+    };
 
     for entity in removed.read() {
         let width = window.width() / 2.0;
