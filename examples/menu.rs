@@ -344,7 +344,7 @@ fn spawn_logo_points(
 // Trick for now as Bevy doesn't support dynamic font size
 fn update_text(mut text: Query<(&mut TextFont, &ChildOf)>, nodes: Query<&ComputedNode>) {
     for (mut text, parent) in text.iter_mut() {
-        let node = nodes.get(parent.parent).unwrap();
+        let node = nodes.get(parent.parent()).unwrap();
         text.font_size = (node.size().y / 8.0).floor() * 2.0;
     }
 }

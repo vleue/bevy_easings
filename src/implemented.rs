@@ -43,7 +43,7 @@ impl Lerp for EaseValue<bevy_ui::BackgroundColor> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(bevy_ui::BackgroundColor(
-            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+            EaseValue(self.0.0).lerp(&EaseValue(other.0.0), scalar).0,
         ))
     }
 }
@@ -54,7 +54,7 @@ impl Lerp for EaseValue<bevy_ui::BorderColor> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(bevy_ui::BorderColor(
-            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+            EaseValue(self.0.0).lerp(&EaseValue(other.0.0), scalar).0,
         ))
     }
 }
@@ -267,7 +267,7 @@ impl Lerp for EaseValue<bevy_text::TextColor> {
 
     fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
         EaseValue(bevy_text::TextColor(
-            EaseValue(self.0 .0).lerp(&EaseValue(other.0 .0), scalar).0,
+            EaseValue(self.0.0).lerp(&EaseValue(other.0.0), scalar).0,
         ))
     }
 }
