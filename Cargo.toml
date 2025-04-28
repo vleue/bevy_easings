@@ -1,8 +1,8 @@
 [package]
 name = "bevy_easings"
-version = "0.16.0-rc.1"
+version = "0.16.0"
 authors = ["François Mockers <francois.mockers@vleue.com>"]
-edition = "2021"
+edition = "2024"
 description = "Easing plugin for Bevy"
 repository = "https://github.com/vleue/bevy_easings"
 homepage = "https://github.com/vleue/bevy_easings"
@@ -15,19 +15,19 @@ categories = ["game-development"]
 
 [dependencies]
 interpolation = "0.3"
-bevy_ecs = { version = "0.16.0-rc.3", default-features = false }
-bevy_app = { version = "0.16.0-rc.3", default-features = false }
-bevy_time = { version = "0.16.0-rc.3", default-features = false }
-bevy_transform = { version = "0.16.0-rc.3", default-features = false }
-bevy_math = { version = "0.16.0-rc.3", default-features = false }
-bevy_render = { version = "0.16.0-rc.3", default-features = false, optional = true }
-bevy_sprite = { version = "0.16.0-rc.3", default-features = false, optional = true }
-bevy_ui = { version = "0.16.0-rc.3", default-features = false, optional = true }
-bevy_text = { version = "0.16.0-rc.3", default-features = false, optional = true }
-bevy_color = { version = "0.16.0-rc.3", default-features = false, optional = true }
+bevy_ecs = { version = "0.16.0", default-features = false }
+bevy_app = { version = "0.16.0", default-features = false }
+bevy_time = { version = "0.16.0", default-features = false }
+bevy_transform = { version = "0.16.0", default-features = false }
+bevy_math = { version = "0.16.0", default-features = false }
+bevy_render = { version = "0.16.0", default-features = false, optional = true }
+bevy_sprite = { version = "0.16.0", default-features = false, optional = true }
+bevy_ui = { version = "0.16.0", default-features = false, optional = true }
+bevy_text = { version = "0.16.0", default-features = false, optional = true }
+bevy_color = { version = "0.16.0", default-features = false, optional = true }
 
 [dev-dependencies.bevy]
-version = "0.16.0-rc.3"
+version = "0.16.0"
 default-features = false
 features = [
     "bevy_window",
