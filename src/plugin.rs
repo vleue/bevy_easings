@@ -215,7 +215,7 @@ pub fn custom_ease_system<
                 if easing.timer.finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
-                            commands.entity(entity).remove::<EasingComponent<T>>();
+                            commands.entity(entity).remove::<EasingComponent<C>>();
                         }
                         EasingType::Loop { pause, .. } => {
                             if let Some(pause) = pause {
