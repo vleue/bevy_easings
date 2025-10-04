@@ -10,8 +10,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_plugins(DefaultPlugins)
         .add_plugins(bevy_easings::EasingsPlugin::default())
         .add_systems(Startup, setup)
-        .add_systems(Update, (spawn_logo_points, switch_menu, update_text))
-        .add_systems(PostUpdate, despawn_menu)
+        .add_systems(
+            Update,
+            (
+                spawn_logo_points,
+                (switch_menu, despawn_menu).chain(),
+                update_text,
+            ),
+        )
         .run();
 
     Ok(())
@@ -164,7 +170,7 @@ fn spawn_menu(commands: &mut Commands) {
                 .spawn((
                     BackgroundColor(palettes::tailwind::EMERALD_400.into()),
                     BorderRadius::all(Val::Percent(5.0)),
-                    BorderColor(palettes::tailwind::EMERALD_100.into()),
+                    BorderColor::all(palettes::tailwind::EMERALD_100),
                     Node {
                         flex_direction: FlexDirection::Column,
                         align_items: AlignItems::Center,
@@ -198,7 +204,7 @@ fn spawn_menu(commands: &mut Commands) {
                                 Button,
                                 BackgroundColor(palettes::tailwind::INDIGO_800.into()),
                                 BorderRadius::all(Val::Percent(10.0)),
-                                BorderColor(palettes::tailwind::INDIGO_400.into()),
+                                BorderColor::all(palettes::tailwind::INDIGO_400),
                                 Node {
                                     width: Val::Px(0.0),
                                     height: Val::Px(0.0),
@@ -277,7 +283,7 @@ fn spawn_logo_points(
 
     for i in (0..image.width()).step_by(resolution) {
         for j in (0..image.height()).step_by(resolution) {
-            let pixel_size = image.texture_descriptor.format.pixel_size();
+            let pixel_size = image.texture_descriptor.format.pixel_size().unwrap();
             let value = image
                 .data
                 .as_ref()
@@ -294,8 +300,8 @@ fn spawn_logo_points(
                 Node {
                     width: Val::Px(resolution as f32),
                     height: Val::Px(resolution as f32),
-                    left: Val::Px(rand::thread_rng().gen_range(0.0..window_size.x)),
-                    top: Val::Px(rand::thread_rng().gen_range(0.0..window_size.y)),
+                    left: Val::Px(rand::rng().random_range(0.0..window_size.x)),
+                    top: Val::Px(rand::rng().random_range(0.0..window_size.y)),
                     position_type: PositionType::Absolute,
                     ..Default::default()
                 }
@@ -317,8 +323,8 @@ fn spawn_logo_points(
                 .with_original_value(),
                 BackgroundColor(Color::Oklaba(Oklaba::new(
                     0.5,
-                    rand::thread_rng().gen_range(-1.5..1.5),
-                    rand::thread_rng().gen_range(-1.5..1.5),
+                    rand::rng().random_range(-1.5..1.5),
+                    rand::rng().random_range(-1.5..1.5),
                     1.0,
                 )))
                 .ease_to(

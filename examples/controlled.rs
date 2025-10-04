@@ -101,7 +101,7 @@ fn setup(mut commands: Commands) {
             ..default()
         },
         Transform::from_translation(Vec3::new(SCREEN_X, 15., 0.)),
-        Anchor::CenterRight,
+        Anchor::CENTER_RIGHT,
     ));
 }
 
