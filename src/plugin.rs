@@ -62,11 +62,6 @@ impl<T: Default + Send + Sync + 'static> Plugin for EasingsPlugin<T> {
         #[cfg(feature = "ui")]
         app.add_systems(
             Update,
-            ease_system::<T, bevy_ui::BorderColor>.in_set(EasingsLabel),
-        );
-        #[cfg(feature = "ui")]
-        app.add_systems(
-            Update,
             ease_system::<T, bevy_text::TextColor>.in_set(EasingsLabel),
         );
     }
@@ -120,7 +115,7 @@ pub fn ease_system<
                             interpolation::lerp(&EaseValue(C::default()), &easing.end, &factor).0;
                     }
                 }
-                if easing.timer.finished() {
+                if easing.timer.is_finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
                             commands.entity(entity).remove::<EasingComponent<C>>();
@@ -212,7 +207,7 @@ pub fn custom_ease_system<
                         *object = interpolation::lerp(&C::default(), &easing.end.0, &factor);
                     }
                 }
-                if easing.timer.finished() {
+                if easing.timer.is_finished() {
                     match easing.easing_type {
                         EasingType::Once { .. } => {
                             commands.entity(entity).remove::<EasingComponent<T>>();

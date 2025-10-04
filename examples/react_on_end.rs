@@ -21,8 +21,8 @@ fn setup(mut commands: Commands, windows: Query<&Window>) {
 
     let width = window.width() / 2.0;
     let height = window.height() / 2.0;
-    let x = rand::thread_rng().gen_range(-width..width);
-    let y = rand::thread_rng().gen_range(-height..height);
+    let x = rand::rng().random_range(-width..width);
+    let y = rand::rng().random_range(-height..height);
 
     commands.spawn((
         Sprite::from_color(palettes::basic::RED, Vec2::new(100.0, 100.0)),
@@ -49,8 +49,8 @@ fn add_new_easing(
     for entity in removed.read() {
         let width = window.width() / 2.0;
         let height = window.height() / 2.0;
-        let x = rand::thread_rng().gen_range(-width..width);
-        let y = rand::thread_rng().gen_range(-height..height);
+        let x = rand::rng().random_range(-width..width);
+        let y = rand::rng().random_range(-height..height);
 
         commands
             .entity(entity)
