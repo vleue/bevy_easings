@@ -1,6 +1,6 @@
 [package]
 name = "bevy_easings"
-version = "0.17.0"
+version = "0.17.1"
 authors = ["François Mockers <francois.mockers@vleue.com>"]
 edition = "2024"
 description = "Easing plugin for Bevy"
