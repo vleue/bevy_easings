@@ -48,17 +48,6 @@ impl Lerp for EaseValue<bevy_ui::BackgroundColor> {
     }
 }
 
-#[cfg(all(feature = "ui", feature = "render"))]
-impl Lerp for EaseValue<bevy_ui::BorderColor> {
-    type Scalar = f32;
-
-    fn lerp(&self, other: &Self, scalar: &Self::Scalar) -> Self {
-        EaseValue(bevy_ui::BorderColor(
-            EaseValue(self.0.0).lerp(&EaseValue(other.0.0), scalar).0,
-        ))
-    }
-}
-
 impl Lerp for EaseValue<Transform> {
     type Scalar = f32;
 
