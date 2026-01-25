@@ -169,7 +169,6 @@ fn spawn_menu(commands: &mut Commands) {
             parent
                 .spawn((
                     BackgroundColor(palettes::tailwind::EMERALD_400.into()),
-                    BorderRadius::all(Val::Percent(5.0)),
                     BorderColor::all(palettes::tailwind::EMERALD_100),
                     Node {
                         flex_direction: FlexDirection::Column,
@@ -177,6 +176,7 @@ fn spawn_menu(commands: &mut Commands) {
                         border: UiRect::all(Val::Px(5.0)),
                         width: Val::Px(500.0),
                         height: Val::Px(400.0),
+                        border_radius: BorderRadius::all(Val::Percent(5.0)),
                         ..default()
                     }
                     .ease_to(
@@ -203,7 +203,6 @@ fn spawn_menu(commands: &mut Commands) {
                             .spawn((
                                 Button,
                                 BackgroundColor(palettes::tailwind::INDIGO_800.into()),
-                                BorderRadius::all(Val::Percent(10.0)),
                                 BorderColor::all(palettes::tailwind::INDIGO_400),
                                 Node {
                                     width: Val::Px(0.0),
@@ -213,6 +212,7 @@ fn spawn_menu(commands: &mut Commands) {
                                     position_type: PositionType::Absolute,
                                     align_items: AlignItems::Center,
                                     justify_content: JustifyContent::Center,
+                                    border_radius: BorderRadius::all(Val::Percent(10.0)),
                                     ..default()
                                 },
                                 Node {
@@ -296,13 +296,13 @@ fn spawn_logo_points(
                 continue;
             }
             commands.spawn((
-                BorderRadius::MAX,
                 Node {
                     width: Val::Px(resolution as f32),
                     height: Val::Px(resolution as f32),
                     left: Val::Px(rand::rng().random_range(0.0..window_size.x)),
                     top: Val::Px(rand::rng().random_range(0.0..window_size.y)),
                     position_type: PositionType::Absolute,
+                    border_radius: BorderRadius::MAX,
                     ..Default::default()
                 }
                 .ease_to(
