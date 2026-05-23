@@ -167,6 +167,17 @@ impl<T> EasingComponent<T> {
         self.timer = Timer::new(duration, TimerMode::Once);
         self
     }
+
+    /// Start a [`EasingChainComponent`] from this `EasingComponent`
+    pub fn chain(self) -> EasingChainComponent<T> {
+        EasingChainComponent(vec![self])
+    }
+}
+
+impl<T> From<EasingComponent<T>> for EasingChainComponent<T> {
+    fn from(component: EasingComponent<T>) -> Self {
+        EasingChainComponent(vec![component])
+    }
 }
 
 impl<T> EasingComponent<T>
