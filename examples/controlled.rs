@@ -97,7 +97,7 @@ fn setup(mut commands: Commands) {
     commands.spawn((
         Text2d::new("".to_string()),
         TextFont {
-            font_size: 18.0,
+            font_size: FontSize::Px(18.0),
             ..default()
         },
         Transform::from_translation(Vec3::new(SCREEN_X, 15., 0.)),

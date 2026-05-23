@@ -71,7 +71,7 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
         commands.spawn((
             Text2d::new(format!("{:?}", ease_function)),
             TextFont {
-                font_size: 15.0,
+                font_size: FontSize::Px(15.0),
                 ..default()
             },
             Transform::from_translation(Vec3::new(x + size / 2.0, y - size / 2.0, 1.)),

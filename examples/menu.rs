@@ -251,7 +251,7 @@ fn spawn_menu(commands: &mut Commands) {
                                         _ => unreachable!(),
                                     }),
                                     TextFont {
-                                        font_size: 0.0,
+                                        font_size: FontSize::Px(0.0),
                                         ..default()
                                     },
                                 ));
@@ -351,6 +351,6 @@ fn spawn_logo_points(
 fn update_text(mut text: Query<(&mut TextFont, &ChildOf)>, nodes: Query<&ComputedNode>) {
     for (mut text, parent) in text.iter_mut() {
         let node = nodes.get(parent.parent()).unwrap();
-        text.font_size = (node.size().y / 8.0).floor() * 2.0;
+        text.font_size = FontSize::Px((node.size().y / 8.0).floor() * 2.0);
     }
 }
