@@ -59,7 +59,9 @@ fn add_easing(
         let mut iter = waypoints.into_iter();
         let first = iter.next().unwrap();
         let chain = iter.fold(
-            Transform::default().ease_to(first, ease, easing_type).chain(),
+            Transform::default()
+                .ease_to(first, ease, easing_type)
+                .chain(),
             |acc, wp| acc.ease_to(wp, ease, easing_type),
         );
 

@@ -168,30 +168,7 @@ impl<T> EasingComponent<T> {
         self
     }
 
-    /// Lift this single easing into an [`EasingChainComponent`] so it can be
-    /// extended uniformly — useful as the seed of an [`Iterator::fold`] when
-    /// building a chain from a collection.
-    ///
-    /// # Example
-    /// ```rust,no_run
-    /// use bevy::prelude::*;
-    /// use bevy_easings::{Ease, EaseFunction, EasingType};
-    ///
-    /// fn system(mut commands: Commands) {
-    ///     let waypoints = [Vec3::X, Vec3::Y, Vec3::Z];
-    ///     let ease = EaseFunction::QuadraticInOut;
-    ///     let easing_type = EasingType::Once {
-    ///         duration: std::time::Duration::from_secs(1),
-    ///     };
-    ///     let mut iter = waypoints.into_iter().map(Transform::from_translation);
-    ///     let first = iter.next().unwrap();
-    ///     let chain = iter.fold(
-    ///         Transform::default().ease_to(first, ease, easing_type).chain(),
-    ///         |acc, wp| acc.ease_to(wp, ease, easing_type),
-    ///     );
-    ///     commands.spawn(chain);
-    /// }
-    /// ```
+    /// Start a [`EasingChainComponent`] from this `EasingComponent`
     pub fn chain(self) -> EasingChainComponent<T> {
         EasingChainComponent(vec![self])
     }
