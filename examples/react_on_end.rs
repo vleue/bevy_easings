@@ -1,7 +1,7 @@
 use bevy::{color::palettes, prelude::*};
 
 use bevy_easings::{Ease, EasingComponent};
-use rand::Rng;
+use rand::RngExt;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
