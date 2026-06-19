@@ -27,7 +27,7 @@ bevy_text = { version = "0.18", default-features = false, optional = true }
 bevy_color = { version = "0.18", default-features = false, optional = true }
 
 [dev-dependencies.bevy]
-version = "0.18"
+version = "0.19"
 default-features = false
 features = [
     "bevy_window",
