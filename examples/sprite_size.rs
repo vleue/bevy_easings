@@ -82,7 +82,7 @@ fn setup(mut commands: Commands, window: Query<&Window>) {
             Text2d::new(format!("{:?}", ease_function)),
             Transform::from_translation(Vec3::new(x + final_size / 2.0, y - final_size / 2.0, 1.)),
             TextFont {
-                font_size: 16.0,
+                font_size: FontSize::Px(16.0),
                 ..Default::default()
             },
         ));
