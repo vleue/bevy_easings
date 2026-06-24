@@ -46,7 +46,7 @@ features = [
 ]
 
 [dev-dependencies]
-rand = "0.9"
+rand = "0.10"
 
 [features]
 default = ["render", "sprite", "ui", "color"]

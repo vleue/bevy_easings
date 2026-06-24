@@ -41,53 +41,30 @@ fn add_easing(
     mut removed: RemovedComponents<EasingChainComponent<Transform>>,
 ) {
     for entity in removed.read() {
-        let transform0 = Transform::default();
-        let transform1 = Transform::from_translation(Vec3::new(500., 0., 0.));
-        let transform2 = Transform::from_translation(Vec3::new(500., 300., 0.));
-        let transform3 = Transform::from_translation(Vec3::new(-500., 300., 0.));
-        let transform4 = Transform::from_translation(Vec3::new(-500., -300., 0.));
-        let transform5 = Transform::from_translation(Vec3::new(500., -300., 0.));
-        let transform6 = Transform::from_translation(Vec3::new(500., 0., 0.));
-        let transform7 = Transform::default();
+        let waypoints = [
+            Transform::from_translation(Vec3::new(500., 0., 0.)),
+            Transform::from_translation(Vec3::new(500., 300., 0.)),
+            Transform::from_translation(Vec3::new(-500., 300., 0.)),
+            Transform::from_translation(Vec3::new(-500., -300., 0.)),
+            Transform::from_translation(Vec3::new(500., -300., 0.)),
+            Transform::from_translation(Vec3::new(500., 0., 0.)),
+            Transform::default(),
+        ];
 
-        let duration = std::time::Duration::from_millis(500);
-        commands.entity(entity).insert(
-            transform0
-                .ease_to(
-                    transform1,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform2,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform3,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform4,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform5,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform6,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                )
-                .ease_to(
-                    transform7,
-                    bevy_easings::EaseFunction::QuadraticInOut,
-                    bevy_easings::EasingType::Once { duration },
-                ),
+        let ease = bevy_easings::EaseFunction::QuadraticInOut;
+        let easing_type = bevy_easings::EasingType::Once {
+            duration: std::time::Duration::from_millis(500),
+        };
+
+        let mut iter = waypoints.into_iter();
+        let first = iter.next().unwrap();
+        let chain = iter.fold(
+            Transform::default()
+                .ease_to(first, ease, easing_type)
+                .chain(),
+            |acc, wp| acc.ease_to(wp, ease, easing_type),
         );
+
+        commands.entity(entity).insert(chain);
     }
 }

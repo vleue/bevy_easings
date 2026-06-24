@@ -3,7 +3,7 @@ use std::time::Duration;
 use bevy::{color::palettes, image::TextureFormatPixelInfo, prelude::*};
 
 use bevy_easings::{Ease, *};
-use rand::Rng;
+use rand::RngExt;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     App::default()
