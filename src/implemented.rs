@@ -1,7 +1,7 @@
 #[cfg(feature = "color")]
 use bevy_color::{
-    Color, ColorToComponents, Hsla, Hsva, Hwba, Laba, Lcha, LinearRgba, Okhsla, Okhsva, Okhwba,
-    Oklaba, Oklcha, Srgba, Xyza,
+    Color, ColorToComponents, Hsla, Hsva, Hwba, Laba, Lcha, LinearRgba, Mix, Okhsla, Okhsva,
+    Okhwba, Oklaba, Oklcha, Srgba, Xyza,
 };
 use bevy_math::Rect;
 use bevy_transform::components::Transform;
@@ -161,6 +161,12 @@ impl Lerp for EaseValue<Val> {
             (Val::Rem(self_val), Val::Rem(other_val)) => {
                 EaseValue(Val::Rem(Lerp::lerp(&self_val, &other_val, scalar)))
             }
+            (Val::VMin(self_val), Val::VMin(other_val)) => {
+                EaseValue(Val::VMin(Lerp::lerp(&self_val, &other_val, scalar)))
+            }
+            (Val::VMax(self_val), Val::VMax(other_val)) => {
+                EaseValue(Val::VMax(Lerp::lerp(&self_val, &other_val, scalar)))
+            }
             _ => EaseValue(self.0),
         }
     }
@@ -253,28 +259,13 @@ impl Lerp for EaseValue<Color> {
                 Color::Xyza(lerped)
             }
             (Color::Okhsla(color), other) => {
-                let lerped = Okhsla::from_vec4(
-                    color
-                        .to_vec4()
-                        .lerp(Into::<Okhsla>::into(other).to_vec4(), *scalar),
-                );
-                Color::Okhsla(lerped)
+                Color::Okhsla(color.mix(&Into::<Okhsla>::into(other), *scalar))
             }
             (Color::Okhsva(color), other) => {
-                let lerped = Okhsva::from_vec4(
-                    color
-                        .to_vec4()
-                        .lerp(Into::<Okhsva>::into(other).to_vec4(), *scalar),
-                );
-                Color::Okhsva(lerped)
+                Color::Okhsva(color.mix(&Into::<Okhsva>::into(other), *scalar))
             }
             (Color::Okhwba(color), other) => {
-                let lerped = Okhwba::from_vec4(
-                    color
-                        .to_vec4()
-                        .lerp(Into::<Okhwba>::into(other).to_vec4(), *scalar),
-                );
-                Color::Okhwba(lerped)
+                Color::Okhwba(color.mix(&Into::<Okhwba>::into(other), *scalar))
             }
         };
         EaseValue(color)

@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use bevy::{color::palettes, image::TextureFormatPixelInfo, prelude::*};
+use bevy::{color::palettes, image::TextureFormatPixelInfo, prelude::*, ui_widgets::Button};
 
 use bevy_easings::{Ease, *};
 use rand::RngExt;
@@ -201,6 +201,7 @@ fn spawn_menu(commands: &mut Commands) {
                     for i in 0..5 {
                         parent
                             .spawn((
+                                Button,
                                 BackgroundColor(palettes::tailwind::INDIGO_800.into()),
                                 BorderColor::all(palettes::tailwind::INDIGO_400),
                                 Node {
