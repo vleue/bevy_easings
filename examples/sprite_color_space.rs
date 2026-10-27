@@ -99,6 +99,9 @@ fn color_space_name(color: Color) -> String {
         Color::Oklaba(_) => "Oklaba",
         Color::Oklcha(_) => "Oklcha",
         Color::Xyza(_) => "Xyza",
+        Color::Okhsla(_) => "Okhsla",
+        Color::Okhsva(_) => "Okhsva",
+        Color::Okhwba(_) => "Okhwba",
     }
     .to_string()
 }

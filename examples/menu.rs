@@ -201,7 +201,6 @@ fn spawn_menu(commands: &mut Commands) {
                     for i in 0..5 {
                         parent
                             .spawn((
-                                Button,
                                 BackgroundColor(palettes::tailwind::INDIGO_800.into()),
                                 BorderColor::all(palettes::tailwind::INDIGO_400),
                                 Node {
